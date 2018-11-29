@@ -1,0 +1,34 @@
+plugins {
+    id 'org.beryx.runtime'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+ext.log4jVersion = '2.9.0'
+
+dependencies {
+    compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    compile "javax.xml.bind:jaxb-api:2.3.0"
+}
+
+mainClassName = 'org.example.runtime.hello.Hello'
+jar {
+    manifest {
+        attributes 'Implementation-Title': "hello",
+                'Main-Class': mainClassName
+    }
+}
+
+tasks.runtime.doLast {
+    copy {
+        from('src/main/resources')
+        into("$buildDir/image/bin")
+    }
+}

@@ -1,0 +1,4 @@
+[[introduction]]
+= Introduction
+
+The badass-runtime plugin allows you to create custom runtime images for non-modular applications.
