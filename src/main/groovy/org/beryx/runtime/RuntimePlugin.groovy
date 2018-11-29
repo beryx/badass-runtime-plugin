@@ -20,25 +20,50 @@ import org.beryx.runtime.data.RuntimePluginExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.resources.TextResource
+import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.util.GradleVersion
 
-@CompileStatic
 class RuntimePlugin implements Plugin<Project> {
     final static String EXTENSION_NAME = 'runtime'
     final static String TASK_NAME_RUNTIME = 'runtime'
     final static String TASK_NAME_RUNTIME_ZIP = 'runtimeZip'
     final static String TASK_NAME_SUGGEST_MODULES = 'suggestModules'
 
+    @CompileStatic
     @Override
     void apply(Project project) {
         if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
             throw new GradleException("This version of the plugin requires Gradle 5 or newer.\n" +
-                "Upgrade to Gradle 5 or use a version with the '-gradle4' suffix.")
+                    "Upgrade to Gradle 5 or use a version with the '-gradle4' suffix.")
         }
         project.getPluginManager().apply('application');
+        if(hasModuleInfo(project)) {
+            throw new GradleException("This plugin works only with non-modular applications.\n" +
+                    "For modular applications use https://github.com/beryx/badass-jlink-plugin/.")
+        }
         def extension = project.extensions.create(EXTENSION_NAME, RuntimePluginExtension, project)
-        project.getTasks().create(TASK_NAME_RUNTIME, RuntimeTask, { it.init(extension) })
-        project.getTasks().create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask, { it.init(extension) })
-        project.getTasks().create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask, { it.init(extension) })
+        project.tasks.create(TASK_NAME_RUNTIME, RuntimeTask, { it.init(extension) })
+        project.tasks.create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask, { it.init(extension) })
+        project.tasks.create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask, { it.init(extension) })
+        configureStartScripts(project)
+    }
+
+    static boolean hasModuleInfo(Project project) {
+        Set<File> srcDirs = project.sourceSets.main?.java?.srcDirs
+        srcDirs?.any { it.list()?.contains('module-info.java')}
+    }
+
+    static void configureStartScripts(Project project) {
+        project.tasks.withType(CreateStartScripts) {
+            unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
+            windowsStartScriptGenerator.template = getTextResource(project, '/windowsScriptTemplate.txt')
+        }
+    }
+
+    static TextResource getTextResource(Project project, String path) {
+        def template = RuntimePlugin.class.getResource(path)
+        if(!template) throw new GradleException("Resource $path not found.")
+        project.resources.text.fromString(template.text)
     }
 }
