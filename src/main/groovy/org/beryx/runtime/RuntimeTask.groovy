@@ -26,6 +26,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
@@ -52,13 +53,9 @@ class RuntimeTask extends BaseTask {
         description = 'Creates a runtime image of your application'
         project.afterEvaluate {
             if(!distDir.getOrNull()) {
-                if(project.tasks.findByName('installShadowDist')) {
-                    dependsOn('installShadowDist')
-                    distDir.set(project.layout.buildDirectory.dir("install/$project.name-shadow"))
-                } else {
-                    dependsOn('installDist')
-                    distDir.set(project.layout.buildDirectory.dir("install/$project.name"))
-                }
+                Sync distTask = (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
+                dependsOn(distTask)
+                distDir.set(distTask.destinationDir)
             }
         }
     }
