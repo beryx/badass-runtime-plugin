@@ -53,7 +53,7 @@ class RuntimeZipTask extends BaseTask {
     }
 
     @TaskAction
-    void jlinkTaskAction() {
+    void runtimeZipTaskAction() {
         def taskData = new RuntimeZipTaskData()
         taskData.runtimeBasePath = runtimeBasePath.get()
         taskData.targetPlatforms = targetPlatforms.get()

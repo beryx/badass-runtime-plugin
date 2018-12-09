@@ -79,7 +79,7 @@ class RuntimeTaskImpl extends BaseTaskImpl<RuntimeTaskData> {
 
     void copyAppTo(File imageDir) {
         project.copy {
-            from "$project.buildDir/install/$project.name"
+            from td.distDir
             into imageDir
         }
     }

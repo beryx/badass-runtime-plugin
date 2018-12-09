@@ -27,6 +27,7 @@ import org.gradle.api.provider.Property
 @ToString(includeNames = true)
 class RuntimePluginExtension {
     final Property<String> runtimeBasePath
+    final DirectoryProperty distDir
     final DirectoryProperty imageDir
     final RegularFileProperty imageZip
 
@@ -40,7 +41,9 @@ class RuntimePluginExtension {
     RuntimePluginExtension(Project project) {
         project.provider{}
         runtimeBasePath = project.objects.property(String)
-        runtimeBasePath.set(project.provider{"$project.buildDir/jlinkbase" as String})
+        runtimeBasePath.set(project.provider{"$project.buildDir/runtimebase" as String})
+
+        distDir = project.objects.directoryProperty()
 
         imageDir = project.objects.directoryProperty()
         imageDir.set(project.layout.buildDirectory.dir('image'))

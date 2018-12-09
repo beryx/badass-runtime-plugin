@@ -21,6 +21,7 @@ import groovy.transform.ToString
 @CompileStatic
 @ToString(includeNames = true)
 class RuntimeTaskData extends BaseTaskData {
+    File distDir
     File imageDir
     List<String> options
     List<String> modules

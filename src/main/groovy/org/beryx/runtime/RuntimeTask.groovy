@@ -24,6 +24,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -41,12 +42,25 @@ class RuntimeTask extends BaseTask {
     @Input
     Property<Map<String, TargetPlatform>> targetPlatforms
 
+    @InputDirectory
+    DirectoryProperty distDir
+
     @OutputDirectory
     DirectoryProperty imageDir
 
     RuntimeTask() {
-        dependsOn('installDist')
         description = 'Creates a runtime image of your application'
+        project.afterEvaluate {
+            if(!distDir.getOrNull()) {
+                if(project.tasks.findByName('installShadowDist')) {
+                    dependsOn('installShadowDist')
+                    distDir.set(project.layout.buildDirectory.dir("install/$project.name-shadow"))
+                } else {
+                    dependsOn('installDist')
+                    distDir.set(project.layout.buildDirectory.dir("install/$project.name"))
+                }
+            }
+        }
     }
 
     @Override
@@ -56,13 +70,15 @@ class RuntimeTask extends BaseTask {
         modules = extension.modules
         javaHome = extension.javaHome
         targetPlatforms = extension.targetPlatforms
+        distDir = extension.distDir
         imageDir = extension.imageDir
     }
 
     @TaskAction
-    void jlinkTaskAction() {
+    void runtimeTaskAction() {
         def taskData = new RuntimeTaskData()
         taskData.runtimeBasePath = runtimeBasePath.get()
+        taskData.distDir = distDir.get().asFile
         taskData.imageDir = imageDir.get().asFile
         taskData.options = options.get()
         taskData.modules = modules.get()
