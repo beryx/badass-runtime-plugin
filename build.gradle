@@ -91,7 +91,8 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.4'
     testCompile('com.athaydes:spock-reports:1.2.13') { transitive = false}
 
-    asciidoctor 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.1'}
+    asciidoctor 'com.bmuschko:asciidoctorj-tabbed-code-extension:0.1'
+}
 
 gradlePlugin {
     plugins {
@@ -101,6 +102,7 @@ gradlePlugin {
         }
     }
 }
+
 pluginBundle {
     website = 'https://github.com/beryx/badass-runtime-plugin/'
     vcsUrl = 'https://github.com/beryx/badass-runtime-plugin'

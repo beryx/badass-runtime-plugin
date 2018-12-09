@@ -77,7 +77,6 @@ class RuntimeTask extends BaseTask {
     @TaskAction
     void runtimeTaskAction() {
         def taskData = new RuntimeTaskData()
-        taskData.runtimeBasePath = runtimeBasePath.get()
         taskData.distDir = distDir.get().asFile
         taskData.imageDir = imageDir.get().asFile
         taskData.options = options.get()

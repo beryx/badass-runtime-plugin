@@ -20,7 +20,7 @@ import groovy.transform.ToString
 
 @CompileStatic
 @ToString(includeNames = true)
-class RuntimeZipTaskData extends BaseTaskData {
+class RuntimeZipTaskData {
     Map<String,TargetPlatform> targetPlatforms
     File imageDir
     File imageZip

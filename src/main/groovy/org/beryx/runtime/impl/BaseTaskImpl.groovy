@@ -16,11 +16,10 @@
 package org.beryx.runtime.impl
 
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.BaseTaskData
 import org.gradle.api.Project
 
 @CompileStatic
-class BaseTaskImpl<DATA extends BaseTaskData> {
+class BaseTaskImpl<DATA> {
     static String SEP = File.pathSeparatorChar
 
     final Project project

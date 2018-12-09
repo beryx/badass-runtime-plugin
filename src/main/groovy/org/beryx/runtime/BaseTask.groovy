@@ -18,19 +18,14 @@ package org.beryx.runtime
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimePluginExtension
 import org.gradle.api.DefaultTask
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 
 @CompileStatic
 class BaseTask extends DefaultTask {
-    @Input
-    Property<String> runtimeBasePath
-
     BaseTask() {
         group = 'build'
     }
 
     void init(RuntimePluginExtension extension) {
-        runtimeBasePath = extension.runtimeBasePath
+        // empty default implementation
     }
 }

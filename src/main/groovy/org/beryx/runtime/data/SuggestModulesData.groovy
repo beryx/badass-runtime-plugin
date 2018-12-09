@@ -20,6 +20,6 @@ import groovy.transform.ToString
 
 @CompileStatic
 @ToString(includeNames = true)
-class SuggestModulesData extends BaseTaskData {
+class SuggestModulesData {
     String javaHome
 }

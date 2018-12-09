@@ -55,7 +55,6 @@ class RuntimeZipTask extends BaseTask {
     @TaskAction
     void runtimeZipTaskAction() {
         def taskData = new RuntimeZipTaskData()
-        taskData.runtimeBasePath = runtimeBasePath.get()
         taskData.targetPlatforms = targetPlatforms.get()
         taskData.imageDir = imageDir.get().asFile
         taskData.imageZip = imageZip.get().asFile

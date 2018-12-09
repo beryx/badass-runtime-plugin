@@ -43,7 +43,6 @@ class SuggestModulesTask extends BaseTask {
     @TaskAction
     void suggestMergedModuleInfoAction() {
         def taskData = new SuggestModulesData()
-        taskData.runtimeBasePath = runtimeBasePath.get()
         taskData.javaHome = javaHome.get()
         def taskImpl = new SuggestModulesTaskImpl(project, taskData)
         taskImpl.execute()
