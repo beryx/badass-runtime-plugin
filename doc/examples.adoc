@@ -3,4 +3,5 @@
 
 The following projects illustrate how to use this plugin to create custom runtime images:
 
-*TBD*
+* https://github.com/beryx-gist/badass-runtime-example[badass-runtime-example] - a 'Hello world' application using slf4j and logback.
+* https://github.com/beryx-gist/badass-runtime-spring-petclinic[badass-runtime-spring-petclinic] - creates a custom runtime image of the https://github.com/spring-projects/spring-petclinic[Spring PetClinic] application.

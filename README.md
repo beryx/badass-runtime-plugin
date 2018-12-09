@@ -4,9 +4,10 @@
 
 ## Badass Runtime Plugin ##
 
-A Gradle plugin to create custom runtime images for non-modularized applications. 
+A Gradle plugin to create custom runtime images for non-modularized applications.
 
-Badass-Runtime exposes an extension with the name `runtime` to let you configure various aspects of its operation.
+The plugin offers three tasks: `runtime`, `runtimeZip`, and `suggestModules`.
+It also adds an extension with the name `runtime` to let you configure various aspects of its operation.
 A simple example configuration is shown below:
 
 ```
@@ -14,4 +15,10 @@ runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     modules = ['java.naming', 'java.xml']
 }
-``` 
+```
+
+The following projects illustrate how to use this plugin to create custom runtime images:
+- [badass-runtime-example](https://github.com/beryx-gist/badass-runtime-example) - a 'Hello world' application using slf4j and logback.
+- [badass-runtime-spring-petclinic](https://github.com/beryx-gist/badass-runtime-spring-petclinic) - creates a custom runtime image of the [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) application.
+
+### Please [read the documentation](https://badass-runtime-plugin.beryx.org/releases/latest/) before using this plugin.

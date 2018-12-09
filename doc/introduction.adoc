@@ -2,3 +2,59 @@
 = Introduction
 
 The badass-runtime plugin allows you to create custom runtime images for non-modular applications.
+
+TIP: For modular applications use the https://badass-jlink-plugin.beryx.org/releases/latest/[Badass-JLink plugin].
+
+Creating a custom runtime image for a non-modular application involves the following steps:
+
+- create a classic (pre-Java-9-style) distribution using a task
+such as https://docs.gradle.org/current/userguide/application_plugin.html#sec:application_tasks[installDist] or
+https://imperceptiblethoughts.com/shadow/application-plugin/#distributing-the-shadow-jar[installShadowDist]
+- use _jlink_ to create a custom JRE containing only the modules required by the application
+- merge the pre-Java-9-style distribution into the custom JRE and adjust the start scripts with appropriate
+ JVM settings flags such as `--module-path`.
+
+The plugin provides a `runtime` task that automates the above steps
+and a `runtimeZip` task that additionally creates a zip archive of the custom runtime image.
+In addition, a `suggestModules` task helps you choose the modules to include in your custom JRE.
+
+WARNING: The plugin requires Java 11 and Gradle 4.8 or newer.
+While it might work with some combinations of older Java and Gradle versions, these are not officially supported.
+
+If you use Gradle 5 or newer, include the following in your build script:
+
+[source,groovy]
+[subs="attributes",options="nowrap"]
+----
+plugins {
+    id 'org.beryx.runtime' version '{project-version}'
+}
+----
+
+We also provide a version compatible with Gradle 4:
+
+[source,groovy]
+[subs="attributes",options="nowrap"]
+----
+plugins {
+    id 'org.beryx.runtime' version '{project-version}-gradle4'
+}
+----
+
+
+Applying this plugin also implicitly applies the https://docs.gradle.org/current/userguide/application_plugin.html[Application plugin].
+
+The badass-runtime plugin adds an extension named `runtime`.
+The sample below shows a few configuration options.
+
+[source,groovy]
+----
+runtime {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    modules = ['java.naming', 'java.xml']
+}
+----
+
+The next sections provide detailed information on how to configure the plugin.
+
+NOTE: The source code is available on https://github.com/beryx/badass-runtime-plugin[GitHub] and is licensed under the {blob-root}/LICENSE[Apache-2.0 license].
