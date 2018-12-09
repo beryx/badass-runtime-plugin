@@ -6,6 +6,8 @@
 
 A Gradle plugin to create custom runtime images for non-modularized applications.
 
+:bulb: For modularized applications use the https://badass-jlinj-plugin.beryx.org/releases/latest/[Badass-JLink plugin].
+
 The plugin offers three tasks: `runtime`, `runtimeZip`, and `suggestModules`.
 It also adds an extension with the name `runtime` to let you configure various aspects of its operation.
 A simple example configuration is shown below:
