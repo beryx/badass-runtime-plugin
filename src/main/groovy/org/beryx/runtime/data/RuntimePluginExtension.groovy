@@ -38,12 +38,12 @@ class RuntimePluginExtension {
 
 
     RuntimePluginExtension(Project project) {
-        distDir = project.objects.directoryProperty()
+        distDir = project.layout.directoryProperty()
 
-        imageDir = project.objects.directoryProperty()
+        imageDir = project.layout.directoryProperty()
         imageDir.set(project.layout.buildDirectory.dir('image'))
 
-        imageZip = project.objects.fileProperty()
+        imageZip = project.layout.fileProperty()
         imageZip.set(project.layout.buildDirectory.file('image.zip'))
 
         options = project.objects.listProperty(String)
@@ -62,11 +62,15 @@ class RuntimePluginExtension {
     }
 
     void addOptions(String... options) {
-        this.options.addAll(options as List)
+        def list = new ArrayList<String>()
+        list.addAll(options)
+        this.options.set(list)
     }
 
-    void addModules(String... options) {
-        this.modules.addAll(options as List)
+    void addModules(String... modules) {
+        def list = new ArrayList<String>()
+        list.addAll(modules)
+        this.modules.set(list)
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
