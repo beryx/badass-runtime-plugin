@@ -23,4 +23,7 @@ The following projects illustrate how to use this plugin to create custom runtim
 - [badass-runtime-example](https://github.com/beryx-gist/badass-runtime-example) - a 'Hello world' application using slf4j and logback.
 - [badass-runtime-spring-petclinic](https://github.com/beryx-gist/badass-runtime-spring-petclinic) - creates a custom runtime image of the [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) application.
 
+- [badass-runtime-pacman](https://github.com/beryx-gist/badass-runtime-pacman) - creates a custom runtime image of Pacman from the [FXGLGames](https://github.com/AlmasB/FXGLGames) repository.
+
+
 ### Please [read the documentation](https://badass-runtime-plugin.beryx.org/releases/latest/) before using this plugin.
