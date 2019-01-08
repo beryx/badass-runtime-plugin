@@ -33,9 +33,8 @@ class RuntimePlugin implements Plugin<Project> {
     @CompileStatic
     @Override
     void apply(Project project) {
-        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
-            throw new GradleException("This version of the plugin requires Gradle 5 or newer.\n" +
-                    "Upgrade to Gradle 5 or use a version with the '-gradle4' suffix.")
+        if(GradleVersion.current() < GradleVersion.version('4.0')) {
+            throw new GradleException("This plugin requires Gradle 4.8 or newer.")
         }
         project.getPluginManager().apply('application');
         if(hasModuleInfo(project)) {

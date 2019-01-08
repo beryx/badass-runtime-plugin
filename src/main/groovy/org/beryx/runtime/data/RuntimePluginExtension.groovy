@@ -17,6 +17,7 @@ package org.beryx.runtime.data
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import org.beryx.runtime.util.Util
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -38,12 +39,12 @@ class RuntimePluginExtension {
 
 
     RuntimePluginExtension(Project project) {
-        distDir = project.objects.directoryProperty()
+        distDir = Util.createDirectoryProperty(project)
 
-        imageDir = project.objects.directoryProperty()
+        imageDir = Util.createDirectoryProperty(project)
         imageDir.set(project.layout.buildDirectory.dir('image'))
 
-        imageZip = project.objects.fileProperty()
+        imageZip = Util.createRegularFileProperty(project)
         imageZip.set(project.layout.buildDirectory.file('image.zip'))
 
         options = project.objects.listProperty(String)
@@ -62,11 +63,11 @@ class RuntimePluginExtension {
     }
 
     void addOptions(String... options) {
-        this.options.addAll(options as List)
+        Util.addToListProperty(this.options, options)
     }
 
-    void addModules(String... options) {
-        this.modules.addAll(options as List)
+    void addModules(String... modules) {
+        Util.addToListProperty(this.modules, modules)
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {

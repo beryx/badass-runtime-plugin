@@ -20,7 +20,12 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import org.codehaus.groovy.tools.Utilities
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.util.GradleVersion
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -60,5 +65,31 @@ class Util {
     static File getArtifact(ResolvedDependency dep) {
         def artifact = dep.moduleArtifacts.find {it.classifier} ?: dep.moduleArtifacts[0]
         artifact.file
+    }
+
+    static DirectoryProperty createDirectoryProperty(Project project) {
+        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
+            return project.layout.directoryProperty()
+        } else {
+            return project.objects.directoryProperty()
+        }
+    }
+
+    static RegularFileProperty createRegularFileProperty(Project project) {
+        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
+            return project.layout.fileProperty()
+        } else {
+            return project.objects.fileProperty()
+        }
+    }
+
+    static <T> void addToListProperty(ListProperty<T> listProp, T... values) {
+        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
+            def list = new ArrayList(listProp.get())
+            list.addAll(values as List)
+            listProp.set(list)
+        } else {
+            listProp.addAll(values as List)
+        }
     }
 }
