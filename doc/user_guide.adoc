@@ -31,7 +31,7 @@ required modules or include unnecessary ones, so you may need to adjust it. +
 distDir:: The directory containing the application pre-Java-9-style distribution. +
 You rarely need to set this property explicitly, because the plugin automatically
 initializes it with the directory in which the `installDist` or the `installShadowDist` task
-(if the https://github.com/johnrengelman/shadow[Shadow plugin] is applied) creates the distribution.
+(if the https://github.com/johnrengelman/shadow[Shadow plugin] is applied) creates the distribution. +
     _usage example_: `distDir = file("$buildDir/install/myapp")`
 
 imageDir:: The directory into which the custom runtime image should be generated. +
