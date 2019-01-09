@@ -21,7 +21,7 @@ In addition, a `suggestModules` task helps you choose the modules to include in 
 WARNING: The plugin requires Java 11 and Gradle 4.8 or newer.
 While it might work with some combinations of older Java and Gradle versions, these are not officially supported.
 
-If you use Gradle 5 or newer, include the following in your build script:
+To use the plugin, include the following in your build script:
 
 [source,groovy]
 [subs="attributes",options="nowrap"]
@@ -30,17 +30,6 @@ plugins {
     id 'org.beryx.runtime' version '{project-version}'
 }
 ----
-
-We also provide a version compatible with Gradle 4:
-
-[source,groovy]
-[subs="attributes",options="nowrap"]
-----
-plugins {
-    id 'org.beryx.runtime' version '{project-version}-gradle4'
-}
-----
-
 
 Applying this plugin also implicitly applies the https://docs.gradle.org/current/userguide/application_plugin.html[Application plugin].
 
