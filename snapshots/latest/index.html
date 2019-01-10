@@ -178,7 +178,8 @@ required modules or include unnecessary ones, so you may need to adjust it.<br>
 <p>The directory containing the application pre-Java-9-style distribution.<br>
 You rarely need to set this property explicitly, because the plugin automatically
 initializes it with the directory in which the <code>installDist</code> or the <code>installShadowDist</code> task
-(if the <a href="https://github.com/johnrengelman/shadow">Shadow plugin</a> is applied) creates the distribution.</p>
+(if the <a href="https://github.com/johnrengelman/shadow">Shadow plugin</a> is applied) creates the distribution.
+    <em>usage example</em>: <code>distDir = file("$buildDir/install/myapp")</code></p>
 </dd>
 <dt class="hdlist1">imageDir</dt>
 <dd>
