@@ -17,7 +17,7 @@
 <h1>The Badass Runtime Plugin</h1>
 <div class="details">
 <span id="author" class="author">Serban Iordache</span><br>
-<span id="revnumber">version 1.0.0</span>
+<span id="revnumber">version 1.1.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -91,22 +91,12 @@ While it might work with some combinations of older Java and Gradle versions, th
 </table>
 </div>
 <div class="paragraph">
-<p>If you use Gradle 5 or newer, include the following in your build script:</p>
+<p>To use the plugin, include the following in your build script:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="groovy">plugins {
-    id 'org.beryx.runtime' version '1.0.0'
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We also provide a version compatible with Gradle 4:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="groovy">plugins {
-    id 'org.beryx.runtime' version '1.0.0-gradle4'
+    id 'org.beryx.runtime' version '1.1.0'
 }</code></pre>
 </div>
 </div>
@@ -135,7 +125,7 @@ The sample below shows a few configuration options.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The source code is available on <a href="https://github.com/beryx/badass-runtime-plugin">GitHub</a> and is licensed under the <a href="https://github.com/beryx/badass-runtime-plugin/blob/v1.0.0/LICENSE">Apache-2.0 license</a>.
+The source code is available on <a href="https://github.com/beryx/badass-runtime-plugin">GitHub</a> and is licensed under the <a href="https://github.com/beryx/badass-runtime-plugin/blob/v1.1.0/LICENSE">Apache-2.0 license</a>.
 </td>
 </tr>
 </table>
@@ -188,7 +178,8 @@ required modules or include unnecessary ones, so you may need to adjust it.<br>
 <p>The directory containing the application pre-Java-9-style distribution.<br>
 You rarely need to set this property explicitly, because the plugin automatically
 initializes it with the directory in which the <code>installDist</code> or the <code>installShadowDist</code> task
-(if the <a href="https://github.com/johnrengelman/shadow">Shadow plugin</a> is applied) creates the distribution.</p>
+(if the <a href="https://github.com/johnrengelman/shadow">Shadow plugin</a> is applied) creates the distribution.
+    <em>usage example</em>: <code>distDir = file("$buildDir/install/myapp")</code></p>
 </dd>
 <dt class="hdlist1">imageDir</dt>
 <dd>
@@ -295,6 +286,9 @@ The archived images will be available in <code>build/image-linux-x64.zip</code> 
 <li>
 <p><a href="https://github.com/beryx-gist/badass-runtime-spring-petclinic">badass-runtime-spring-petclinic</a> - creates a custom runtime image of the <a href="https://github.com/spring-projects/spring-petclinic">Spring PetClinic</a> application.</p>
 </li>
+<li>
+<p><a href="https://github.com/beryx-gist/badass-runtime-pacman">badass-runtime-pacman</a> - creates a custom runtime image of Pacman from the <a href="https://github.com/AlmasB/FXGLGames">FXGLGames</a> repository.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -302,7 +296,7 @@ The archived images will be available in <code>build/image-linux-x64.zip</code> 
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
+Version 1.1.0<br>
 </div>
 </div>
 </body>
