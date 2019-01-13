@@ -24,6 +24,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -33,7 +34,7 @@ class RuntimeZipTask extends BaseTask {
     @Input
     Property<Map<String, TargetPlatform>> targetPlatforms
 
-    @OutputDirectory
+    @InputDirectory
     DirectoryProperty imageDir
 
     @OutputFile

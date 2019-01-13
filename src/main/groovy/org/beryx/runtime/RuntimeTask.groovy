@@ -43,7 +43,7 @@ class RuntimeTask extends BaseTask {
     @Input
     Property<Map<String, TargetPlatform>> targetPlatforms
 
-    @OutputDirectory
+    @InputDirectory
     DirectoryProperty distDir
 
     @OutputDirectory
