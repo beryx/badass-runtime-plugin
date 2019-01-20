@@ -119,7 +119,6 @@ class PackageUseScanner extends ClassVisitor {
     }
 
 
-    @CompileDynamic
     PackageUseScanner() {
         super(Opcodes.ASM7)
     }
@@ -210,8 +209,6 @@ class PackageUseScanner extends ClassVisitor {
                     ClassReader cr = new ClassReader(inputStream)
                     cr.accept(this, 0)
                 } catch (Exception e) {
-                    println "Failed to scan $path"
-                    e.printStackTrace()
                     LOGGER.info("Failed to scan $path", e)
                     invalidEntries << "${basePath}/${path}"
                 }
