@@ -15,19 +15,38 @@
  */
 package org.beryx.runtime.util
 
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.transform.ToString
 import jdk.internal.org.objectweb.asm.Type
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 
+@ToString
+@CompileStatic
 class PackageCollection {
-    final TreeSet<String> packages = []
+    private static final Logger LOGGER = Logging.getLogger(PackageCollection.class);
+
+    final TreeSet<String> packages = new TreeSet<String>() {
+        @Override
+        boolean add(Object o) {
+            if(String.valueOf(o).startsWith('L')) {
+                println "#### $o"
+            }
+            return super.add(o)
+        }
+    }
 
     void addPackage(String pkg) {
         packages << adjust(pkg)
     }
 
+    @CompileDynamic
     void addDescriptor(String descriptor) {
         addTypes(Type.getType(descriptor))
     }
 
+    @CompileDynamic
     void addTypes(Type... types) {
         types.each { Type type ->
             switch(type.sort) {
@@ -40,21 +59,34 @@ class PackageCollection {
 
     void addClass(String className) {
         if(!className) return
-        def pkg = removeFromLastOccurrence(adjust(className), '.')
-        if(pkg) packages << pkg
+        if(className.startsWith('[')) {
+            addDescriptor(className)
+        } else {
+            def pkg = removeFromLastOccurrence(adjust(className), '.')
+            if(pkg) packages << pkg
+        }
     }
 
     static String removeFromLastOccurrence(String s, String delimiter) {
         int pos = s.lastIndexOf(delimiter)
-        if(pos <= 0) throw new IllegalArgumentException("Cannot remove from last occurrence of $delimiter in $s")
+        if(pos <= 0) {
+            LOGGER.debug("Cannot remove from last occurrence of $delimiter in $s")
+            return null
+        }
         s.substring(0, pos)
     }
 
     static String adjust(String s) {
         s = s?.trim()
         if(!s) return ''
-        while(!Character.isJavaIdentifierStart(s[0] as char)) s = s.substring(0)
-        while(!Character.isJavaIdentifierPart(s[-1] as char)) s = s.substring(0, s.length()-1)
+        while(!Character.isJavaIdentifierStart(s[0] as char)) {
+            s = s.substring(1)
+            if(!s) return ''
+        }
+        while(!Character.isJavaIdentifierPart(s[s.length() - 1] as char)) {
+            s = s.substring(0, s.length()-1)
+            if(!s) return ''
+        }
         s.replace('/', '.')
     }
 }
