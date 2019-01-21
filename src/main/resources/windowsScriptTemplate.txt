@@ -18,12 +18,10 @@ set APP_HOME=%DIRNAME%${appHomeRelativePath}
 set DEFAULT_JVM_OPTS=${defaultJvmOpts}
 
 set JAVA_HOME="%~dp0.."
-
-set JAVA_HOME=%JAVA_HOME:"=%
 set JAVA_EXE=%JAVA_HOME%/bin/java.exe
 set JAVA_EXE="%JAVA_EXE:"=%"
 
-if exist "%JAVA_EXE%" goto init
+if exist %JAVA_EXE% goto init
 
 echo.
 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
