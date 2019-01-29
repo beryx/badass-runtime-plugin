@@ -16,6 +16,7 @@
 package org.beryx.runtime.util
 
 import groovy.io.FileType
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -25,6 +26,8 @@ import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 
 import java.util.zip.ZipEntry
@@ -91,5 +94,18 @@ class Util {
         } else {
             listProp.addAll(values as List)
         }
+    }
+
+    @CompileDynamic
+    static <K,V>Provider<Map<K,V>> createMapProperty(Project project,
+                                             Class<K> keyType, Class<V> valueType) {
+        Provider<Map<K,V>> provider
+        if(GradleVersion.current() < GradleVersion.version('5.1')) {
+            provider = (Property<Map<K,V>>)project.objects.property(Map)
+        } else {
+            provider = project.objects.mapProperty(keyType, valueType)
+        }
+        provider.set(new TreeMap<K,V>())
+        provider
     }
 }

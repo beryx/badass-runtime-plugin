@@ -23,6 +23,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 
 @CompileStatic
 @ToString(includeNames = true)
@@ -34,7 +35,7 @@ class RuntimePluginExtension {
     final ListProperty<String> options
     final ListProperty<String> modules
     final Property<String> javaHome
-    final Property<Map<String, TargetPlatform>> targetPlatforms
+    final Provider<Map<String, TargetPlatform>> targetPlatforms
     final Property<Integer> jvmVersion
 
 
@@ -56,8 +57,7 @@ class RuntimePluginExtension {
         javaHome = project.objects.property(String)
         javaHome.set(System.getenv('JAVA_HOME'))
 
-        targetPlatforms = (Property)project.objects.property(Map)
-        targetPlatforms.set(new TreeMap<>())
+        targetPlatforms = Util.createMapProperty(project, String, TargetPlatform)
 
         jvmVersion = project.objects.property(Integer)
     }

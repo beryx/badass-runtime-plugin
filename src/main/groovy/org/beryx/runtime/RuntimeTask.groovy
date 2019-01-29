@@ -23,6 +23,7 @@ import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
@@ -41,7 +42,7 @@ class RuntimeTask extends BaseTask {
     Property<String> javaHome
 
     @Input
-    Property<Map<String, TargetPlatform>> targetPlatforms
+    Provider<Map<String, TargetPlatform>> targetPlatforms
 
     @InputDirectory
     DirectoryProperty distDir

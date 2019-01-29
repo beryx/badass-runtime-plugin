@@ -17,22 +17,21 @@ package org.beryx.runtime
 
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimePluginExtension
+import org.beryx.runtime.data.RuntimeZipTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeZipTaskImpl
-import org.beryx.runtime.data.RuntimeZipTaskData
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
 class RuntimeZipTask extends BaseTask {
     @Input
-    Property<Map<String, TargetPlatform>> targetPlatforms
+    Provider<Map<String, TargetPlatform>> targetPlatforms
 
     @InputDirectory
     DirectoryProperty imageDir

@@ -50,7 +50,7 @@ class RuntimePluginSpec extends Specification {
     }
 
     @Unroll
-    def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed"() {
+    def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed with Gradle #gradleVersion"() {
         when:
         setUpBuild(modules)
         BuildResult result
@@ -58,6 +58,7 @@ class RuntimePluginSpec extends Specification {
             result = GradleRunner.create()
                     .withDebug(true)
                     .withProjectDir(testProjectDir.root)
+                    .withGradleVersion(gradleVersion)
                     .withPluginClasspath()
                     .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-is")
                     .build();
@@ -84,14 +85,14 @@ class RuntimePluginSpec extends Specification {
         (outputText.trim() == 'LOG: Hello, runtime!') == runShouldSucceed
 
         where:
-        modules                                     | buildShouldSucceed | runShouldSucceed
-        null                                        | true               | true
-        []                                          | true               | true
-        ['java.base']                               | true               | false
-        ['foo.bar']                                 | false              | false
-        ['java.naming']                             | true               | false
-        ['java.naming', 'java.xml']                 | true               | true
-        ['java.naming', 'java.xml', 'java.logging'] | true               | true
-        ['java.naming', 'java.xml', 'foo.bar']      | false              | false
+        modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion
+        null                                        | true               | true             | '4.8'
+        []                                          | true               | true             | '5.0'
+        ['java.base']                               | true               | false            | '5.1'
+        ['foo.bar']                                 | false              | false            | '5.1.1'
+        ['java.naming']                             | true               | false            | '4.8'
+        ['java.naming', 'java.xml']                 | true               | true             | '5.0'
+        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '5.1'
+        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '5.1.1'
     }
 }
