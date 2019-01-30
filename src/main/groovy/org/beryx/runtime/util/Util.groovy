@@ -108,4 +108,11 @@ class Util {
         provider.set(new TreeMap<K,V>())
         provider
     }
+
+    @CompileDynamic
+    static <K,V> void putToMapProvider(Provider<Map<K,V>> mapProvider, K key, V value) {
+        def map = new TreeMap(mapProvider.get())
+        map[key] = value
+        mapProvider.set(map)
+    }
 }

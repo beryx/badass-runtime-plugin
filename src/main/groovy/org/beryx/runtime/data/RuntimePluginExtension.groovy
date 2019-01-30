@@ -71,6 +71,6 @@ class RuntimePluginExtension {
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
-        targetPlatforms.get()[name] = new TargetPlatform(name, jdkHome, options)
+        Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(name, jdkHome, options))
     }
 }
