@@ -4,6 +4,7 @@
 The following projects illustrate how to use this plugin to create custom runtime images:
 
 * https://github.com/beryx-gist/badass-runtime-example[badass-runtime-example] - a 'Hello world' application using slf4j and logback.
+* https://github.com/beryx-gist/badass-runtime-example-javafx[badass-runtime-example-javafx] - a 'Hello world' JavaFX application.
 * https://github.com/beryx-gist/badass-runtime-example-kotlin-tornadofx[badass-runtime-example-kotlin-tornadofx] - a 'Hello world' application written in Kotlin using https://github.com/edvin/tornadofx[tornadofx].
 * https://github.com/beryx-gist/badass-runtime-spring-petclinic[badass-runtime-spring-petclinic] - creates a custom runtime image of the https://github.com/spring-projects/spring-petclinic[Spring PetClinic] application.
 * https://github.com/beryx-gist/badass-runtime-pacman[badass-runtime-pacman] - creates a custom runtime image of Pacman from the https://github.com/AlmasB/FXGLGames[FXGLGames] repository.
