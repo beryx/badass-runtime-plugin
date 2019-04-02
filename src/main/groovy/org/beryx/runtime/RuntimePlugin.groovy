@@ -20,8 +20,6 @@ import org.beryx.runtime.data.RuntimePluginExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.resources.TextResource
-import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.util.GradleVersion
 
 class RuntimePlugin implements Plugin<Project> {
@@ -45,7 +43,6 @@ class RuntimePlugin implements Plugin<Project> {
         project.tasks.create(TASK_NAME_RUNTIME, RuntimeTask, { it.init(extension) })
         project.tasks.create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask, { it.init(extension) })
         project.tasks.create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask, { it.init(extension) })
-        configureStartScripts(project)
     }
 
     static boolean hasModuleInfo(Project project) {
@@ -53,16 +50,4 @@ class RuntimePlugin implements Plugin<Project> {
         srcDirs?.any { it.list()?.contains('module-info.java')}
     }
 
-    static void configureStartScripts(Project project) {
-        project.tasks.withType(CreateStartScripts) {
-            unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
-            windowsStartScriptGenerator.template = getTextResource(project, '/windowsScriptTemplate.txt')
-        }
-    }
-
-    static TextResource getTextResource(Project project, String path) {
-        def template = RuntimePlugin.class.getResource(path)
-        if(!template) throw new GradleException("Resource $path not found.")
-        project.resources.text.fromString(template.text)
-    }
 }

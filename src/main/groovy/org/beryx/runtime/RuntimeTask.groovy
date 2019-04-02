@@ -15,20 +15,25 @@
  */
 package org.beryx.runtime
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
+import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.application.CreateStartScripts
 
 @CompileStatic
 class RuntimeTask extends BaseTask {
@@ -58,7 +63,22 @@ class RuntimeTask extends BaseTask {
                 dependsOn(distTask)
                 distDir.set(distTask.destinationDir)
             }
+            configureStartScripts(project)
         }
+    }
+
+    @CompileDynamic
+    static void configureStartScripts(Project project) {
+        project.tasks.withType(CreateStartScripts) {
+            unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
+            windowsStartScriptGenerator.template = getTextResource(project, '/windowsScriptTemplate.txt')
+        }
+    }
+
+    static TextResource getTextResource(Project project, String path) {
+        def template = RuntimePlugin.class.getResource(path)
+        if(!template) throw new GradleException("Resource $path not found.")
+        project.resources.text.fromString(template.text)
     }
 
     @Override
