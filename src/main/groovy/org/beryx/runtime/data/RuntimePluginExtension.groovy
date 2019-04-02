@@ -55,7 +55,7 @@ class RuntimePluginExtension {
         modules.set(new ArrayList<String>())
 
         javaHome = project.objects.property(String)
-        javaHome.set(System.getenv('JAVA_HOME'))
+        javaHome.set(getDefaultJavaHome())
 
         targetPlatforms = Util.createMapProperty(project, String, TargetPlatform)
 
@@ -72,5 +72,16 @@ class RuntimePluginExtension {
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
         Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(name, jdkHome, options))
+    }
+
+    private static String getDefaultJavaHome() {
+        def value = System.properties['badass.runtime.java.home']
+        if(value) return value
+        value = System.getenv('BADASS_RUNTIME_JAVA_HOME')
+        if(value) return value
+        value = System.properties['java.home']
+        String ext = System.getProperty('os.name', '').toLowerCase().contains('win') ? '.exe' : ''
+        if(['javac', 'jar', 'jlink'].every { new File("$value/bin/$it$ext").file }) return value
+        return System.getenv('JAVA_HOME')
     }
 }
