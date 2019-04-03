@@ -202,10 +202,13 @@ initializes it with the directory in which the <code>installDist</code> or the <
 </dd>
 <dt class="hdlist1">javaHome</dt>
 <dd>
-<p>The path to the JDK providing the <em>jlink</em> tool.<br>
-Unless you call the <em>targetPlatform</em> method, the modules included in the custom JRE will also come from this JDK.<br>
-    <em>defaultValue</em>: the value of the <code>JAVA_HOME</code> environment variable.<br>
-    <em>usage example</em>: <code>javaHome = '/usr/lib/jvm/open-jdk'</code></p>
+<p>The path to the JDK providing the tools needed by the plugin (<em>javac</em>, <em>jar</em>, <em>jlink</em> etc.).<br>
+<em>defaultValue</em>: the first non-empty value from:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>badass.runtime.java.home</code> system property<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>BADASS_RUNTIME_JAVA_HOME</code> environment variable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>java.home</code> system property (only if it points to a JRE containing the <code>javac</code>, <code>jar</code>, and <code>jlink</code> tools)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>JAVA_HOME</code> environment variable<br>
+<em>usage example</em>: <code>javaHome = '/usr/lib/jvm/open-jdk'</code></p>
 </dd>
 <dt class="hdlist1">modules</dt>
 <dd>
