@@ -23,6 +23,7 @@ import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -63,15 +64,20 @@ class RuntimeTask extends BaseTask {
                 dependsOn(distTask)
                 distDir.set(distTask.destinationDir)
             }
-            configureStartScripts(project)
+            project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
+                configureStartScripts(project, taskGraph.hasTask(this))
+            }
         }
     }
 
     @CompileDynamic
-    static void configureStartScripts(Project project) {
-        project.tasks.withType(CreateStartScripts) {
-            unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
-            windowsStartScriptGenerator.template = getTextResource(project, '/windowsScriptTemplate.txt')
+    static void configureStartScripts(Project project, boolean asRuntimeImage) {
+        project.tasks.withType(CreateStartScripts) { startScriptTask ->
+            startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
+            if(asRuntimeImage) {
+                unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
+                windowsStartScriptGenerator.template = getTextResource(project, '/windowsScriptTemplate.txt')
+            }
         }
     }
 
