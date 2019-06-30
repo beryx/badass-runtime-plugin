@@ -28,6 +28,7 @@ class RuntimePlugin implements Plugin<Project> {
     final static String TASK_NAME_RUNTIME = 'runtime'
     final static String TASK_NAME_RUNTIME_ZIP = 'runtimeZip'
     final static String TASK_NAME_SUGGEST_MODULES = 'suggestModules'
+    final static String TASK_NAME_JPACKAGE_IMAGE = 'jpackageImage'
     final static String TASK_NAME_JPACKAGE = 'jpackage'
 
     @CompileStatic
@@ -46,6 +47,7 @@ class RuntimePlugin implements Plugin<Project> {
         project.tasks.create(TASK_NAME_RUNTIME, RuntimeTask, { it.init(extension) })
         project.tasks.create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask, { it.init(extension) })
         project.tasks.create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask, { it.init(extension) })
+        project.tasks.create(TASK_NAME_JPACKAGE_IMAGE, JPackageImageTask, { it.init(extension) })
         project.tasks.create(TASK_NAME_JPACKAGE, JPackageTask, { it.init(extension) })
     }
 

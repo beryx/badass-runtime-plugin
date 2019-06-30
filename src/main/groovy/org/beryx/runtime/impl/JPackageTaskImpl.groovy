@@ -23,8 +23,6 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.os.OperatingSystem
-import org.beryx.runtime.util.Util
-import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
 @CompileStatic
 class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
@@ -35,50 +33,12 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
         LOGGER.info("taskData: $taskData")
     }
 
+    @CompileDynamic
     void execute() {
-        LOGGER.warn("The jpackage task is experimental. Use it at your own risk.")
-        jpackageCreateImage()
         if(td.jpackageData.skipInstaller) {
             LOGGER.info("Skipping create-installer")
-        } else {
-            jpackageCreateInstaller()
+            return
         }
-    }
-
-    @CompileDynamic
-    void jpackageCreateImage() {
-        def result = project.exec {
-            ignoreExitValue = true
-            standardOutput = new ByteArrayOutputStream()
-            project.ext.jpackageImageOutput = {
-                return standardOutput.toString()
-            }
-            def outputDir = td.jpackageData.imageOutputDir
-            project.delete(outputDir)
-            def jpd = td.jpackageData
-            def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
-            Util.checkExecutable(jpackageExec)
-            commandLine = [jpackageExec,
-                           '--input', "$project.buildDir/install/$project.name/lib",
-                           '--main-jar', Util.getArchiveFile(project).name,
-                           '--main-class', td.mainClass,
-                           '--output', outputDir,
-                           '--name', jpd.imageName,
-                           '--runtime-image', td.runtimeImageDir,
-                           *(jpd.jvmArgs ? jpd.jvmArgs.collect{['--java-options', '"'+it+'"']}.flatten() : []),
-                           *jpd.imageOptions]
-        }
-        if(result.exitValue != 0) {
-            LOGGER.error(project.ext.jpackageImageOutput())
-        } else {
-            LOGGER.info(project.ext.jpackageImageOutput())
-        }
-        result.assertNormalExitValue()
-        result.rethrowFailure()
-    }
-
-    @CompileDynamic
-    void jpackageCreateInstaller() {
         def jpd = td.jpackageData
         def appImagePath = "${td.jpackageData.getImageOutputDir()}/$jpd.imageName"
         if(OperatingSystem.current().macOsX) {
