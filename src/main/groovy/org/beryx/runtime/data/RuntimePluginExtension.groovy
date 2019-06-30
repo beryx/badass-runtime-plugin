@@ -18,6 +18,7 @@ package org.beryx.runtime.data
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.beryx.runtime.util.Util
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -81,6 +82,10 @@ class RuntimePluginExtension {
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
         Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(name, jdkHome, options))
+    }
+
+    void jpackage(Action<JPackageData> action) {
+        action.execute(jpackageData.get())
     }
 
     private static String getDefaultJavaHome() {
