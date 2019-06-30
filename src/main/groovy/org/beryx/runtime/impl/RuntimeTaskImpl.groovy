@@ -17,7 +17,6 @@ package org.beryx.runtime.impl
 
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimeTaskData
-import org.beryx.runtime.util.SuggestedModulesBuilder
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -34,47 +33,26 @@ class RuntimeTaskImpl extends BaseTaskImpl<RuntimeTaskData> {
     void execute() {
         if(td.targetPlatforms) {
             td.targetPlatforms.values().each { platform ->
+                File jreDir = new File(td.jreDir, "$project.name-$platform.name")
                 File imageDir = new File(td.imageDir, "$project.name-$platform.name")
-                createRuntime(imageDir, platform.jdkHome, td.options + platform.options)
+                createRuntime(jreDir, imageDir, platform.jdkHome, td.options + platform.options)
             }
         } else {
-            createRuntime(td.imageDir, td.javaHome, td.options)
+            createRuntime(td.jreDir, td.imageDir, td.javaHome, td.options)
         }
     }
 
-    void createRuntime(File imageDir, String jdkHome, List<String> options) {
+    void createRuntime(File jreDir, File imageDir, String jdkHome, List<String> options) {
         project.delete(imageDir)
-
-        def cmd = ["$td.javaHome/bin/jlink",
-                       '-v',
-                       *options,
-                       '--module-path',
-                       "$jdkHome/jmods/",
-                       '--add-modules', modules.join(','),
-                       '--output', imageDir]
-        LOGGER.info("Executing: $cmd")
-        def result = project.exec {
-            ignoreExitValue = true
-            standardOutput = new ByteArrayOutputStream()
-            project.ext.jlinkOutput = {
-                return standardOutput.toString()
-            }
-            commandLine = cmd
-        }
-        if(result.exitValue != 0) {
-            LOGGER.error(project.ext.jlinkOutput())
-        } else {
-            LOGGER.info(project.ext.jlinkOutput())
-        }
-        result.assertNormalExitValue()
-        result.rethrowFailure()
-
+        copyJre(jreDir, imageDir)
         copyAppTo(imageDir)
     }
 
-    @CompileStatic
-    Collection<String> getModules() {
-        td.modules ?: new SuggestedModulesBuilder(td.javaHome).getProjectModules(project)
+    void copyJre(File jreDir, File imageDir) {
+        project.copy {
+            from jreDir
+            into imageDir
+        }
     }
 
     void copyAppTo(File imageDir) {

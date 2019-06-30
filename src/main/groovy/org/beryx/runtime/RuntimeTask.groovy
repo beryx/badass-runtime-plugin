@@ -31,7 +31,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.application.CreateStartScripts
@@ -54,10 +57,14 @@ class RuntimeTask extends BaseTask {
     DirectoryProperty distDir
 
     @OutputDirectory
+    DirectoryProperty jreDir
+
+    @Internal
     DirectoryProperty imageDir
 
     RuntimeTask() {
         description = 'Creates a runtime image of your application'
+        dependsOn(RuntimePlugin.TASK_NAME_JRE)
         project.afterEvaluate {
             if(!distDir.getOrNull()) {
                 Sync distTask = (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
@@ -68,6 +75,11 @@ class RuntimeTask extends BaseTask {
                 configureStartScripts(project, taskGraph.hasTask(this))
             }
         }
+    }
+
+    @OutputDirectory @PathSensitive(PathSensitivity.RELATIVE)
+    File getImageDirAsFile() {
+        imageDir.get().asFile
     }
 
     @CompileDynamic
@@ -95,6 +107,7 @@ class RuntimeTask extends BaseTask {
         javaHome = extension.javaHome
         targetPlatforms = extension.targetPlatforms
         distDir = extension.distDir
+        jreDir = extension.jreDir
         imageDir = extension.imageDir
     }
 
@@ -102,6 +115,7 @@ class RuntimeTask extends BaseTask {
     void runtimeTaskAction() {
         def taskData = new RuntimeTaskData()
         taskData.distDir = distDir.get().asFile
+        taskData.jreDir = jreDir.get().asFile
         taskData.imageDir = imageDir.get().asFile
         taskData.options = options.get()
         taskData.modules = modules.get()

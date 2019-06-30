@@ -21,13 +21,16 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import org.codehaus.groovy.tools.Utilities
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.util.GradleVersion
 
 import java.util.zip.ZipEntry
@@ -35,6 +38,8 @@ import java.util.zip.ZipFile
 
 @CompileStatic
 class Util {
+    static String EXEC_EXTENSION = System.getProperty('os.name', '').toLowerCase().contains('win') ? '.exe' : ''
+
     static boolean isValidClassFileReference(String name) {
         if(!name.endsWith('.class')) return false
         name = name - '.class'
@@ -114,5 +119,23 @@ class Util {
         def map = new TreeMap(mapProvider.get())
         map[key] = value
         mapProvider.set(map)
+    }
+
+    static void checkExecutable(String filePath) {
+        checkExecutable(new File(filePath))
+    }
+
+    static void checkExecutable(File f) {
+        if(!f.file) throw new GradleException("$f.absolutePath does not exist.")
+        if(!f.canExecute()) throw new GradleException("$f.absolutePath is not executable.")
+    }
+
+    public static File getArchiveFile(Project project) {
+        Jar jarTask = (Jar)project.tasks.getByName(JavaPlugin.JAR_TASK_NAME)
+        if(GradleVersion.current() < GradleVersion.version('5.1')) {
+            return jarTask.archivePath
+        } else {
+            return jarTask.archiveFile.get().asFile
+        }
     }
 }

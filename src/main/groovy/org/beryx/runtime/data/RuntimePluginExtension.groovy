@@ -29,6 +29,7 @@ import org.gradle.api.provider.Provider
 @ToString(includeNames = true)
 class RuntimePluginExtension {
     final DirectoryProperty distDir
+    final DirectoryProperty jreDir
     final DirectoryProperty imageDir
     final RegularFileProperty imageZip
 
@@ -38,9 +39,13 @@ class RuntimePluginExtension {
     final Provider<Map<String, TargetPlatform>> targetPlatforms
     final Property<Integer> jvmVersion
 
+    final Property<JPackageData> jpackageData
 
     RuntimePluginExtension(Project project) {
         distDir = Util.createDirectoryProperty(project)
+
+        jreDir = Util.createDirectoryProperty(project)
+        jreDir.set(project.layout.buildDirectory.dir('jre'))
 
         imageDir = Util.createDirectoryProperty(project)
         imageDir.set(project.layout.buildDirectory.dir('image'))
@@ -60,6 +65,10 @@ class RuntimePluginExtension {
         targetPlatforms = Util.createMapProperty(project, String, TargetPlatform)
 
         jvmVersion = project.objects.property(Integer)
+
+        jpackageData = project.objects.property(JPackageData)
+        def jpd = new JPackageData(project)
+        jpackageData.set(jpd)
     }
 
     void addOptions(String... options) {
