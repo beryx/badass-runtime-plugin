@@ -4,7 +4,7 @@
 
 ## Badass Runtime Plugin ##
 
-Using this Gradle plugin you can create a custom runtime images for non-modularized applications.
+Using this Gradle plugin you can create custom runtime images for non-modularized applications.
 The plugin also lets you create an application installer with the [jpackage](https://jdk.java.net/jpackage/) tool introduced in Java 14.
 
 
@@ -21,12 +21,12 @@ runtime {
 }
 ```
 
-The following projects illustrate how to use this plugin to create custom runtime images:
+The following projects illustrate how to use this plugin to create custom runtime images and/or platform-specific installers:
 - [badass-runtime-example](https://github.com/beryx-gist/badass-runtime-example) - a 'Hello world' application using slf4j and logback.
 - [badass-runtime-example-javafx](https://github.com/beryx-gist/badass-runtime-example-javafx) - a 'Hello world' JavaFX application.
 - [badass-runtime-example-kotlin-tornadofx](https://github.com/beryx-gist/badass-runtime-example-kotlin-tornadofx) - a 'Hello world' application written in Kotlin using [tornadofx](https://github.com/edvin/tornadofx).
 - [badass-runtime-spring-petclinic](https://github.com/beryx-gist/badass-runtime-spring-petclinic) - creates a custom runtime image of the [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) application.
-- [badass-runtime-pacman](https://github.com/beryx-gist/badass-runtime-pacman) - creates a custom runtime image of Pacman from the [FXGLGames](https://github.com/AlmasB/FXGLGames) repository.
+- [badass-runtime-pacman](https://github.com/beryx-gist/badass-runtime-pacman) - creates a custom runtime image and an application installer for the Pacman gama available in the [FXGLGames](https://github.com/AlmasB/FXGLGames) repository.
 
 
 ### Please [read the documentation](https://badass-runtime-plugin.beryx.org/releases/latest/) before using this plugin.
