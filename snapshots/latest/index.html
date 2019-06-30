@@ -11,6 +11,82 @@
 <link rel="stylesheet" href="./asciidoctor.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #7a2518;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #7a2518;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #7a2519;
+    color: #ffffff;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+    $('.primary').each(function() {
+        primary = $(this);
+        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+        primary.children('.title').remove();
+    });
+    $('.secondary').each(function(idx, node) {
+        secondary = $(node);
+        primary = findPrimary(secondary);
+        switchItem = createSwitchItem(secondary, primary.children('.switch'));
+        switchItem.content.addClass('hidden');
+        findPrimary(secondary).append(switchItem.content);
+        secondary.remove();
+    });
+}
+
+function createBlockSwitch(primary) {
+    blockSwitch = $('<div class="switch"></div>');
+    primary.prepend(blockSwitch);
+    return blockSwitch;
+}
+
+function findPrimary(secondary) {
+    candidate = secondary.prev();
+    while (!candidate.is('.primary')) {
+        candidate = candidate.prev();
+    }
+    return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+    blockName = block.children('.title').text();
+    content = block.children('.content').first().append(block.next('.colist'));
+    item = $('<div class="switch--item">' + blockName + '</div>');
+    item.on('click', '', content, function(e) {
+        $(this).addClass('selected');
+        $(this).siblings().removeClass('selected');
+        e.data.siblings('.content').addClass('hidden');
+        e.data.removeClass('hidden');
+    });
+    blockSwitch.append(item);
+    return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+
+</script>
+
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
@@ -28,6 +104,7 @@
 <li><a href="#_tasks">Tasks</a></li>
 <li><a href="#_properties">Properties</a></li>
 <li><a href="#_methods">Methods</a></li>
+<li><a href="#_the_jpackage_script_block">The jpackage script block</a></li>
 </ul>
 </li>
 <li><a href="#examples">Examples</a></li>
@@ -39,7 +116,8 @@
 <h2 id="introduction">Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The badass-runtime plugin allows you to create custom runtime images for non-modular applications.</p>
+<p>The badass-runtime plugin allows you to create custom runtime images for non-modular applications.
+It also lets you create an application installer with the <a href="https://jdk.java.net/jpackage/">jpackage</a> tool introduced in Java 14.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -75,7 +153,8 @@ JVM settings flags such as <code>--module-path</code>.</p>
 <div class="paragraph">
 <p>The plugin provides a <code>runtime</code> task that automates the above steps
 and a <code>runtimeZip</code> task that additionally creates a zip archive of the custom runtime image.
-In addition, a <code>suggestModules</code> task helps you choose the modules to include in your custom JRE.</p>
+In addition, a <code>suggestModules</code> task helps you choose the modules to include in your custom JRE.
+With the <code>jpackage</code> task you can create a platform-specific installer for your application.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -165,6 +244,18 @@ Setting the <code>modules</code> property explicitly is strongly recommended.
 The list of modules suggested by this task is a good value to start with, but it may miss some
 required modules or include unnecessary ones, so you may need to adjust it.<br>
     <em>depends on</em>: <code>jar</code></p>
+</dd>
+<dt class="hdlist1">jpackageImage</dt>
+<dd>
+<p>Uses the <a href="https://jdk.java.net/jpackage/">jpackage</a> tool to create a platform-specific application image. <br>
+<em>depends on</em>: <code>runtime</code><br>
+<em>This task is experimental.</em></p>
+</dd>
+<dt class="hdlist1">jpackage</dt>
+<dd>
+<p>Uses the <a href="https://jdk.java.net/jpackage/">jpackage</a> tool to create a platform-specific application installer. <br>
+<em>depends on</em>: <code>jpackageImage</code><br>
+<em>This task is experimental.</em></p>
 </dd>
 </dl>
 </div>
@@ -272,6 +363,139 @@ The archived images will be available in <code>build/image-linux-x64.zip</code> 
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect2">
+<h3 id="_the_jpackage_script_block">The jpackage script block</h3>
+<div class="paragraph">
+<p>This experimental script block allows you to customize the <a href="https://jdk.java.net/jpackage/">jpackage</a>-based generation of platform-specific application images and installers.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">jpackageHome</dt>
+<dd>
+<p>The path to the JDK providing the jpackage tool.<br>
+<em>defaultValue</em>: the first non-empty value from:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>badass.runtime.jpackage.home</code> system property<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>BADASS_RUNTIME_JPACKAGE_HOME</code> environment variable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>java.home</code> system property (only if it points to a JRE containing the <code>jpackage</code> tool)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>JAVA_HOME</code> environment variable<br>
+<em>usage example</em>: <code>jpackageHome = "/usr/lib/jvm/jdk14"</code></p>
+</dd>
+<dt class="hdlist1">outputDir</dt>
+<dd>
+<p>Convenience property for setting both <code>imageOutputDir</code> and
+<code>installerOutputDir</code> with the value <em>buildDir</em>/<em>outputDir</em>.<br>
+    <em>defaultValue</em>: <code>"jpackage"</code><br>
+    <em>usage example</em>: <code>outputDir = "my-packaging"</code></p>
+</dd>
+<dt class="hdlist1">imageOutputDir</dt>
+<dd>
+<p>the directory passed as argument to the <code>--output</code> option when running <code>jpackage</code> to create an application image.<br>
+<em>defaultValue</em>: <code><em>buildDir</em>/<em>outputDir</em></code><br>
+<em>usage example</em>: <code>imageOutputDir = file("$buildDir/my-packaging-image")</code></p>
+</dd>
+<dt class="hdlist1">imageName</dt>
+<dd>
+<p>the argument passed to the <code>--name</code> option when running <code>jpackage</code> to create an application image.<br>
+<em>defaultValue</em>: the <code>name</code> value configured in the <code>launcher</code> block or  <code><em>project.name</em></code><br>
+<em>usage example</em>: <code>imageName = "MyApp"</code></p>
+</dd>
+<dt class="hdlist1">imageOptions</dt>
+<dd>
+<p>list of additional options to be passed to the <code>jpackage</code> executable when creating the appliction image.<br>
+<em>defaultValue</em>: empty list<br>
+<em>usage example</em>: <code>imageOptions = ["--win-console"]</code></p>
+</dd>
+<dt class="hdlist1">skipInstaller</dt>
+<dd>
+<p>boolean value that lets you generate only the platform-specific application image and skip the generation of the platform-specific application installer.<br>
+<em>defaultValue</em>: false<br>
+<em>usage example</em>: <code>skipInstaller = true</code></p>
+</dd>
+<dt class="hdlist1">installerType</dt>
+<dd>
+<p>the type of installer to be generated.<br>
+<em>defaultValue</em>: null (all supported types for the current platform will be generated)<br>
+<em>usage example</em>: <code>installerType = "rpm"</code></p>
+</dd>
+<dt class="hdlist1">installerOutputDir</dt>
+<dd>
+<p>the directory passed as argument to the <code>--output</code> option when running <code>jpackage</code> to create an application installer.<br>
+<em>defaultValue</em>: <code><em>buildDir</em>/<em>outputDir</em></code><br>
+<em>usage example</em>: <code>installerOutputDir = file("$buildDir/my-packaging-installer")</code></p>
+</dd>
+<dt class="hdlist1">installerName</dt>
+<dd>
+<p>the argument passed to the <code>--name</code> option when running <code>jpackage</code> to create an application installer.<br>
+<em>defaultValue</em>: the <code>name</code> value configured in the <code>launcher</code> block or  <code><em>project.name</em></code><br>
+<em>usage example</em>: <code>installerName = "MyApp"</code></p>
+</dd>
+<dt class="hdlist1">jvmArgs</dt>
+<dd>
+<p>list of JVM arguments to be passed to the virtual machine.<br>
+<em>defaultValue</em>: the <code>jvmArgs</code> value configured in the <code>launcher</code> block or an empty list</p>
+</dd>
+<dt class="hdlist1">installerOptions</dt>
+<dd>
+<p>list of additional options to be passed to the <code>jpackage</code> executable when creating the application installer.<br>
+<em>defaultValue</em>: empty list<br>
+<em>usage example</em>: <code>installerOptions = ["--win-console"]</code></p>
+</dd>
+<dt class="hdlist1">targetPlatformName</dt>
+<dd>
+<p>This property is required only when using the <code>targetPlatform</code> method.
+It specifies which of the images produced by jlink should be used as runtime image by jpackage.
+Its value must match the name provided in one of the calls to the <code>targetPlatform</code> method.<br>
+<em>defaultValue</em>: null<br>
+<em>usage example</em>: <code>targetPlatform = "linux"</code></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><em>Usage example</em></p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    jpackage {
+        jpackageHome = <span class="string"><span class="delimiter">'</span><span class="content">/usr/lib/jvm/jdk14</span><span class="delimiter">'</span></span>
+        outputDir = <span class="string"><span class="delimiter">'</span><span class="content">my-packaging</span><span class="delimiter">'</span></span>
+        <span class="comment">// imageOutputDir = file(&quot;$buildDir/my-packaging-image&quot;)</span>
+        <span class="comment">// installerOutputDir = file(&quot;$buildDir/my-packaging-installer&quot;)</span>
+        imageName = <span class="string"><span class="delimiter">'</span><span class="content">MyApp</span><span class="delimiter">'</span></span>
+        imageOptions = [<span class="string"><span class="delimiter">'</span><span class="content">--win-console</span><span class="delimiter">'</span></span>]
+        skipInstaller = <span class="predefined-constant">false</span>
+        installerName = <span class="string"><span class="delimiter">'</span><span class="content">MyApp</span><span class="delimiter">'</span></span>
+        installerType = <span class="string"><span class="delimiter">'</span><span class="content">msi</span><span class="delimiter">'</span></span>
+        installerOptions = [<span class="string"><span class="delimiter">'</span><span class="content">--win-menu</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">--win-shortcut</span><span class="delimiter">'</span></span>]
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">runtime {
+    ...
+    jpackage {
+        jpackageHome = &quot;/usr/lib/jvm/jdk14&quot;
+        outputDir = &quot;my-packaging&quot;
+        // imageOutputDir = file(&quot;$buildDir/my-packaging-image&quot;)
+        // installerOutputDir = file(&quot;$buildDir/my-packaging-installer&quot;)
+        imageName = &quot;MyApp&quot;
+        imageOptions = listOf(&quot;--win-console&quot;)
+        skipInstaller = false
+        installerName = &quot;MyApp&quot;
+        installerType = &quot;msi&quot;
+        installerOptions = listOf(&quot;--win-menu&quot;, &quot;--win-shortcut&quot;)
+    }
+    ...
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
