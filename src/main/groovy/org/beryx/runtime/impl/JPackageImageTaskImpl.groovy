@@ -48,8 +48,10 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             def jpd = td.jpackageData
             def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
             Util.checkExecutable(jpackageExec)
+            def inputSuffix = project.tasks.findByName('installShadowDist') ? '-shadow' : ''
+            LOGGER.info("input subdir: $project.name$inputSuffix")
             commandLine = [jpackageExec,
-                           '--input', "$project.buildDir/install/$project.name/lib",
+                           '--input', "$project.buildDir/install/$project.name$inputSuffix/lib",
                            '--main-jar', Util.getArchiveFile(project).name,
                            '--main-class', td.mainClass,
                            '--output', outputDir,
