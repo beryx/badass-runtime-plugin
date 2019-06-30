@@ -4,11 +4,13 @@
 
 ## Badass Runtime Plugin ##
 
-A Gradle plugin to create custom runtime images for non-modularized applications.
+Using this Gradle plugin you can create a custom runtime images for non-modularized applications.
+The plugin also lets you create an application installer with the [jpackage](https://jdk.java.net/jpackage/) tool introduced in Java 14.
+
 
 :bulb: For modularized applications use the [Badass-JLink plugin](https://badass-jlink-plugin.beryx.org/releases/latest/).
 
-The plugin offers three tasks: `runtime`, `runtimeZip`, and `suggestModules`.
+The plugin offers several tasks, uch as: `runtime`, `runtimeZip`, `suggestModules`, or `jpackage`.
 It also adds an extension with the name `runtime` to let you configure various aspects of its operation.
 A simple example configuration is shown below:
 

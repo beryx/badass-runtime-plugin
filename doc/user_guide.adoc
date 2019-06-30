@@ -16,7 +16,6 @@ runtime:: Creates an image containing your application, a custom JRE, and approp
 runtimeZip:: Creates a zip archive of the custom runtime image. +
     _depends on_: `runtime`
 
-
 suggestModules:: Displays a list of modules that are probably required by your application.
 This list will be used when creating the custom JRE if you don't configure the `modules` property
 explicitly within the `runtime` extension. +
@@ -24,6 +23,14 @@ Setting the `modules` property explicitly is strongly recommended.
 The list of modules suggested by this task is a good value to start with, but it may miss some
 required modules or include unnecessary ones, so you may need to adjust it. +
     _depends on_: `jar`
+
+jpackageImage:: Uses the https://jdk.java.net/jpackage/[jpackage] tool to create a platform-specific application image.  +
+    _depends on_: `runtime` +
+    _This task is experimental._
+
+jpackage:: Uses the https://jdk.java.net/jpackage/[jpackage] tool to create a platform-specific application installer.  +
+    _depends on_: `jpackageImage` +
+    _This task is experimental._
 
 
 == Properties
@@ -96,3 +103,109 @@ the plugin will generate the platform-specific images in the directories
 `build/image/hello-linux-x64` and `build/image/hello-linux-s390x`.
 The archived images will be available in `build/image-linux-x64.zip` and `build/image-linux-s390x.zip`.
 |===
+
+== The jpackage script block
+
+This experimental script block allows you to customize the https://jdk.java.net/jpackage/[jpackage]-based generation of platform-specific application images and installers.
+
+jpackageHome:: The path to the JDK providing the jpackage tool. +
+    _defaultValue_: the first non-empty value from: +
+        pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the `badass.runtime.jpackage.home` system property +
+        pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the `BADASS_RUNTIME_JPACKAGE_HOME` environment variable +
+        pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the `java.home` system property (only if it points to a JRE containing the `jpackage` tool) +
+        pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the `JAVA_HOME` environment variable +
+    _usage example_: `jpackageHome = "/usr/lib/jvm/jdk14"`
+
+outputDir:: Convenience property for setting both `imageOutputDir` and
+`installerOutputDir` with the value _buildDir_/_outputDir_. +
+    _defaultValue_: `"jpackage"` +
+    _usage example_: `outputDir = "my-packaging"`
+
+
+imageOutputDir:: the directory passed as argument to the `--output` option when running `jpackage` to create an application image. +
+    _defaultValue_: `_buildDir_/_outputDir_` +
+    _usage example_: `imageOutputDir = file("$buildDir/my-packaging-image")`
+
+imageName:: the argument passed to the `--name` option when running `jpackage` to create an application image. +
+    _defaultValue_: the `name` value configured in the `launcher` block or  `_project.name_` +
+    _usage example_: `imageName = "MyApp"`
+
+imageOptions:: list of additional options to be passed to the `jpackage` executable when creating the appliction image. +
+    _defaultValue_: empty list +
+    _usage example_: `imageOptions = ["--win-console"]`
+
+skipInstaller:: boolean value that lets you generate only the platform-specific application image and skip the generation of the platform-specific application installer. +
+    _defaultValue_: false +
+    _usage example_: `skipInstaller = true`
+
+installerType:: the type of installer to be generated. +
+    _defaultValue_: null (all supported types for the current platform will be generated) +
+    _usage example_: `installerType = "rpm"`
+
+installerOutputDir:: the directory passed as argument to the `--output` option when running `jpackage` to create an application installer. +
+    _defaultValue_: `_buildDir_/_outputDir_` +
+    _usage example_: `installerOutputDir = file("$buildDir/my-packaging-installer")`
+
+installerName:: the argument passed to the `--name` option when running `jpackage` to create an application installer. +
+    _defaultValue_: the `name` value configured in the `launcher` block or  `_project.name_` +
+    _usage example_: `installerName = "MyApp"`
+
+jvmArgs:: list of JVM arguments to be passed to the virtual machine. +
+    _defaultValue_: the `jvmArgs` value configured in the `launcher` block or an empty list
+
+installerOptions:: list of additional options to be passed to the `jpackage` executable when creating the application installer. +
+    _defaultValue_: empty list +
+    _usage example_: `installerOptions = ["--win-console"]`
+
+targetPlatformName:: This property is required only when using the `targetPlatform` method.
+    It specifies which of the images produced by jlink should be used as runtime image by jpackage.
+    Its value must match the name provided in one of the calls to the `targetPlatform` method. +
+    _defaultValue_: null +
+    _usage example_: `targetPlatform = "linux"`
+
+
+_Usage example_
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+runtime {
+    ...
+    jpackage {
+        jpackageHome = '/usr/lib/jvm/jdk14'
+        outputDir = 'my-packaging'
+        // imageOutputDir = file("$buildDir/my-packaging-image")
+        // installerOutputDir = file("$buildDir/my-packaging-installer")
+        imageName = 'MyApp'
+        imageOptions = ['--win-console']
+        skipInstaller = false
+        installerName = 'MyApp'
+        installerType = 'msi'
+        installerOptions = ['--win-menu', '--win-shortcut']
+    }
+    ...
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+runtime {
+    ...
+    jpackage {
+        jpackageHome = "/usr/lib/jvm/jdk14"
+        outputDir = "my-packaging"
+        // imageOutputDir = file("$buildDir/my-packaging-image")
+        // installerOutputDir = file("$buildDir/my-packaging-installer")
+        imageName = "MyApp"
+        imageOptions = listOf("--win-console")
+        skipInstaller = false
+        installerName = "MyApp"
+        installerType = "msi"
+        installerOptions = listOf("--win-menu", "--win-shortcut")
+    }
+    ...
+}
+----
+
+
+
