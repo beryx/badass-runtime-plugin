@@ -57,7 +57,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                            '--output', outputDir,
                            '--name', jpd.imageName,
                            '--runtime-image', td.runtimeImageDir,
-                           *(jpd.jvmArgs ? jpd.jvmArgs.collect{['--java-options', '"'+it+'"']}.flatten() : []),
+                           *(jpd.jvmArgs ? jpd.jvmArgs.collect{['--java-options', adjustArg(it)]}.flatten() : []),
                            *jpd.imageOptions]
         }
         if(result.exitValue != 0) {
@@ -67,5 +67,15 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
         }
         result.assertNormalExitValue()
         result.rethrowFailure()
+    }
+
+    static String adjustArg(String arg) {
+        def adjusted = arg.replace('"', '\\"')
+        if(!(adjusted ==~ /[\w\-\+=\/\\,;.:#]+/)) {
+            adjusted = '"' + adjusted + '"'
+        }
+        // Workaround for https://bugs.openjdk.java.net/browse/JDK-8227641
+        adjusted = adjusted.replace(' ', '\\" \\"')
+        adjusted
     }
 }
