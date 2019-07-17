@@ -42,13 +42,13 @@ class RuntimePlugin implements Plugin<Project> {
             throw new GradleException("This plugin works only with non-modular applications.\n" +
                     "For modular applications use https://github.com/beryx/badass-jlink-plugin/.")
         }
-        def extension = project.extensions.create(EXTENSION_NAME, RuntimePluginExtension, project)
-        project.tasks.create(TASK_NAME_JRE, JreTask, { it.init(extension) })
-        project.tasks.create(TASK_NAME_RUNTIME, RuntimeTask, { it.init(extension) })
-        project.tasks.create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask, { it.init(extension) })
-        project.tasks.create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask, { it.init(extension) })
-        project.tasks.create(TASK_NAME_JPACKAGE_IMAGE, JPackageImageTask, { it.init(extension) })
-        project.tasks.create(TASK_NAME_JPACKAGE, JPackageTask, { it.init(extension) })
+        project.extensions.create(EXTENSION_NAME, RuntimePluginExtension, project)
+        project.tasks.create(TASK_NAME_JRE, JreTask)
+        project.tasks.create(TASK_NAME_RUNTIME, RuntimeTask)
+        project.tasks.create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask)
+        project.tasks.create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask)
+        project.tasks.create(TASK_NAME_JPACKAGE_IMAGE, JPackageImageTask)
+        project.tasks.create(TASK_NAME_JPACKAGE, JPackageTask)
     }
 
     static boolean hasModuleInfo(Project project) {

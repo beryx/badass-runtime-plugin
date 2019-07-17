@@ -17,69 +17,74 @@ package org.beryx.runtime
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
+import org.gradle.api.file.Directory
 import org.gradle.api.resources.TextResource
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.Sync
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
 
 @CompileStatic
 class RuntimeTask extends BaseTask {
     @Input
-    ListProperty<String> options
+    List<String> getOptions() {
+        extension.options.get()
+    }
 
     @Input
-    ListProperty<String> modules
+    List<String> getModules() {
+        extension.modules.get()
+    }
 
     @Input
-    Property<String> javaHome
+    String getJavaHome() {
+        extension.javaHome.get()
+    }
 
     @Input
-    Provider<Map<String, TargetPlatform>> targetPlatforms
+    Map<String, TargetPlatform> getTargetPlatforms() {
+        extension.targetPlatforms.get()
+    }
 
     @InputDirectory
-    DirectoryProperty distDir
+    Directory getDistDir() {
+        extension.distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
+    }
 
     @OutputDirectory
-    DirectoryProperty jreDir
+    Directory getJreDir() {
+        extension.jreDir.get()
+    }
 
     @Internal
-    DirectoryProperty imageDir
+    Directory getImageDir() {
+        extension.imageDir.get()
+    }
 
+    @Internal
+    Sync getDistTask() {
+        (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
+    }
+
+    @CompileDynamic
     RuntimeTask() {
         description = 'Creates a runtime image of your application'
         dependsOn(RuntimePlugin.TASK_NAME_JRE)
         project.afterEvaluate {
-            if(!distDir.getOrNull()) {
-                Sync distTask = (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
-                dependsOn(distTask)
-                distDir.set(distTask.destinationDir)
-            }
-            project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
-                configureStartScripts(project, taskGraph.hasTask(this))
-            }
+            dependsOn(distTask)
+        }
+        project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
+            configureStartScripts(project, taskGraph.hasTask(this))
         }
     }
 
-    @OutputDirectory @PathSensitive(PathSensitivity.RELATIVE)
+    @OutputDirectory
     File getImageDirAsFile() {
-        imageDir.get().asFile
+        imageDir.asFile
     }
 
     @CompileDynamic
@@ -99,28 +104,16 @@ class RuntimeTask extends BaseTask {
         project.resources.text.fromString(template.text)
     }
 
-    @Override
-    void init(RuntimePluginExtension extension) {
-        super.init(extension)
-        options = extension.options
-        modules = extension.modules
-        javaHome = extension.javaHome
-        targetPlatforms = extension.targetPlatforms
-        distDir = extension.distDir
-        jreDir = extension.jreDir
-        imageDir = extension.imageDir
-    }
-
     @TaskAction
     void runtimeTaskAction() {
         def taskData = new RuntimeTaskData()
-        taskData.distDir = distDir.get().asFile
-        taskData.jreDir = jreDir.get().asFile
-        taskData.imageDir = imageDir.get().asFile
-        taskData.options = options.get()
-        taskData.modules = modules.get()
-        taskData.javaHome = javaHome.get()
-        taskData.targetPlatforms = targetPlatforms.get()
+        taskData.distDir = distDir.asFile
+        taskData.jreDir = jreDir.asFile
+        taskData.imageDir = imageDir.asFile
+        taskData.options = options
+        taskData.modules = modules
+        taskData.javaHome = javaHome
+        taskData.targetPlatforms = targetPlatforms
 
         def taskImpl = new RuntimeTaskImpl(project, taskData)
         taskImpl.execute()

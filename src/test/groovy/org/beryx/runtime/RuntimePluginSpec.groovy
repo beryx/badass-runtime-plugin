@@ -63,6 +63,9 @@ class RuntimePluginSpec extends Specification {
                     .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-is")
                     .build();
         } catch (Exception e) {
+            if(buildShouldSucceed) {
+                e.printStackTrace()
+            }
             assert !buildShouldSucceed
             return
         }

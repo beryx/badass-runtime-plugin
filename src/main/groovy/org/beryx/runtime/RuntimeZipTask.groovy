@@ -16,13 +16,11 @@
 package org.beryx.runtime
 
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.data.RuntimeZipTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeZipTaskImpl
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Provider
+import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
@@ -31,33 +29,31 @@ import org.gradle.api.tasks.TaskAction
 @CompileStatic
 class RuntimeZipTask extends BaseTask {
     @Input
-    Provider<Map<String, TargetPlatform>> targetPlatforms
+    Map<String, TargetPlatform> getTargetPlatforms() {
+        extension.targetPlatforms.get()
+    }
 
     @InputDirectory
-    DirectoryProperty imageDir
+    Directory getImageDir() {
+        extension.imageDir.get()
+    }
 
     @OutputFile
-    RegularFileProperty imageZip
+    RegularFile getImageZip() {
+        extension.imageZip.get()
+    }
 
     RuntimeZipTask() {
         dependsOn(RuntimePlugin.TASK_NAME_RUNTIME)
         description = 'Creates a zip of the runtime image of your application'
     }
 
-    @Override
-    void init(RuntimePluginExtension extension) {
-        super.init(extension)
-        targetPlatforms = extension.targetPlatforms
-        imageDir = extension.imageDir
-        imageZip = extension.imageZip
-    }
-
     @TaskAction
     void runtimeZipTaskAction() {
         def taskData = new RuntimeZipTaskData()
-        taskData.targetPlatforms = targetPlatforms.get()
-        taskData.imageDir = imageDir.get().asFile
-        taskData.imageZip = imageZip.get().asFile
+        taskData.targetPlatforms = targetPlatforms
+        taskData.imageDir = imageDir.asFile
+        taskData.imageZip = imageZip.asFile
         def taskImpl = new RuntimeZipTaskImpl(project, taskData)
         taskImpl.execute()
     }

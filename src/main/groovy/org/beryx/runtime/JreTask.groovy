@@ -15,16 +15,11 @@
  */
 package org.beryx.runtime
 
-
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JreTaskData
-import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.JreTaskImpl
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
+import org.gradle.api.file.Directory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -32,42 +27,42 @@ import org.gradle.api.tasks.TaskAction
 @CompileStatic
 class JreTask extends BaseTask {
     @Input
-    ListProperty<String> options
+    List<String> getOptions() {
+        extension.options.get()
+    }
 
     @Input
-    ListProperty<String> modules
+    List<String> getModules() {
+        extension.modules.get()
+    }
 
     @Input
-    Property<String> javaHome
+    String getJavaHome() {
+        extension.javaHome.get()
+    }
 
     @Input
-    Provider<Map<String, TargetPlatform>> targetPlatforms
+    Map<String, TargetPlatform> getTargetPlatforms() {
+        extension.targetPlatforms.get()
+    }
 
     @OutputDirectory
-    DirectoryProperty jreDir
+    Directory getJreDir() {
+        extension.jreDir.get()
+    }
 
     JreTask() {
         description = 'Creates a custom JRE'
     }
 
-    @Override
-    void init(RuntimePluginExtension extension) {
-        super.init(extension)
-        options = extension.options
-        modules = extension.modules
-        javaHome = extension.javaHome
-        targetPlatforms = extension.targetPlatforms
-        jreDir = extension.jreDir
-    }
-
     @TaskAction
     void runtimeTaskAction() {
         def taskData = new JreTaskData()
-        taskData.jreDir = jreDir.get().asFile
-        taskData.options = options.get()
-        taskData.modules = modules.get()
-        taskData.javaHome = javaHome.get()
-        taskData.targetPlatforms = targetPlatforms.get()
+        taskData.jreDir = jreDir.asFile
+        taskData.options = options
+        taskData.modules = modules
+        taskData.javaHome = javaHome
+        taskData.targetPlatforms = targetPlatforms
 
         def taskImpl = new JreTaskImpl(project, taskData)
         taskImpl.execute()

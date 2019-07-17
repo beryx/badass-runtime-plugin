@@ -16,17 +16,17 @@
 package org.beryx.runtime
 
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.data.SuggestModulesData
 import org.beryx.runtime.impl.SuggestModulesTaskImpl
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
 class SuggestModulesTask extends BaseTask {
     @Input
-    Property<String> javaHome
+    String getJavaHome() {
+        extension.javaHome.get()
+    }
 
     SuggestModulesTask() {
         dependsOn('jar')
@@ -34,16 +34,10 @@ class SuggestModulesTask extends BaseTask {
         outputs.upToDateWhen { false }
     }
 
-    @Override
-    void init(RuntimePluginExtension extension) {
-        super.init(extension)
-        javaHome = extension.javaHome
-    }
-
     @TaskAction
     void suggestMergedModuleInfoAction() {
         def taskData = new SuggestModulesData()
-        taskData.javaHome = javaHome.get()
+        taskData.javaHome = javaHome
         def taskImpl = new SuggestModulesTaskImpl(project, taskData)
         taskImpl.execute()
     }

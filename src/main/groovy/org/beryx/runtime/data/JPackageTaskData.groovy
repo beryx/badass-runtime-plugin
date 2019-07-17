@@ -34,7 +34,7 @@ class JPackageTaskData {
     JPackageData jpackageData
 
     void configureRuntimeImageDir(RuntimeTask runtimeTask) {
-        def jlinkPlatforms = runtimeTask.targetPlatforms.get()
+        def jlinkPlatforms = runtimeTask.targetPlatforms
         if(jpackageData.targetPlatformName) {
             if(!jlinkPlatforms.isEmpty()) {
                 if(!jlinkPlatforms.keySet().contains(jpackageData.targetPlatformName)) {

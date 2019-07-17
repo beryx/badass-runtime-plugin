@@ -15,16 +15,13 @@
  */
 package org.beryx.runtime
 
-
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JPackageData
 import org.beryx.runtime.data.JPackageTaskData
-import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.impl.JPackageImageTaskImpl
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.Directory
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -35,32 +32,30 @@ class JPackageImageTask extends BaseTask {
     private static final Logger LOGGER = Logging.getLogger(JPackageImageTask.class)
 
     @InputDirectory
-    DirectoryProperty jreDir
+    Directory getJreDir() {
+        extension.jreDir.get()
+    }
 
     @InputDirectory
-    DirectoryProperty imageDir
+    Directory getImageDir() {
+        extension.imageDir.get()
+    }
 
     @Nested
-    Property<JPackageData> jpackageData
+    JPackageData getJpackageData() {
+        extension.jpackageData.get()
+    }
 
     JPackageImageTask() {
         dependsOn(RuntimePlugin.TASK_NAME_RUNTIME)
         description = 'Creates an installable image using the jpackage tool'
     }
 
-    @Override
-    void init(RuntimePluginExtension extension) {
-        super.init(extension)
-        jpackageData = extension.jpackageData
-        jreDir = extension.jreDir
-        imageDir = extension.imageDir
-    }
-
     @TaskAction
     void jpackageTaskAction() {
         def taskData = new JPackageTaskData()
-        taskData.imageDir = imageDir.get().asFile
-        taskData.jpackageData = jpackageData.get()
+        taskData.imageDir = imageDir.asFile
+        taskData.jpackageData = jpackageData
         taskData.mainClass = defaultMainClass
 
         def runtimeTask = (RuntimeTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_RUNTIME)
