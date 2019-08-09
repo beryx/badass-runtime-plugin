@@ -449,6 +449,20 @@ Its value must match the name provided in one of the calls to the <code>targetPl
 <em>defaultValue</em>: null<br>
 <em>usage example</em>: <code>targetPlatform = "linux"</code></p>
 </dd>
+<dt class="hdlist1">mainJar</dt>
+<dd>
+<p>the argument passed to the <code>--main-jar</code> option when running <code>jpackage</code> to create an application image.<br>
+Usually, you don&#8217;t need to set this property, unless you also explicitly set <code>distDir</code>.<br>
+<em>defaultValue</em>: the name of the JAR file produced by the <code>installDist</code> or the <code>installShadowDist</code> task<br>
+<em>usage example</em>: <code>mainJar = "my-app-1.0.1.jar"</code></p>
+</dd>
+<dt class="hdlist1">mainClass</dt>
+<dd>
+<p>the argument passed to the <code>--main-class</code> option when running <code>jpackage</code> to create an application image.<br>
+Usually, you don&#8217;t need to set this property, unless you also explicitly set <code>distDir</code>.<br>
+<em>defaultValue</em>: the <code>mainClassName</code> configured for the <code>application</code> plugin<br>
+<em>usage example</em>: <code>mainClass = "org.example.hello.Greeter"</code></p>
+</dd>
 </dl>
 </div>
 <div class="paragraph">
