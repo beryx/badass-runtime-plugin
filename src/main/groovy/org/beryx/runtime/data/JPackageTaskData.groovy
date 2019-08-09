@@ -27,7 +27,6 @@ import org.gradle.api.logging.Logging
 class JPackageTaskData {
     private static final Logger LOGGER = Logging.getLogger(JPackageTaskData.class)
 
-    String mainClass
     File jreDir
     File imageDir
     File runtimeImageDir

@@ -56,21 +56,11 @@ class JPackageImageTask extends BaseTask {
         def taskData = new JPackageTaskData()
         taskData.imageDir = imageDir.asFile
         taskData.jpackageData = jpackageData
-        taskData.mainClass = defaultMainClass
 
         def runtimeTask = (RuntimeTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_RUNTIME)
         taskData.configureRuntimeImageDir(runtimeTask)
 
         def taskImpl = new JPackageImageTaskImpl(project, taskData)
         taskImpl.execute()
-    }
-
-    @Internal
-    String getDefaultMainClass() {
-        def mainClass = project['mainClassName'] as String
-        int pos = mainClass.lastIndexOf('/')
-        if(pos < 0) return mainClass
-        def mainClassModule = mainClass.substring(0, pos)
-        mainClass.substring(pos + 1)
     }
 }

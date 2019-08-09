@@ -130,6 +130,7 @@ class Util {
         if(!f.canExecute()) throw new GradleException("$f.absolutePath is not executable.")
     }
 
+    @CompileDynamic
     public static File getArchiveFile(Project project) {
         Jar jarTask = (Jar)project.tasks.getByName(JavaPlugin.JAR_TASK_NAME)
         if(GradleVersion.current() < GradleVersion.version('5.1')) {
@@ -137,5 +138,14 @@ class Util {
         } else {
             return jarTask.archiveFile.get().asFile
         }
+    }
+
+    public static File getMainDistJarFile(Project project) {
+        File jarFile = getArchiveFile(project)
+        if(project.tasks.findByName('installShadowDist')) {
+            def baseName = jarFile.name - '.jar'
+            jarFile = new File(jarFile.parent, "$baseName-all.jar")
+        }
+        jarFile
     }
 }

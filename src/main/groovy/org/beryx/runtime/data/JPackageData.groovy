@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import static org.beryx.runtime.util.Util.EXEC_EXTENSION
@@ -60,9 +61,19 @@ class JPackageData {
     @Input
     List<String> jvmArgs = []
 
+    @Input @Optional
+    String mainJar
+
+    String mainClass
+
     JPackageData(Project project) {
         this.project = project
         this.jpackageHome = defaultJPackageHome
+    }
+
+    @Input
+    String getMainClass() {
+        this.@mainClass ?: defaultMainClass
     }
 
     @Input
@@ -85,6 +96,14 @@ class JPackageData {
         this.@installerOutputDir ?: project.file("$project.buildDir/$outputDir")
     }
 
+
+    @Internal
+    private String getDefaultMainClass() {
+        def mainClass = project['mainClassName'] as String
+        int pos = mainClass.lastIndexOf('/')
+        if(pos < 0) return mainClass
+        mainClass.substring(pos + 1)
+    }
 
     private static String getDefaultJPackageHome() {
         def value = System.properties['badass.runtime.jpackage.home']
