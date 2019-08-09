@@ -163,6 +163,16 @@ targetPlatformName:: This property is required only when using the `targetPlatfo
     _defaultValue_: null +
     _usage example_: `targetPlatform = "linux"`
 
+mainJar:: the argument passed to the `--main-jar` option when running `jpackage` to create an application image. +
+    Usually, you don't need to set this property, unless you also explicitly set `distDir`. +
+    _defaultValue_: the name of the JAR file produced by the `installDist` or the `installShadowDist` task +
+    _usage example_: `mainJar = "my-app-1.0.1.jar"`
+
+mainClass:: the argument passed to the `--main-class` option when running `jpackage` to create an application image. +
+    Usually, you don't need to set this property, unless you also explicitly set `distDir`. +
+    _defaultValue_: the `mainClassName` configured for the `application` plugin +
+    _usage example_: `mainClass = "org.example.hello.Greeter"`
+
 
 _Usage example_
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
