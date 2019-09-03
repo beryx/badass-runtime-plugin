@@ -55,6 +55,9 @@ class JPackageData {
 
     String installerName
 
+    @Input @Optional
+    String identifier
+
     @Input
     List<String> installerOptions = []
 
