@@ -435,6 +435,12 @@ The archived images will be available in <code>build/image-linux-x64.zip</code> 
 <p>list of JVM arguments to be passed to the virtual machine.<br>
 <em>defaultValue</em>: the <code>jvmArgs</code> value configured in the <code>launcher</code> block or an empty list</p>
 </dd>
+<dt class="hdlist1">identifier</dt>
+<dd>
+<p>the argument passed to the <code>--identifier</code> option when running <code>jpackage</code> when executing the <code>jpackage</code> task.<br>
+<em>defaultValue</em>: the main class name<br>
+<em>usage example</em>: <code>identifier = "org.example.MyApp"</code></p>
+</dd>
 <dt class="hdlist1">installerOptions</dt>
 <dd>
 <p>list of additional options to be passed to the <code>jpackage</code> executable when creating the application installer.<br>
