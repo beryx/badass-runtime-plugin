@@ -56,6 +56,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                            '--main-class', jpd.mainClass,
                            '--output', outputDir,
                            '--name', jpd.imageName,
+                           '--app-version', jpd.appVersion ?: project.version,
                            '--runtime-image', td.runtimeImageDir,
                            '--resource-dir', jpd.getResourceDir(),
                            *(jpd.jvmArgs ? jpd.jvmArgs.collect{['--java-options', adjustArg(it)]}.flatten() : []),

@@ -161,6 +161,10 @@ identifier:: the argument passed to the `--identifier` option when running `jpac
     _defaultValue_: the main class name +
     _usage example_: `identifier = "org.example.MyApp"`
 
+appVersion:: the argument passed to the `--app-version` option when running `jpackage` when executing the `jpackage` and `jpackageImage` tasks. +
+    _defaultValue_: the project version +
+    _usage example_: `appVersion = "1.0.0"`
+
 installerOptions:: list of additional options to be passed to the `jpackage` executable when creating the application installer. +
     _defaultValue_: empty list +
     _usage example_: `installerOptions = ["--win-console"]`
