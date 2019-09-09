@@ -46,9 +46,13 @@ class RuntimeZipTaskImpl extends BaseTaskImpl<RuntimeZipTaskData> {
     }
 
     private void zipDir(File imageDir, File zipFile) {
+        def parentPath = imageDir.parentFile.toPath()
         project.ant.zip(destfile: zipFile, duplicate: 'fail') {
-            zipfileset(dir: imageDir.parentFile, includes: "$imageDir.name/**", excludes: "$imageDir.name/bin/**")
-            zipfileset(dir: imageDir.parentFile, includes: "$imageDir.name/bin/**", filemode: 755)
+            imageDir.eachFileRecurse { f ->
+                int mode = f.canExecute() ? 755 : 644
+                def relPath = parentPath.relativize(f.toPath()).toString()
+                zipfileset(dir: parentPath, includes: relPath, filemode: mode)
+            }
         }
     }
 }
