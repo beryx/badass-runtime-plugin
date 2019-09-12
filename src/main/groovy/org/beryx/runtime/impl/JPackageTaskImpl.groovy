@@ -68,6 +68,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                                '--name', jpd.installerName,
                                '--identifier', jpd.identifier ?: jpd.mainClass,
                                '--app-image', "$appImagePath",
+                               '--resource-dir', jpd.getResourceDir(),
                                *jpd.installerOptions]
             }
             if(result.exitValue != 0) {

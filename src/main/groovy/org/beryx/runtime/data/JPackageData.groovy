@@ -21,6 +21,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
@@ -41,6 +42,9 @@ class JPackageData {
 
     @Input
     List<String> imageOptions = []
+
+    @Input @Optional
+    File resourceDir
 
     @Input @Optional
     String targetPlatformName
@@ -87,6 +91,11 @@ class JPackageData {
     @Input
     String getInstallerName() {
         this.@installerName ?: project.name
+    }
+
+    @InputDirectory
+    File getResourceDir() {
+        this.@resourceDir ?: project.buildDir
     }
 
     @OutputDirectory
