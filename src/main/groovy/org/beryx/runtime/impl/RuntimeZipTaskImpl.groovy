@@ -38,17 +38,21 @@ class RuntimeZipTaskImpl extends BaseTaskImpl<RuntimeZipTaskData> {
             td.targetPlatforms.values().each { platform ->
                 File zipFile = new File(zipDir, "${baseName}-${platform.name}.${ext}")
                 File imageDir = new File(td.imageDir, "$project.name-$platform.name")
-                zipDir(imageDir, zipFile)
+                createZip(imageDir, zipFile)
             }
         } else {
-            zipDir(td.imageDir, td.imageZip)
+            createZip(td.imageDir, td.imageZip)
         }
     }
 
-    private void zipDir(File imageDir, File zipFile) {
+    private void createZip(File imageDir, File zipFile) {
+        def parentPath = imageDir.parentFile.toPath()
         project.ant.zip(destfile: zipFile, duplicate: 'fail') {
-            zipfileset(dir: imageDir.parentFile, includes: "$imageDir.name/**", excludes: "$imageDir.name/bin/**")
-            zipfileset(dir: imageDir.parentFile, includes: "$imageDir.name/bin/**", filemode: 755)
+            imageDir.eachFileRecurse { f ->
+                int mode = f.canExecute() ? 755 : 644
+                def relPath = parentPath.relativize(f.toPath()).toString()
+                zipfileset(dir: parentPath, includes: relPath, filemode: mode)
+            }
         }
     }
 }
