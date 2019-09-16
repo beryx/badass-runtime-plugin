@@ -35,13 +35,15 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
     @CompileDynamic
     void execute() {
-        if(td.jpackageData.skipInstaller) {
+        if (td.jpackageData.skipInstaller) {
             LOGGER.info("Skipping create-installer")
             return
         }
+
         def jpd = td.jpackageData
         def appImagePath = "${td.jpackageData.getImageOutputDir()}/$jpd.imageName"
-        if(OperatingSystem.current().macOsX) {
+
+        if (OperatingSystem.current().macOsX) {
             def appImageDir = new File(appImagePath)
             if(!appImageDir.directory) {
                 def currImagePath = "${td.jpackageData.getImageOutputDir()}/${jpd.imageName}.app"
@@ -56,12 +58,15 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             def result = project.exec {
                 ignoreExitValue = true
                 standardOutput = new ByteArrayOutputStream()
+
                 project.ext.jpackageInstallerOutput = {
                     return standardOutput.toString()
                 }
+
                 if (td.jpackageData.getImageOutputDir() != td.jpackageData.getInstallerOutputDir()) {
                     FileUtils.cleanDirectory(td.jpackageData.getInstallerOutputDir())
                 }
+
                 commandLine = ["$jpd.jpackageHome/bin/jpackage",
                                '--package-type', packageType,
                                '--output', td.jpackageData.getInstallerOutputDir(),
@@ -71,11 +76,13 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                                '--resource-dir', jpd.getResourceDir(),
                                *jpd.installerOptions]
             }
-            if(result.exitValue != 0) {
+
+            if (result.exitValue != 0) {
                 LOGGER.error(project.ext.jpackageInstallerOutput())
             } else {
                 LOGGER.info(project.ext.jpackageInstallerOutput())
             }
+
             result.assertNormalExitValue()
             result.rethrowFailure()
         }
@@ -83,8 +90,8 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
     List<String> getPackageTypes() {
         def jpd = td.jpackageData
-        if(jpd.installerType) return [jpd.installerType]
-        if(OperatingSystem.current().windows) {
+        if (jpd.installerType) return [jpd.installerType]
+        if (OperatingSystem.current().windows) {
             return ['exe', 'msi']
         } else if(OperatingSystem.current().macOsX) {
             return ['pkg', 'dmg']

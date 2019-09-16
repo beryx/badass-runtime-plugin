@@ -40,16 +40,22 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
         def result = project.exec {
             ignoreExitValue = true
             standardOutput = new ByteArrayOutputStream()
+
             project.ext.jpackageImageOutput = {
                 return standardOutput.toString()
             }
+
             def outputDir = td.jpackageData.imageOutputDir
             project.delete(outputDir)
+
             def jpd = td.jpackageData
+
             def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
             Util.checkExecutable(jpackageExec)
+
             def inputSuffix = project.tasks.findByName('installShadowDist') ? '-shadow' : ''
             LOGGER.info("input subdir: $project.name$inputSuffix")
+
             commandLine = [jpackageExec,
                            '--input', "$td.runtimeImageDir${File.separator}lib",
                            '--main-jar', jpd.mainJar ?: Util.getMainDistJarFile(project).name,
@@ -61,18 +67,20 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                            *(jpd.jvmArgs ? jpd.jvmArgs.collect{['--java-options', adjustArg(it)]}.flatten() : []),
                            *jpd.imageOptions]
         }
-        if(result.exitValue != 0) {
+
+        if (result.exitValue != 0) {
             LOGGER.error(project.ext.jpackageImageOutput())
         } else {
             LOGGER.info(project.ext.jpackageImageOutput())
         }
+
         result.assertNormalExitValue()
         result.rethrowFailure()
     }
 
     static String adjustArg(String arg) {
         def adjusted = arg.replace('"', '\\"')
-        if(!(adjusted ==~ /[\w\-\+=\/\\,;.:#]+/)) {
+        if (!(adjusted ==~ /[\w\-\+=\/\\,;.:#]+/)) {
             adjusted = '"' + adjusted + '"'
         }
         // Workaround for https://bugs.openjdk.java.net/browse/JDK-8227641
