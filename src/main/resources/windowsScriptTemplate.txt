@@ -49,8 +49,6 @@ set CMD_LINE_ARGS=%*
 :execute
 @rem Setup the command line
 
-REM set CLASSPATH=$classpath
-REM set CLASSPATH="%CLASSPATH:"=%"
 set CLASSPATH="%JAVA_HOME:"=%/lib/*"
 
 @rem Execute ${applicationName}
