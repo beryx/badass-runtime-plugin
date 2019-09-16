@@ -72,12 +72,18 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
                 Util.checkExecutable(jpackageExec)
 
+                def appVersion = (jpd.appVersion ?: project.version).toString()
+                def versionOpts = (appVersion == 'unspecified') ? [] : ['--app-version', appVersion]
+                if(versionOpts && (!appVersion || !Character.isDigit(appVersion[0] as char))) {
+                    throw new GradleException("The first character of the --app-version argument should be a digit.")
+                }
+
                 commandLine = [jpackageExec,
                                '--package-type', packageType,
                                '--output', td.jpackageData.getInstallerOutputDir(),
                                '--name', jpd.installerName,
                                '--identifier', jpd.identifier ?: jpd.mainClass,
-                               '--app-version', jpd.appVersion ?: project.version,
+                               *versionOpts,
                                '--app-image', "$appImagePath",
                                '--resource-dir', jpd.getResourceDir(),
                                *jpd.installerOptions]
