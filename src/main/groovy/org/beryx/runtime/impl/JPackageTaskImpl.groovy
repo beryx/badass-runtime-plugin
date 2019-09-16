@@ -15,9 +15,12 @@
  */
 package org.beryx.runtime.impl
 
+import static org.beryx.runtime.util.Util.EXEC_EXTENSION
+
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JPackageTaskData
+import org.beryx.runtime.util.Util
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
@@ -62,7 +65,10 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 if (td.jpackageData.getImageOutputDir() != td.jpackageData.getInstallerOutputDir()) {
                     FileUtils.cleanDirectory(td.jpackageData.getInstallerOutputDir())
                 }
-                commandLine = ["$jpd.jpackageHome/bin/jpackage",
+                def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
+                Util.checkExecutable(jpackageExec)
+
+                commandLine = [jpackageExec,
                                '--package-type', packageType,
                                '--output', td.jpackageData.getInstallerOutputDir(),
                                '--name', jpd.installerName,
