@@ -98,7 +98,7 @@ class JPackageData {
 
     @InputDirectory
     File getResourceDir() {
-        this.@resourceDir ?: project.buildDir
+        this.@resourceDir
     }
 
     @OutputDirectory
