@@ -46,10 +46,9 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 return standardOutput.toString()
             }
 
-            def outputDir = td.jpackageData.imageOutputDir
-            project.delete(outputDir)
-
             def jpd = td.jpackageData
+            def outputDir = jpd.imageOutputDir
+            project.delete(outputDir)
 
             def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
             Util.checkExecutable(jpackageExec)
@@ -59,23 +58,25 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
             def appVersion = (jpd.appVersion ?: project.version).toString()
             def versionOpts = (appVersion == 'unspecified') ? [] : ['--app-version', appVersion]
-            if(versionOpts && (!appVersion || !Character.isDigit(appVersion[0] as char))) {
+            if (versionOpts && (!appVersion || !Character.isDigit(appVersion[0] as char))) {
                 throw new GradleException("The first character of the --app-version argument should be a digit.")
             }
 
             final def resourceDir = jpd.getResourceDir()
             final def resourceOpts = resourceDir == null ? [] : [ '--resource-dir', resourceDir ]
 
+            final def jvmArgs = (jpd.jvmArgs ? jpd.jvmArgs.collect{[ '--java-options', adjustArg(it) ]}.flatten() : [])
+
             commandLine = [jpackageExec,
-                           '--input', "$td.runtimeImageDir${File.separator}lib",
+                           '--input', "$td.distDir${File.separator}lib",
                            '--main-jar', jpd.mainJar ?: Util.getMainDistJarFile(project).name,
                            '--main-class', jpd.mainClass,
                            '--output', outputDir,
                            '--name', jpd.imageName,
                            *versionOpts,
-                           '--runtime-image', td.runtimeImageDir,
+                           '--runtime-image', td.jreDir,
                            *resourceOpts,
-                           *(jpd.jvmArgs ? jpd.jvmArgs.collect{['--java-options', adjustArg(it)]}.flatten() : []),
+                           *jvmArgs,
                            *jpd.imageOptions]
         }
 

@@ -31,6 +31,7 @@ import org.gradle.api.provider.Provider
 class RuntimePluginExtension {
     final DirectoryProperty distDir
     final DirectoryProperty jreDir
+    final DirectoryProperty appImageDir
     final DirectoryProperty imageDir
     final RegularFileProperty imageZip
 
@@ -47,6 +48,9 @@ class RuntimePluginExtension {
 
         jreDir = Util.createDirectoryProperty(project)
         jreDir.set(project.layout.buildDirectory.dir('jre'))
+
+        appImageDir = Util.createDirectoryProperty(project)
+        appImageDir.set(project.layout.buildDirectory.dir('appImage'))
 
         imageDir = Util.createDirectoryProperty(project)
         imageDir.set(project.layout.buildDirectory.dir('image'))

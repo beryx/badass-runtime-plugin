@@ -38,23 +38,10 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
     @CompileDynamic
     void execute() {
-        if (td.jpackageData.skipInstaller) {
+        final def jpd = td.jpackageData
+        if (jpd.skipInstaller) {
             LOGGER.info("Skipping create-installer")
             return
-        }
-
-        def jpd = td.jpackageData
-        def appImagePath = "${td.jpackageData.getImageOutputDir()}/$jpd.imageName"
-
-        if (OperatingSystem.current().macOsX) {
-            def appImageDir = new File(appImagePath)
-            if(!appImageDir.directory) {
-                def currImagePath = "${td.jpackageData.getImageOutputDir()}/${jpd.imageName}.app"
-                if(!new File(currImagePath).directory) {
-                    throw new GradleException("Unable to find the application image in ${td.jpackageData.getImageOutputDir()}")
-                }
-                appImagePath = currImagePath
-            }
         }
 
         packageTypes.each { packageType ->
@@ -66,15 +53,16 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                     return standardOutput.toString()
                 }
 
-                if (td.jpackageData.getImageOutputDir() != td.jpackageData.getInstallerOutputDir()) {
-                    FileUtils.cleanDirectory(td.jpackageData.getInstallerOutputDir())
+                if (jpd.getImageOutputDir() != jpd.getInstallerOutputDir()) {
+                    FileUtils.cleanDirectory(jpd.getInstallerOutputDir())
                 }
+
                 def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
                 Util.checkExecutable(jpackageExec)
 
                 def appVersion = (jpd.appVersion ?: project.version).toString()
                 def versionOpts = (appVersion == 'unspecified') ? [] : ['--app-version', appVersion]
-                if(versionOpts && (!appVersion || !Character.isDigit(appVersion[0] as char))) {
+                if (versionOpts && (!appVersion || !Character.isDigit(appVersion[0] as char))) {
                     throw new GradleException("The first character of the --app-version argument should be a digit.")
                 }
 
@@ -83,11 +71,11 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
                 commandLine = [jpackageExec,
                                '--package-type', packageType,
-                               '--output', td.jpackageData.getInstallerOutputDir(),
+                               '--output', jpd.getInstallerOutputDir(),
                                '--name', jpd.installerName,
                                '--identifier', jpd.identifier ?: jpd.mainClass,
                                *versionOpts,
-                               '--app-image', "$appImagePath",
+                               '--app-image', td.appImageDir,
                                *resourceOpts,
                                *jpd.installerOptions]
             }

@@ -17,26 +17,47 @@ package org.beryx.runtime.data
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
-import org.beryx.runtime.RuntimeTask
+import org.beryx.runtime.JreTask
 import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.internal.os.OperatingSystem
 
 @CompileStatic
 @ToString(includeNames = true)
 class JPackageTaskData {
     private static final Logger LOGGER = Logging.getLogger(JPackageTaskData.class)
 
+    File distDir
+
     File jreDir
-    File imageDir
-    File runtimeImageDir
+
+    File appImageDir
+
     JPackageData jpackageData
 
-    void configureRuntimeImageDir(RuntimeTask runtimeTask) {
-        def jlinkPlatforms = runtimeTask.targetPlatforms
-        if(jpackageData.targetPlatformName) {
-            if(!jlinkPlatforms.isEmpty()) {
-                if(!jlinkPlatforms.keySet().contains(jpackageData.targetPlatformName)) {
+    void configureAppImageDir() {
+        final def imageOutputDir = jpackageData.getImageOutputDir()
+        final def imageName = jpackageData.getImageName()
+        final def appImagePath = "${imageOutputDir}${File.separator}${imageName}"
+        appImageDir = new File(appImagePath)
+
+        if (OperatingSystem.current().macOsX) {
+            if (!appImageDir.directory) {
+                def currImagePath = "${appImagePath}.app"
+                if (!new File(currImagePath).directory) {
+                    throw new GradleException("Unable to find the application image in ${imageOutputDir}")
+                }
+                appImageDir = new File(currImagePath)
+            }
+        }
+    }
+
+    void configureRuntimeImageDir(JreTask jreTask) {
+        def jlinkPlatforms = jreTask.targetPlatforms
+        if (jpackageData.targetPlatformName) {
+            if (!jlinkPlatforms.isEmpty()) {
+                if (!jlinkPlatforms.keySet().contains(jpackageData.targetPlatformName)) {
                     throw new GradleException("The targetPlatform of the jpackage task ($jpackageData.targetPlatformName) doesn't match any of the targetPlatforms of the jlink task.")
                 }
             } else {
@@ -44,17 +65,19 @@ class JPackageTaskData {
                 jpackageData.targetPlatformName = null
             }
         } else {
-            if(!jlinkPlatforms.isEmpty()) {
-                if(jlinkPlatforms.size() > 1) throw new GradleException("Since your runtime task is configured to generate images for multiple platforms, you must specify a targetPlatform for your jpackage task.")
+            if (!jlinkPlatforms.isEmpty()) {
+                if (jlinkPlatforms.size() > 1) {
+                    throw new GradleException("Since your runtime task is configured to generate images for multiple platforms, you must specify a targetPlatform for your jpackage task.")
+                }
                 jpackageData.targetPlatformName = jlinkPlatforms.keySet().first()
                 LOGGER.warn("No target platform defined for the jpackage task. Defaulting to `$jpackageData.targetPlatformName`.")
             }
         }
-        if(jpackageData.targetPlatformName) {
-            runtimeImageDir = new File(runtimeTask.imageDirAsFile, "$jpackageData.installerName-$jpackageData.targetPlatformName")
+        if (jpackageData.targetPlatformName) {
+            jreDir = new File(jreTask.jreDirAsFile, "$jpackageData.installerName-$jpackageData.targetPlatformName")
         } else {
-            runtimeImageDir = runtimeTask.imageDirAsFile
+            jreDir = jreTask.jreDirAsFile
         }
-        LOGGER.debug("runtimeImageDir: $runtimeImageDir")
     }
+
 }

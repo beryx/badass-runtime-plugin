@@ -51,8 +51,13 @@ class JreTask extends BaseTask {
         extension.jreDir.get()
     }
 
+    @OutputDirectory
+    File getJreDirAsFile() {
+        jreDir.asFile
+    }
+
     JreTask() {
-        description = 'Creates a custom JRE'
+        description = 'Creates a custom java runtime image with jlink'
     }
 
     @TaskAction
