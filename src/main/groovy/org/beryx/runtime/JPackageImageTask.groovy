@@ -15,6 +15,7 @@
  */
 package org.beryx.runtime
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JPackageData
 import org.beryx.runtime.data.JPackageTaskData
@@ -25,6 +26,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
@@ -32,13 +34,13 @@ class JPackageImageTask extends BaseTask {
     private static final Logger LOGGER = Logging.getLogger(JPackageImageTask.class)
 
     @InputDirectory
-    Directory getJreDir() {
-        extension.jreDir.get()
+    Directory getDistDir() {
+        extension.distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
     }
 
     @InputDirectory
-    Directory getImageDir() {
-        extension.imageDir.get()
+    Directory getJreDir() {
+        extension.jreDir.get()
     }
 
     @Nested
@@ -46,19 +48,28 @@ class JPackageImageTask extends BaseTask {
         extension.jpackageData.get()
     }
 
+    @Internal
+    Sync getDistTask() {
+        (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
+    }
+
+    @CompileDynamic
     JPackageImageTask() {
-        dependsOn(RuntimePlugin.TASK_NAME_RUNTIME)
-        description = 'Creates an installable image using the jpackage tool'
+        description = 'Creates an application image using the jpackage tool'
+        dependsOn(RuntimePlugin.TASK_NAME_JRE)
+        project.afterEvaluate {
+            dependsOn(distTask)
+        }
     }
 
     @TaskAction
     void jpackageTaskAction() {
         def taskData = new JPackageTaskData()
-        taskData.imageDir = imageDir.asFile
+        taskData.distDir = distDir.asFile
         taskData.jpackageData = jpackageData
 
-        def runtimeTask = (RuntimeTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_RUNTIME)
-        taskData.configureRuntimeImageDir(runtimeTask)
+        def jreTask = (JreTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_JRE)
+        taskData.configureRuntimeImageDir(jreTask)
 
         def taskImpl = new JPackageImageTaskImpl(project, taskData)
         taskImpl.execute()

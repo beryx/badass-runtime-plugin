@@ -32,13 +32,8 @@ class JPackageTask extends BaseTask {
     private static final Logger LOGGER = Logging.getLogger(JPackageTask.class)
 
     @InputDirectory
-    Directory getJreDir() {
-        extension.jreDir.get()
-    }
-
-    @InputDirectory
-    Directory getImageDir() {
-        extension.imageDir.get()
+    Directory getAppImageDir() {
+        extension.appImageDir.get()
     }
 
     @Nested
@@ -47,18 +42,15 @@ class JPackageTask extends BaseTask {
     }
 
     JPackageTask() {
-        dependsOn(RuntimePlugin.TASK_NAME_JPACKAGE_IMAGE)
         description = 'Creates an application installer using the jpackage tool'
+        dependsOn(RuntimePlugin.TASK_NAME_JPACKAGE_IMAGE)
     }
 
     @TaskAction
     void jpackageTaskAction() {
         def taskData = new JPackageTaskData()
-        taskData.imageDir = imageDir.asFile
         taskData.jpackageData = jpackageData
-
-        def runtimeTask = (RuntimeTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_RUNTIME)
-        taskData.configureRuntimeImageDir(runtimeTask)
+        taskData.configureAppImageDir()
 
         def taskImpl = new JPackageTaskImpl(project, taskData)
         taskImpl.execute()
