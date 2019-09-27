@@ -15,8 +15,6 @@
  */
 package org.beryx.runtime.data
 
-import groovy.transform.CompileStatic
-import groovy.transform.ToString
 import org.beryx.runtime.util.Util
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -26,12 +24,14 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
+import groovy.transform.CompileStatic
+import groovy.transform.ToString
+
 @CompileStatic
 @ToString(includeNames = true)
 class RuntimePluginExtension {
     final DirectoryProperty distDir
     final DirectoryProperty jreDir
-    final DirectoryProperty appImageDir
     final DirectoryProperty imageDir
     final RegularFileProperty imageZip
 
@@ -48,9 +48,6 @@ class RuntimePluginExtension {
 
         jreDir = Util.createDirectoryProperty(project)
         jreDir.set(project.layout.buildDirectory.dir('jre'))
-
-        appImageDir = Util.createDirectoryProperty(project)
-        appImageDir.set(project.layout.buildDirectory.dir('appImage'))
 
         imageDir = Util.createDirectoryProperty(project)
         imageDir.set(project.layout.buildDirectory.dir('image'))

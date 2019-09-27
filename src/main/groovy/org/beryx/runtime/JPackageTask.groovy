@@ -15,26 +15,19 @@
  */
 package org.beryx.runtime
 
-import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JPackageData
 import org.beryx.runtime.data.JPackageTaskData
 import org.beryx.runtime.impl.JPackageTaskImpl
-import org.gradle.api.file.Directory
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+
+import groovy.transform.CompileStatic
 
 @CompileStatic
 class JPackageTask extends BaseTask {
     private static final Logger LOGGER = Logging.getLogger(JPackageTask.class)
-
-    @InputDirectory
-    Directory getAppImageDir() {
-        extension.appImageDir.get()
-    }
 
     @Nested
     JPackageData getJpackageData() {
