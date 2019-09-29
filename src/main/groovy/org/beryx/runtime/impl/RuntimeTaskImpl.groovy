@@ -35,14 +35,14 @@ class RuntimeTaskImpl extends BaseTaskImpl<RuntimeTaskData> {
             td.targetPlatforms.values().each { platform ->
                 File jreDir = new File(td.jreDir, "$project.name-$platform.name")
                 File imageDir = new File(td.imageDir, "$project.name-$platform.name")
-                createRuntime(jreDir, imageDir, platform.jdkHome, td.options + platform.options)
+                createRuntime(jreDir, imageDir)
             }
         } else {
-            createRuntime(td.jreDir, td.imageDir, td.javaHome, td.options)
+            createRuntime(td.jreDir, td.imageDir)
         }
     }
 
-    void createRuntime(File jreDir, File imageDir, String jdkHome, List<String> options) {
+    void createRuntime(File jreDir, File imageDir) {
         project.delete(imageDir)
         copyJre(jreDir, imageDir)
         copyAppTo(imageDir)

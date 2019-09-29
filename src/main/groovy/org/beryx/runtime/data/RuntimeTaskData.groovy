@@ -24,8 +24,5 @@ class RuntimeTaskData {
     File distDir
     File jreDir
     File imageDir
-    List<String> options
-    List<String> modules
-    String javaHome
     Map<String,TargetPlatform> targetPlatforms
 }

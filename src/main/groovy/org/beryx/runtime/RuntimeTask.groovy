@@ -31,21 +31,6 @@ import org.gradle.api.tasks.application.CreateStartScripts
 @CompileStatic
 class RuntimeTask extends BaseTask {
     @Input
-    List<String> getOptions() {
-        extension.options.get()
-    }
-
-    @Input
-    List<String> getModules() {
-        extension.modules.get()
-    }
-
-    @Input
-    String getJavaHome() {
-        extension.javaHome.get()
-    }
-
-    @Input
     Map<String, TargetPlatform> getTargetPlatforms() {
         extension.targetPlatforms.get()
     }
@@ -110,9 +95,6 @@ class RuntimeTask extends BaseTask {
         taskData.distDir = distDir.asFile
         taskData.jreDir = jreDir.asFile
         taskData.imageDir = imageDir.asFile
-        taskData.options = options
-        taskData.modules = modules
-        taskData.javaHome = javaHome
         taskData.targetPlatforms = targetPlatforms
 
         def taskImpl = new RuntimeTaskImpl(project, taskData)
