@@ -64,7 +64,7 @@ case "`uname`" in
     ;;
 esac
 
-CLASSPATH=$classpath
+CLASSPATH="\$APP_HOME/lib/*"
 
 JAVA_HOME="\$APP_HOME"
 JAVACMD="\$JAVA_HOME/bin/java"
