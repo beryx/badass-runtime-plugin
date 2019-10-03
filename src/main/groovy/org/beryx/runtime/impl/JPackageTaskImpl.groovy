@@ -72,7 +72,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
                 commandLine = [jpackageExec,
                                '--package-type', packageType,
-                               '--output', jpd.getInstallerOutputDir(),
+                               '--dest', jpd.getInstallerOutputDir(),
                                '--name', jpd.installerName,
                                *versionOpts,
                                '--app-image', td.appImageDir,

@@ -15,8 +15,11 @@
  */
 package org.beryx.runtime.impl
 
+import static org.beryx.runtime.util.Util.EXEC_EXTENSION
+
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+
 import org.beryx.runtime.data.JPackageTaskData
 import org.beryx.runtime.util.Util
 import org.gradle.api.GradleException
@@ -24,15 +27,13 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
-import static org.beryx.runtime.util.Util.EXEC_EXTENSION
-
 @CompileStatic
 class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
     private static final Logger LOGGER = Logging.getLogger(JPackageImageTaskImpl.class)
 
     JPackageImageTaskImpl(Project project, JPackageTaskData taskData) {
         super(project, taskData)
-        LOGGER.info("taskData: $taskData")
+        LOGGER.debug("taskData: $taskData")
     }
 
     @CompileDynamic
@@ -71,7 +72,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                            '--input', "$td.distDir${File.separator}lib",
                            '--main-jar', jpd.mainJar ?: Util.getMainDistJarFile(project).name,
                            '--main-class', jpd.mainClass,
-                           '--output', outputDir,
+                           '--dest', outputDir,
                            '--name', jpd.imageName,
                            *versionOpts,
                            '--runtime-image', td.jreDir,
