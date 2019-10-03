@@ -15,15 +15,17 @@
  */
 package org.beryx.runtime.data
 
+import static org.beryx.runtime.util.Util.EXEC_EXTENSION
+
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
-import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
 @CompileStatic
 @ToString(includeNames = true)
@@ -58,9 +60,6 @@ class JPackageData {
     File installerOutputDir
 
     String installerName
-
-    @Input @Optional
-    String identifier
 
     @Input @Optional
     String appVersion
