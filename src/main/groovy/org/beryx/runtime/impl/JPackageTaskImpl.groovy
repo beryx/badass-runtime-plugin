@@ -19,6 +19,7 @@ import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+
 import org.beryx.runtime.data.JPackageTaskData
 import org.beryx.runtime.util.Util
 import org.gradle.api.GradleException
@@ -33,7 +34,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
     JPackageTaskImpl(Project project, JPackageTaskData taskData) {
         super(project, taskData)
-        LOGGER.info("taskData: $taskData")
+        LOGGER.debug("taskData: $taskData")
     }
 
     @CompileDynamic
@@ -73,7 +74,6 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                                '--package-type', packageType,
                                '--output', jpd.getInstallerOutputDir(),
                                '--name', jpd.installerName,
-                               '--identifier', jpd.identifier ?: jpd.mainClass,
                                *versionOpts,
                                '--app-image', td.appImageDir,
                                *resourceOpts,
