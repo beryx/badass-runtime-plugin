@@ -75,6 +75,7 @@ class Util {
         artifact.file
     }
 
+    @CompileDynamic
     static DirectoryProperty createDirectoryProperty(Project project) {
         if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
             return project.layout.directoryProperty()
@@ -83,6 +84,7 @@ class Util {
         }
     }
 
+    @CompileDynamic
     static RegularFileProperty createRegularFileProperty(Project project) {
         if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
             return project.layout.fileProperty()
