@@ -91,11 +91,11 @@ class RuntimePluginSpec extends Specification {
         modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion
         null                                        | true               | true             | '4.8'
         []                                          | true               | true             | '5.0'
-        ['java.base']                               | true               | false            | '5.1'
-        ['foo.bar']                                 | false              | false            | '5.1.1'
+        ['java.base']                               | true               | false            | '5.6.3'
+        ['foo.bar']                                 | false              | false            | '6.0-rc-1'
         ['java.naming']                             | true               | false            | '4.8'
         ['java.naming', 'java.xml']                 | true               | true             | '5.0'
-        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '5.1'
-        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '5.1.1'
+        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '5.6.3'
+        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '6.0-rc-1'
     }
 }

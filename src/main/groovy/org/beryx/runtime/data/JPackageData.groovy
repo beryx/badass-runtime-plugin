@@ -45,7 +45,7 @@ class JPackageData {
     @Input
     List<String> imageOptions = []
 
-    @Input @Optional
+    @InputDirectory @Optional
     File resourceDir
 
     @Input @Optional
@@ -95,11 +95,6 @@ class JPackageData {
         this.@installerName ?: project.name
     }
 
-    @InputDirectory
-    File getResourceDir() {
-        this.@resourceDir
-    }
-
     @OutputDirectory
     File getImageOutputDir() {
         this.@imageOutputDir ?: project.file("$project.buildDir/$outputDir")
@@ -111,7 +106,6 @@ class JPackageData {
     }
 
 
-    @Internal
     private String getDefaultMainClass() {
         def mainClass = project['mainClassName'] as String
         int pos = mainClass.lastIndexOf('/')

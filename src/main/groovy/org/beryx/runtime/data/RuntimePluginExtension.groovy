@@ -28,7 +28,6 @@ import groovy.transform.CompileStatic
 import groovy.transform.ToString
 
 @CompileStatic
-@ToString(includeNames = true)
 class RuntimePluginExtension {
     final DirectoryProperty distDir
     final DirectoryProperty jreDir
