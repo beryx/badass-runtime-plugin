@@ -35,7 +35,7 @@ class SuggestedModulesBuilder {
         Set<String> modules = []
         for(ResolvedDependency dep: project.configurations['runtimeClasspath'].resolvedConfiguration.firstLevelModuleDependencies) {
             def f = Util.getArtifact(dep)
-            modules.addAll(getModulesRequiredBy(f))
+            if(f) modules.addAll(getModulesRequiredBy(f))
         }
         if(!modules) {
             modules << 'java.base'

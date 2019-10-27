@@ -26,6 +26,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -38,6 +40,7 @@ import java.util.zip.ZipFile
 
 @CompileStatic
 class Util {
+    private static final Logger LOGGER = Logging.getLogger(Util)
     static String EXEC_EXTENSION = System.getProperty('os.name', '').toLowerCase().contains('win') ? '.exe' : ''
 
     static boolean isValidClassFileReference(String name) {
@@ -71,8 +74,10 @@ class Util {
     }
 
     static File getArtifact(ResolvedDependency dep) {
-        def artifact = dep.moduleArtifacts.find {it.classifier} ?: dep.moduleArtifacts[0]
-        artifact.file
+        def artifact = dep.moduleArtifacts.find {it.classifier} ?: dep.moduleArtifacts?.getAt(0)
+        if(artifact) return artifact.file
+        LOGGER.warn "Cannot retrieve artifact $dep.name"
+        return null
     }
 
     @CompileDynamic
