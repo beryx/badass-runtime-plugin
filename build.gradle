@@ -42,7 +42,7 @@ ext.badassRuntimePluginTag = Boolean.valueOf(badassRuntimePluginReleaseBuild) ? 
 group = 'org.beryx'
 version = badassRuntimePluginVersion
 
-ext.asmVersion = '7.0'
+ext.asmVersion = '7.2'
 
 repositories {
     jcenter()
