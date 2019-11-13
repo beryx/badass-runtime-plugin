@@ -69,7 +69,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             final def jvmArgs = (jpd.jvmArgs ? jpd.jvmArgs.collect{[ '--java-options', adjustArg(it) ]}.flatten() : [])
 
             commandLine = [jpackageExec,
-                           '--package-type', 'app-image',
+                           '--type', 'app-image',
                            '--input', "$td.distDir${File.separator}lib",
                            '--main-jar', jpd.mainJar ?: Util.getMainDistJarFile(project).name,
                            '--main-class', jpd.mainClass,

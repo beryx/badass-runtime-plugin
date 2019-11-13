@@ -71,7 +71,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 final def resourceOpts = (resourceDir == null) ? [] : [ '--resource-dir', resourceDir ]
 
                 commandLine = [jpackageExec,
-                               '--package-type', packageType,
+                               '--type', packageType,
                                '--dest', jpd.getInstallerOutputDir(),
                                '--name', jpd.installerName,
                                *versionOpts,
