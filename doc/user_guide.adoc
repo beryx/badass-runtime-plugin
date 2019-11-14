@@ -66,7 +66,13 @@ modules:: The list of modules to be included in the custom JRE. +
     _defaultValue_: empty list (the modules provided by the `suggestModules` task will be used) +
     _usage example_: `modules = ['java.naming', 'java.xml']`
 
-
+additive:: In many cases, the list of modules provided by the `suggestModules` task contains exactly the modules required by your application.
+This means that you don’t need to configure the `modules` property, because the plugin can figure out by itself which modules are required.
+In some other cases, the "suggested" list of modules is _almost_ right, in the sense that it only misses one or a few modules.
+In these cases, you are allowed to specify only the missing modules in the `modules` property,
+and you instruct the plugin to add them to the list of suggested modules, by setting the property `additive` to true. +
+    _defaultValue_: false +
+    _usage example_: `additive = true`
 
 == Methods
 
