@@ -5,6 +5,10 @@
 - [documentation](http://badass-runtime-plugin.beryx.org/snapshots/latest)
 - [groovydoc](http://badass-runtime-plugin.beryx.org/snapshots/latest/groovydoc)
 
+**Release 1.8.0**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.8.0)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.8.0/groovydoc)
+
 **Release 1.7.3**
   - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.7.3)
   - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.7.3/groovydoc)
