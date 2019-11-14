@@ -32,6 +32,11 @@ class JreTask extends BaseTask {
     }
 
     @Input
+    boolean isAdditive() {
+        extension.additive.get()
+    }
+
+    @Input
     List<String> getModules() {
         extension.modules.get()
     }
@@ -65,6 +70,7 @@ class JreTask extends BaseTask {
         def taskData = new JreTaskData()
         taskData.jreDir = jreDir.asFile
         taskData.options = options
+        taskData.additive = additive
         taskData.modules = modules
         taskData.javaHome = javaHome
         taskData.targetPlatforms = targetPlatforms

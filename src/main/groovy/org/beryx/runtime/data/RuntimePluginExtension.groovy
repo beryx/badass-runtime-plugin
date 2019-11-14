@@ -35,6 +35,7 @@ class RuntimePluginExtension {
     final RegularFileProperty imageZip
 
     final ListProperty<String> options
+    final Property<Boolean> additive
     final ListProperty<String> modules
     final Property<String> javaHome
     final Provider<Map<String, TargetPlatform>> targetPlatforms
@@ -56,6 +57,9 @@ class RuntimePluginExtension {
 
         options = project.objects.listProperty(String)
         options.set(new ArrayList<String>())
+
+        additive = project.objects.property(Boolean)
+        additive.set(false)
 
         modules = project.objects.listProperty(String)
         modules.set(new ArrayList<String>())

@@ -76,6 +76,13 @@ class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
 
     @CompileStatic
     Collection<String> getModules() {
-        td.modules ?: new SuggestedModulesBuilder(td.javaHome).getProjectModules(project)
+        Set<String> imageModules = []
+        if(td.additive || !td.modules) {
+            imageModules.addAll(new SuggestedModulesBuilder(td.javaHome).getProjectModules(project))
+        }
+        if(td.modules) {
+            imageModules.addAll(td.modules)
+        }
+        imageModules
     }
 }

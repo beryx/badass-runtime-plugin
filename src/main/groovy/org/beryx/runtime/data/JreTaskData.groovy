@@ -23,6 +23,7 @@ import groovy.transform.ToString
 class JreTaskData {
     File jreDir
     List<String> options
+    boolean additive
     List<String> modules
     String javaHome
     Map<String,TargetPlatform> targetPlatforms
