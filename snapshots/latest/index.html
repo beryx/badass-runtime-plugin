@@ -93,7 +93,7 @@ $(addBlockSwitches);
 <h1>The Badass Runtime Plugin</h1>
 <div class="details">
 <span id="author" class="author">Serban Iordache</span><br>
-<span id="revnumber">version 1.7.4-SNAPSHOT</span>
+<span id="revnumber">version 1.8.1-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -175,7 +175,7 @@ While it might work with some combinations of older Java and Gradle versions, th
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="groovy">plugins {
-    id 'org.beryx.runtime' version '1.7.4-SNAPSHOT'
+    id 'org.beryx.runtime' version '1.8.1-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -306,6 +306,16 @@ initializes it with the directory in which the <code>installDist</code> or the <
 <p>The list of modules to be included in the custom JRE.<br>
 <em>defaultValue</em>: empty list (the modules provided by the <code>suggestModules</code> task will be used)<br>
 <em>usage example</em>: <code>modules = ['java.naming', 'java.xml']</code></p>
+</dd>
+<dt class="hdlist1">additive</dt>
+<dd>
+<p>In many cases, the list of modules provided by the <code>suggestModules</code> task contains exactly the modules required by your application.
+This means that you don’t need to configure the <code>modules</code> property, because the plugin can figure out by itself which modules are required.
+In some other cases, the "suggested" list of modules is <em>almost</em> right, in the sense that it only misses one or a few modules.
+In these cases, you are allowed to specify only the missing modules in the <code>modules</code> property,
+and you instruct the plugin to add them to the list of suggested modules, by setting the property <code>additive</code> to true.<br>
+    <em>defaultValue</em>: false<br>
+    <em>usage example</em>: <code>additive = true</code></p>
 </dd>
 </dl>
 </div>
@@ -555,7 +565,7 @@ Usually, you don&#8217;t need to set this property, unless you also explicitly s
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.7.4-SNAPSHOT<br>
+Version 1.8.1-SNAPSHOT<br>
 </div>
 </div>
 </body>
