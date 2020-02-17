@@ -10,7 +10,7 @@ The plugin also lets you create an application installer with the [jpackage](htt
 
 :bulb: For modularized applications use the [Badass-JLink plugin](https://badass-jlink-plugin.beryx.org/releases/latest/).
 
-The plugin offers several tasks, uch as: `runtime`, `runtimeZip`, `suggestModules`, or `jpackage`.
+The plugin offers several tasks, such as: `runtime`, `runtimeZip`, `suggestModules`, or `jpackage`.
 It also adds an extension with the name `runtime` to let you configure various aspects of its operation.
 A simple example configuration is shown below:
 
