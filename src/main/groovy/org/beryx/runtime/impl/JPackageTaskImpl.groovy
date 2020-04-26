@@ -55,7 +55,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 }
 
                 if (jpd.getImageOutputDir() != jpd.getInstallerOutputDir()) {
-                    FileUtils.cleanDirectory(jpd.getInstallerOutputDir())
+                    project.delete(project.files(jpd.getInstallerOutputDir()))
                 }
 
                 def jpackageExec = "$jpd.jpackageHome/bin/jpackage$EXEC_EXTENSION"
