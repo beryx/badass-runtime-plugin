@@ -49,6 +49,10 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             project.delete(project.files(jpd.getInstallerOutputDir()))
         }
         packageTypes.each { packageType ->
+            if (jpd.getImageOutputDir() != jpd.getInstallerOutputDir()) {
+                def subdirs = jpd.getInstallerOutputDir().listFiles({ f -> f.directory } as FileFilter)
+                if(subdirs) project.delete(subdirs)
+            }
             def result = project.exec {
                 ignoreExitValue = true
                 standardOutput = new ByteArrayOutputStream()
