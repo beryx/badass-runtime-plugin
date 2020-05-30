@@ -27,6 +27,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
+import org.gradle.util.GradleVersion
 
 @CompileStatic
 class RuntimeTask extends BaseTask {
@@ -74,7 +75,13 @@ class RuntimeTask extends BaseTask {
 
     @CompileDynamic
     static void configureStartScripts(Project project, boolean asRuntimeImage) {
-        project.tasks.withType(CreateStartScripts) { startScriptTask ->
+        project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
+            // workaround for shadow bug https://github.com/johnrengelman/shadow/issues/572
+            if(GradleVersion.current() >= GradleVersion.version('6.4')) {
+                if(!startScriptTask.mainClass.present) {
+                    startScriptTask.mainClass.set(startScriptTask.mainClassName)
+                }
+            }
             startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
             if(asRuntimeImage) {
                 unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
