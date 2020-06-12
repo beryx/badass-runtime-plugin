@@ -28,6 +28,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -138,7 +139,7 @@ class Util {
     }
 
     @CompileDynamic
-    public static File getArchiveFile(Project project) {
+    static File getArchiveFile(Project project) {
         Jar jarTask = (Jar)project.tasks.getByName(JavaPlugin.JAR_TASK_NAME)
         if(GradleVersion.current() < GradleVersion.version('5.1')) {
             return jarTask.archivePath
@@ -147,7 +148,7 @@ class Util {
         }
     }
 
-    public static File getMainDistJarFile(Project project) {
+    static File getMainDistJarFile(Project project) {
         File jarFile = getArchiveFile(project)
         if(project.tasks.findByName('installShadowDist')) {
             def baseName = jarFile.name - '.jar'
@@ -155,4 +156,28 @@ class Util {
         }
         jarFile
     }
+
+    static String getMainClass(Project project) {
+        def mainClass = getRawMainClass(project)
+        if(!mainClass) throw new GradleException("mainClass not configured")
+        int pos = mainClass.lastIndexOf('/')
+        if(pos < 0) return mainClass
+        mainClass.substring(pos + 1)
+    }
+
+    @CompileDynamic
+    static String getRawMainClass(Project project) {
+        String mainClass
+        if(GradleVersion.current() < GradleVersion.version('6.4')) {
+            def convention = project.convention.plugins['application'] as ApplicationPluginConvention
+            mainClass = convention.mainClassName
+            if(!mainClass) {
+                mainClass = project['mainClassName'] as String
+            }
+        } else {
+            mainClass = project.tasks.run.mainClass.get()
+        }
+        mainClass
+    }
+
 }

@@ -96,6 +96,6 @@ class RuntimePluginSpec extends Specification {
         ['java.naming']                             | true               | false            | '4.8'
         ['java.naming', 'java.xml']                 | true               | true             | '5.4.1'
         ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '6.3'
-        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '6.4.1'
+        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '6.5'
     }
 }

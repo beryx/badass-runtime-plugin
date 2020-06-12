@@ -17,6 +17,7 @@ dependencies {
 }
 
 mainClassName = 'org.example.runtime.Hello'
+
 jar {
     manifest {
         attributes 'Implementation-Title': "runtime-hello",

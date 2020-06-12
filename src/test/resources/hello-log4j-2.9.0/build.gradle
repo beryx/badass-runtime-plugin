@@ -18,11 +18,14 @@ dependencies {
     compile "javax.xml.bind:jaxb-api:2.3.0"
 }
 
-mainClassName = 'org.example.runtime.hello.Hello'
+application {
+    mainClass = 'org.example.runtime.hello.Hello'
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': "hello",
-                'Main-Class': mainClassName
+                'Main-Class': 'org.example.runtime.hello.Hello'
     }
 }
 
