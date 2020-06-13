@@ -202,6 +202,7 @@ class PackageUseScanner extends ClassVisitor {
 
     List<String> scan(File file) {
         def invalidEntries = []
+        LOGGER.debug("Scanning $file")
         Util.scan(file, { String basePath, String path, InputStream inputStream ->
             if(Util.isValidClassFileReference(path)) {
                 LOGGER.trace("processing: $path")

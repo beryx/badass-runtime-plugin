@@ -33,6 +33,8 @@ class SuggestedModulesBuilder {
 
     Set<String> getProjectModules(Project project) {
         Set<String> modules = []
+        def mainDistJarFile = Util.getMainDistJarFile(project)
+        modules.addAll(getModulesRequiredBy(mainDistJarFile))
         for(ResolvedDependency dep: project.configurations['runtimeClasspath'].resolvedConfiguration.firstLevelModuleDependencies) {
             def f = Util.getArtifact(dep)
             if(f) modules.addAll(getModulesRequiredBy(f))
@@ -44,6 +46,7 @@ class SuggestedModulesBuilder {
     }
 
     Set<String> getModulesRequiredBy(File jarOrDir) {
+        LOGGER.debug("Detecting modules required by $jarOrDir")
         def scanner = new PackageUseScanner()
         def invalidFiles = scanner.scan(jarOrDir)
         if(invalidFiles) {

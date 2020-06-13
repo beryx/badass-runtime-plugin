@@ -32,12 +32,20 @@ class RuntimePluginSpec extends Specification {
         println "CLEANUP"
     }
 
-    def setUpBuild(Collection<String> modules) {
+    def setUpBuild(Collection<String> modules, String gradleVersion) {
         new AntBuilder().copy( todir: testProjectDir.root ) {
             fileset( dir: 'src/test/resources/hello-logback' )
         }
 
         File buildFile = new File(testProjectDir.root, "build.gradle")
+        if(gradleVersion.startsWith("4.")) {
+            // com.github.johnrengelman.shadow 5.2.0 is not compatible with Gradle 4.X
+            buildFile.text = buildFile.text.replace(
+                "id 'com.github.johnrengelman.shadow' version '5.2.0'",
+                    "id 'com.github.johnrengelman.shadow' version '4.0.4'"
+                )
+        }
+        // id 'com.github.johnrengelman.shadow' version '5.2.0'
         buildFile << '''
             runtime {
                 options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
@@ -52,7 +60,7 @@ class RuntimePluginSpec extends Specification {
     @Unroll
     def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed with Gradle #gradleVersion"() {
         when:
-        setUpBuild(modules)
+        setUpBuild(modules, gradleVersion)
         BuildResult result
         try {
             result = GradleRunner.create()

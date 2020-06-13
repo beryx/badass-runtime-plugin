@@ -26,11 +26,9 @@ required modules or include unnecessary ones, so you may need to adjust it. +
 
 jpackageImage:: Uses the https://jdk.java.net/jpackage/[jpackage] tool to create a platform-specific application image.  +
     _depends on_: `runtime` +
-    _This task is experimental._
 
 jpackage:: Uses the https://jdk.java.net/jpackage/[jpackage] tool to create a platform-specific application installer.  +
     _depends on_: `jpackageImage` +
-    _This task is experimental._
 
 
 == Properties
@@ -112,7 +110,7 @@ The archived images will be available in `build/image-linux-x64.zip` and `build/
 
 == The jpackage script block
 
-This experimental script block allows you to customize the https://jdk.java.net/jpackage/[jpackage]-based generation of platform-specific application images and installers.
+This script block allows you to customize the https://jdk.java.net/jpackage/[jpackage]-based generation of platform-specific application images and installers.
 
 jpackageHome:: The path to the JDK providing the jpackage tool. +
     _defaultValue_: the first non-empty value from: +
