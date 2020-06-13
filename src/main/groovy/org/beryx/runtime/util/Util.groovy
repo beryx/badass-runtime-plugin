@@ -175,9 +175,26 @@ class Util {
                 mainClass = project['mainClassName'] as String
             }
         } else {
-            mainClass = project.tasks.run.mainClass.get()
+            mainClass = project.tasks.run.mainClass?.get()
         }
         mainClass
     }
 
+    @CompileDynamic
+    static List<String> getDefaultJvmArgs(Project project) {
+        try {
+            return project.application?.applicationDefaultJvmArgs
+        } catch (Exception e) {
+            return []
+        }
+    }
+
+    @CompileDynamic
+    static List<String> getDefaultArgs(Project project) {
+        try {
+            return project.tasks.run?.args
+        } catch (Exception e) {
+            return []
+        }
+    }
 }

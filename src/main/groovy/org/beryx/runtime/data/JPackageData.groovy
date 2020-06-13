@@ -16,9 +16,6 @@
 package org.beryx.runtime.data
 
 import org.beryx.runtime.util.Util
-import org.gradle.api.plugins.ApplicationPlugin
-import org.gradle.api.plugins.ApplicationPluginConvention
-import org.gradle.api.plugins.JavaPlugin
 
 import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
@@ -28,7 +25,6 @@ import groovy.transform.ToString
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 
@@ -72,7 +68,8 @@ class JPackageData {
     @Input
     List<String> installerOptions = []
 
-    @Input
+    List<String> args = []
+
     List<String> jvmArgs = []
 
     @Input @Optional
@@ -86,10 +83,19 @@ class JPackageData {
     }
 
     @Input
+    List<String> getArgs() {
+        this.@args ?: Util.getDefaultArgs(project)
+    }
+
+    @Input
+    List<String> getJvmArgs() {
+        this.@jvmArgs ?: Util.getDefaultJvmArgs(project)
+    }
+
+    @Input
     String getMainClass() {
         this.@mainClass ?: Util.getMainClass(project)
     }
-
     @Input
     String getImageName() {
         this.@imageName ?: project.name

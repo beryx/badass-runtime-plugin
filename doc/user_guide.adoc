@@ -161,7 +161,10 @@ installerName:: the argument passed to the `--name` option when running `jpackag
     _usage example_: `installerName = "MyApp"`
 
 jvmArgs:: list of JVM arguments to be passed to the virtual machine. +
-    _defaultValue_: an empty list
+    _defaultValue_: the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension
+
+args:: list of arguments to be passed to the application. +
+    _defaultValue_: the arguments configured in the `args` property of the `run` task
 
 appVersion:: the argument passed to the `--app-version` option when running `jpackage` when executing the `jpackage` and `jpackageImage` tasks. +
     _defaultValue_: the project version +

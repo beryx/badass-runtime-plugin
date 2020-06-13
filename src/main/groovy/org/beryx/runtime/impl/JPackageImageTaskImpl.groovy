@@ -67,6 +67,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             final def resourceOpts = resourceDir == null ? [] : [ '--resource-dir', resourceDir ]
 
             final def jvmArgs = (jpd.jvmArgs ? jpd.jvmArgs.collect{[ '--java-options', adjustArg(it) ]}.flatten() : [])
+            final def args = (jpd.args ? jpd.args.collect{['--arguments', adjustArg(it)]}.flatten() : [])
 
             commandLine = [jpackageExec,
                            '--type', 'app-image',
@@ -79,6 +80,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                            '--runtime-image', td.jreDir,
                            *resourceOpts,
                            *jvmArgs,
+                           *args,
                            *jpd.imageOptions]
         }
 
