@@ -93,7 +93,7 @@ $(addBlockSwitches);
 <h1>The Badass Runtime Plugin</h1>
 <div class="details">
 <span id="author" class="author">Serban Iordache</span><br>
-<span id="revnumber">version 1.8.6-SNAPSHOT</span>
+<span id="revnumber">version 1.9.2-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -175,7 +175,7 @@ While it might work with some combinations of older Java and Gradle versions, th
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="groovy">plugins {
-    id 'org.beryx.runtime' version '1.8.6-SNAPSHOT'
+    id 'org.beryx.runtime' version '1.9.2-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -248,14 +248,12 @@ required modules or include unnecessary ones, so you may need to adjust it.<br>
 <dt class="hdlist1">jpackageImage</dt>
 <dd>
 <p>Uses the <a href="https://jdk.java.net/jpackage/">jpackage</a> tool to create a platform-specific application image. <br>
-<em>depends on</em>: <code>runtime</code><br>
-<em>This task is experimental.</em></p>
+<em>depends on</em>: <code>runtime</code><br></p>
 </dd>
 <dt class="hdlist1">jpackage</dt>
 <dd>
 <p>Uses the <a href="https://jdk.java.net/jpackage/">jpackage</a> tool to create a platform-specific application installer. <br>
-<em>depends on</em>: <code>jpackageImage</code><br>
-<em>This task is experimental.</em></p>
+<em>depends on</em>: <code>jpackageImage</code><br></p>
 </dd>
 </dl>
 </div>
@@ -377,7 +375,7 @@ The archived images will be available in <code>build/image-linux-x64.zip</code> 
 <div class="sect2">
 <h3 id="_the_jpackage_script_block">The jpackage script block</h3>
 <div class="paragraph">
-<p>This experimental script block allows you to customize the <a href="https://jdk.java.net/jpackage/">jpackage</a>-based generation of platform-specific application images and installers.</p>
+<p>This script block allows you to customize the <a href="https://jdk.java.net/jpackage/">jpackage</a>-based generation of platform-specific application images and installers.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -449,7 +447,12 @@ It is also applicable when creating an application image when you want your own 
 <dt class="hdlist1">jvmArgs</dt>
 <dd>
 <p>list of JVM arguments to be passed to the virtual machine.<br>
-<em>defaultValue</em>: an empty list</p>
+<em>defaultValue</em>: the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension</p>
+</dd>
+<dt class="hdlist1">args</dt>
+<dd>
+<p>list of arguments to be passed to the application.<br>
+<em>defaultValue</em>: the arguments configured in the <code>args</code> property of the <code>run</code> task</p>
 </dd>
 <dt class="hdlist1">appVersion</dt>
 <dd>
@@ -565,7 +568,7 @@ Usually, you don&#8217;t need to set this property, unless you also explicitly s
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8.6-SNAPSHOT<br>
+Version 1.9.2-SNAPSHOT<br>
 </div>
 </div>
 </body>
