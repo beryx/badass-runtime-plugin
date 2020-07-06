@@ -29,6 +29,8 @@ import groovy.transform.ToString
 
 @CompileStatic
 class RuntimePluginExtension {
+    private final Project project
+
     final DirectoryProperty distDir
     final DirectoryProperty jreDir
     final DirectoryProperty imageDir
@@ -44,6 +46,7 @@ class RuntimePluginExtension {
     final Property<JPackageData> jpackageData
 
     RuntimePluginExtension(Project project) {
+        this.project = project
         distDir = Util.createDirectoryProperty(project)
 
         jreDir = Util.createDirectoryProperty(project)
@@ -85,7 +88,13 @@ class RuntimePluginExtension {
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
-        Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(name, jdkHome, options))
+        Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(project, name, jdkHome, options))
+    }
+
+    void targetPlatform(String name, Action<TargetPlatform> action) {
+        def targetPlatform = new TargetPlatform(project, name)
+        action.execute(targetPlatform)
+        Util.putToMapProvider(targetPlatforms, name, targetPlatform)
     }
 
     void jpackage(Action<JPackageData> action) {
