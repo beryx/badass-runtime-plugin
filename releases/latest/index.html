@@ -93,7 +93,7 @@ $(addBlockSwitches);
 <h1>The Badass Runtime Plugin</h1>
 <div class="details">
 <span id="author" class="author">Serban Iordache</span><br>
-<span id="revnumber">version 1.9.1</span>
+<span id="revnumber">version 1.10.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -175,7 +175,7 @@ While it might work with some combinations of older Java and Gradle versions, th
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="groovy">plugins {
-    id 'org.beryx.runtime' version '1.9.1'
+    id 'org.beryx.runtime' version '1.10.0'
 }</code></pre>
 </div>
 </div>
@@ -204,7 +204,7 @@ The sample below shows a few configuration options.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The source code is available on <a href="https://github.com/beryx/badass-runtime-plugin">GitHub</a> and is licensed under the <a href="https://github.com/beryx/badass-runtime-plugin/blob/v1.9.1/LICENSE">Apache-2.0 license</a>.
+The source code is available on <a href="https://github.com/beryx/badass-runtime-plugin">GitHub</a> and is licensed under the <a href="https://github.com/beryx/badass-runtime-plugin/blob/v1.10.0/LICENSE">Apache-2.0 license</a>.
 </td>
 </tr>
 </table>
@@ -338,7 +338,8 @@ To create images for other platforms, you need to call the <code>targetPlatform<
 determine the location of the image directory and of the image archive.<br>
 <span class="purple"><strong>jdkHome</strong></span>: the path to the target platform JDK.<br>
 <span class="purple"><strong>options</strong></span>: an optional list of platform-specific options.
-These options will pe passed to <em>jlink</em> in addition to those provided by the <code>options</code> property of the <code>runtime</code> extension.</p>
+These options will pe passed to <em>jlink</em> in addition to those provided by the <code>options</code> property of the <code>runtime</code> extension.<br>
+<em>NOTE</em>: This is only a convenience method. There is a more powerful <code>targetPlatform</code> method (described below), which allows configuring additional parameters of the target platform.</p>
 </dd>
 </dl>
 </div>
@@ -367,6 +368,73 @@ These options will pe passed to <em>jlink</em> in addition to those provided by 
 the plugin will generate the platform-specific images in the directories
 <code>build/image/hello-linux-x64</code> and <code>build/image/hello-linux-s390x</code>.
 The archived images will be available in <code>build/image-linux-x64.zip</code> and <code>build/image-linux-s390x.zip</code>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><span class="maroon">targetPlatform</span>(String <span class="purple">name</span>, Action&lt;TargetPlatform&gt; <span class="purple">action</span>)</dt>
+<dd>
+<p>This more powerful version of the <code>targetPlatform</code> method allows configuring the target platform parameters using a script block.<br>
+<span class="purple"><strong>name</strong></span>: an identifier of your choice that will be appended to the <code>imageDir</code> and <code>imageZip</code> properties to
+determine the location of the image directory and of the image archive.<br>
+<span class="purple"><strong>action</strong></span>: a script block for configuring the target platform parameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <em>Parameters:</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="purple"><strong>jdkHome</strong></span>: the path to the target platform JDK.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="purple"><strong>options</strong></span>: an optional list of platform-specific options.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <em>Methods:</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="maroon">addOptions</span>(String&#8230;&#8203; <span class="purple">options</span>): an alternative way of setting the <code>options</code> property.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="maroon">jdkDownload</span>(String <span class="purple">downloadUrl</span>, Closure <span class="purple">downloadConfig</span>=null): helper method for setting <span class="purple">jdkHome</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It downloads and unpacks a JDK distribution from the given URL.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The optional closure allows configuring the following parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">downloadDir</span>: the directory in which the distribution is downloaded and unpacked.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code><em>buildDir</em>/jdks/<em>targetPlatform-name</em></code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">archiveName</span>: the name under which the archived distribution should be saved.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>jdk</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">archiveExtension</span>: accepted values: <code>tar.gz</code> and <code>zip</code>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>null</code> (inferred from the URL)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">pathToHome</span>: the relative path to the JDK home in the unpacked distribution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>null</code> (inferred by scanning the unpacked distribution)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">overwrite</span>: if <code>true</code>, the plugin overwrites an already existing distribution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>false</code></p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 99.01%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="title">Usage example</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    targetPlatform(<span class="string"><span class="delimiter">&quot;</span><span class="content">linux-s390x</span><span class="delimiter">&quot;</span></span>) {
+        jdkHome = <span class="string"><span class="delimiter">&quot;</span><span class="content">/usr/lib/jvm/linux-s390x/jdk-14.0.1_7</span><span class="delimiter">&quot;</span></span>
+        addOptions(<span class="string"><span class="delimiter">&quot;</span><span class="content">--endian</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">big</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    targetPlatform(<span class="string"><span class="delimiter">&quot;</span><span class="content">win</span><span class="delimiter">&quot;</span></span>) {
+        jdkHome = jdkDownload(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7.1/OpenJDK14U-jdk_x64_windows_hotspot_14.0.1_7.zip</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    targetPlatform(<span class="string"><span class="delimiter">&quot;</span><span class="content">mac</span><span class="delimiter">&quot;</span></span>) {
+        jdkHome = jdkDownload(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7/OpenJDK14U-jdk_x64_mac_hotspot_14.0.1_7.tar.gz</span><span class="delimiter">&quot;</span></span>) {
+            downloadDir = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>buildDir</span><span class="content">/myMac</span><span class="delimiter">&quot;</span></span>
+            archiveName = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-mac-jdk</span><span class="delimiter">&quot;</span></span>
+            archiveExtension = <span class="string"><span class="delimiter">&quot;</span><span class="content">tar.gz</span><span class="delimiter">&quot;</span></span>
+            pathToHome = <span class="string"><span class="delimiter">&quot;</span><span class="content">jdk-14.0.1+7/Contents/Home</span><span class="delimiter">&quot;</span></span>
+            overwrite = <span class="predefined-constant">true</span>
+        }
+    }
+    ...
+}</code></pre>
+</div>
 </div></div></td>
 </tr>
 </tbody>
@@ -568,7 +636,7 @@ Usually, you don&#8217;t need to set this property, unless you also explicitly s
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9.1<br>
+Version 1.10.0<br>
 </div>
 </div>
 </body>
