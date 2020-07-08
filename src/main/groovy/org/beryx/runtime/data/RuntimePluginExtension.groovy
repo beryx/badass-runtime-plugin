@@ -25,7 +25,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
 import groovy.transform.CompileStatic
-import groovy.transform.ToString
 
 @CompileStatic
 class RuntimePluginExtension {
@@ -43,6 +42,7 @@ class RuntimePluginExtension {
     final Provider<Map<String, TargetPlatform>> targetPlatforms
     final Property<Integer> jvmVersion
 
+    final Property<LauncherData> launcherData
     final Property<JPackageData> jpackageData
 
     RuntimePluginExtension(Project project) {
@@ -74,8 +74,13 @@ class RuntimePluginExtension {
 
         jvmVersion = project.objects.property(Integer)
 
+        launcherData = project.objects.property(LauncherData)
+        def ld = new LauncherData()
+        ld.jvmArgs = Util.getDefaultJvmArgs(project)
+        launcherData.set(ld)
+
         jpackageData = project.objects.property(JPackageData)
-        def jpd = new JPackageData(project)
+        def jpd = new JPackageData(project, ld)
         jpackageData.set(jpd)
     }
 
@@ -95,6 +100,10 @@ class RuntimePluginExtension {
         def targetPlatform = new TargetPlatform(project, name)
         action.execute(targetPlatform)
         Util.putToMapProvider(targetPlatforms, name, targetPlatform)
+    }
+
+    void launcher(Action<LauncherData> action) {
+        action.execute(launcherData.get())
     }
 
     void jpackage(Action<JPackageData> action) {

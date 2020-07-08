@@ -162,8 +162,64 @@ runtime {
 ----
 |===
 
+[[scriptBlocks]]
+== Script blocks
 
-== The jpackage script block
+The `runtime` extension can also contain the script blocks detailed below.
+
+=== launcher
+
+The plugin generates script files for launching your application.
+You can customize these scripts by configuring the following properties in the `launcher` block.
+
+jvmArgs:: list of JVM arguments to be passed to the java executable. +
+_defaultValue_: the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension
+
+unixScriptTemplate:: the template for generating the script file for Unix-like systems. +
+_defaultValue_: null (the plugin uses its own template)
+
+windowsScriptTemplate:: the template for generating the script file for Windows-based systems. +
+_defaultValue_: null (the plugin uses its own template)
+
+The plugin uses http://docs.groovy-lang.org/latest/html/api/groovy/text/SimpleTemplateEngine.html[Groovy's SimpleTemplateEngine]
+to parse the templates, with the following variables available:
+
+- applicationName
+- mainClassName
+
+The values in the *jvmArgs* list may contain the placeholder `{{BIN_DIR}}`, which stands for the _bin_ directory of your custom runtime image.
+
+_Usage example_
+[source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
+.Groovy
+----
+runtime {
+    ...
+    launcher {
+        jvmArgs = ['-Dlog4j.debug=true', '-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml']
+        unixScriptTemplate = file('unixStartScript.txt')
+        windowsScriptTemplate = file('windowsStartScript.txt')
+    }
+    ...
+}
+----
+
+[source,kotlin,indent=0,subs="verbatim,attributes",role="secondary"]
+.Kotlin
+----
+runtime {
+    ...
+    launcher {
+        jvmArgs = listOf("-Dlog4j.debug=true", "-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml")
+        unixScriptTemplate = file("unixStartScript.txt")
+        windowsScriptTemplate = file("windowsStartScript.txt")
+    }
+    ...
+}
+----
+
+
+=== jpackage
 
 This script block allows you to customize the https://jdk.java.net/jpackage/[jpackage]-based generation of platform-specific application images and installers.
 

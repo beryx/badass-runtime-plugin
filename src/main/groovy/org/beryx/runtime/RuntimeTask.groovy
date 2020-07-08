@@ -17,16 +17,17 @@ package org.beryx.runtime
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.beryx.runtime.data.LauncherData
 import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.Directory
-import org.gradle.api.resources.TextResource
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
+import org.gradle.jvm.application.scripts.ScriptGenerator
+import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 import org.gradle.util.GradleVersion
 
 @CompileStatic
@@ -34,6 +35,11 @@ class RuntimeTask extends BaseTask {
     @Input
     Map<String, TargetPlatform> getTargetPlatforms() {
         extension.targetPlatforms.get()
+    }
+
+    @Input
+    LauncherData getLauncherData() {
+        extension.launcherData.get()
     }
 
     @InputDirectory
@@ -64,7 +70,7 @@ class RuntimeTask extends BaseTask {
             dependsOn(distTask)
         }
         project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
-            configureStartScripts(project, taskGraph.hasTask(this))
+            configureStartScripts(taskGraph.hasTask(this))
         }
     }
 
@@ -73,9 +79,13 @@ class RuntimeTask extends BaseTask {
         imageDir.asFile
     }
 
-    @CompileDynamic
-    static void configureStartScripts(Project project, boolean asRuntimeImage) {
+    void configureStartScripts(boolean asRuntimeImage) {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
+            startScriptTask.unixStartScriptGenerator
+            startScriptTask.doLast {
+                startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME')
+                startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replace('{{BIN_DIR}}', '%~dp0')
+            }
             // workaround for shadow bug https://github.com/johnrengelman/shadow/issues/572
             if(GradleVersion.current() >= GradleVersion.version('6.4')) {
                 if(!startScriptTask.mainClass.present) {
@@ -84,16 +94,16 @@ class RuntimeTask extends BaseTask {
             }
             startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
             if(asRuntimeImage) {
-                unixStartScriptGenerator.template = getTextResource(project, '/unixScriptTemplate.txt')
-                windowsStartScriptGenerator.template = getTextResource(project, '/windowsScriptTemplate.txt')
+                configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.unixScriptTemplate, '/unixScriptTemplate.txt')
+                configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.windowsScriptTemplate, '/windowsScriptTemplate.txt')
             }
         }
     }
 
-    static TextResource getTextResource(Project project, String path) {
-        def template = RuntimePlugin.class.getResource(path)
-        if(!template) throw new GradleException("Resource $path not found.")
-        project.resources.text.fromString(template.text)
+    void configureTemplate(ScriptGenerator scriptGenerator, File customTemplate, String resourceTemplate) {
+        def template = customTemplate ? customTemplate.toURI().toURL() : RuntimePlugin.class.getResource(resourceTemplate)
+        if(!template) throw new GradleException("Resource $resourceTemplate not found.")
+        ((TemplateBasedScriptGenerator)scriptGenerator).template = project.resources.text.fromString(template.text)
     }
 
     @TaskAction

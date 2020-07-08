@@ -32,6 +32,7 @@ import org.gradle.api.tasks.OutputDirectory
 @ToString(includeNames = true)
 class JPackageData {
     private final Project project
+    private final LauncherData launcherData
 
     @Input
     String jpackageHome
@@ -68,17 +69,18 @@ class JPackageData {
     @Input
     List<String> installerOptions = []
 
-    List<String> args = []
+    private List<String> args = []
 
-    List<String> jvmArgs = []
+    private List<String> jvmArgs = []
 
     @Input @Optional
     String mainJar
 
     String mainClass
 
-    JPackageData(Project project) {
+    JPackageData(Project project, LauncherData launcherData) {
         this.project = project
+        this.launcherData = launcherData
         this.jpackageHome = defaultJPackageHome
     }
 
@@ -89,7 +91,7 @@ class JPackageData {
 
     @Input
     List<String> getJvmArgs() {
-        this.@jvmArgs ?: Util.getDefaultJvmArgs(project)
+        this.@jvmArgs ?: launcherData.jvmArgs
     }
 
     @Input
