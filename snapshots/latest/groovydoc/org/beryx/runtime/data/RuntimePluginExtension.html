@@ -168,16 +168,21 @@ if (location.href.indexOf('is-external=true') == -1) {
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code><strong>org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
-                            <td class="colLast"><code><a href="#modules">modules</a></code><br></td>
+                            <td class="colFirst"><code><strong>org.gradle.api.provider.Property&lt;<a href='../../../../org/beryx/runtime/data/LauncherData.html' title='LauncherData'>LauncherData</a>&gt;</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#launcherData">launcherData</a></code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code><strong>org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
-                            <td class="colLast"><code><a href="#options">options</a></code><br></td>
+                            <td class="colLast"><code><a href="#modules">modules</a></code><br></td>
                         </tr>
                         
                         <tr class="altColor">
+                            <td class="colFirst"><code><strong>org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#options">options</a></code><br></td>
+                        </tr>
+                        
+                        <tr class="rowColor">
                             <td class="colFirst"><code><strong>org.gradle.api.provider.Provider&lt;java.util.Map&lt;java.lang.String, <a href='../../../../org/beryx/runtime/data/TargetPlatform.html' title='TargetPlatform'>TargetPlatform</a>&gt;&gt;</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#targetPlatforms">targetPlatforms</a></code><br></td>
                         </tr>
@@ -251,10 +256,16 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#targetPlatform(java.lang.String, java.lang.String, List<String>)">targetPlatform</a></strong>(java.lang.String name, java.lang.String jdkHome, java.util.List&lt;java.lang.String&gt; options = [])</code><br></td>
+                            <td class="colLast"><code><strong><a href="#launcher(Action<LauncherData>)">launcher</a></strong>(org.gradle.api.Action&lt;<a href='../../../../org/beryx/runtime/data/LauncherData.html' title='LauncherData'>LauncherData</a>&gt; action)</code><br></td>
                         </tr>
                         
                         <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>void</code></td>
+                            <td class="colLast"><code><strong><a href="#targetPlatform(java.lang.String, java.lang.String, List<String>)">targetPlatform</a></strong>(java.lang.String name, java.lang.String jdkHome, java.util.List&lt;java.lang.String&gt; options = [])</code><br></td>
+                        </tr>
+                        
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
                             <td class="colLast"><code><strong><a href="#targetPlatform(java.lang.String, Action<TargetPlatform>)">targetPlatform</a></strong>(java.lang.String name, org.gradle.api.Action&lt;<a href='../../../../org/beryx/runtime/data/TargetPlatform.html' title='TargetPlatform'>TargetPlatform</a>&gt; action)</code><br></td>
@@ -367,6 +378,14 @@ if (location.href.indexOf('is-external=true') == -1) {
                             </li>
                         </ul>
                     
+                        <a name="launcherData"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>final&nbsp;org.gradle.api.provider.Property&lt;<a href='../../../../org/beryx/runtime/data/LauncherData.html' title='LauncherData'>LauncherData</a>&gt; <strong>launcherData</strong></h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
                         <a name="modules"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
@@ -446,6 +465,14 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>void <strong>jpackage</strong>(org.gradle.api.Action&lt;<a href='../../../../org/beryx/runtime/data/JPackageData.html' title='JPackageData'>JPackageData</a>&gt; action)</h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="launcher(Action<LauncherData>)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>void <strong>launcher</strong>(org.gradle.api.Action&lt;<a href='../../../../org/beryx/runtime/data/LauncherData.html' title='LauncherData'>LauncherData</a>&gt; action)</h4>
                                 <p></p>
                             </li>
                         </ul>

@@ -161,38 +161,50 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>static&nbsp;void</code></td>
-                            <td class="colLast"><code><strong><a href="#configureStartScripts(org.gradle.api.Project, boolean)">configureStartScripts</a></strong>(org.gradle.api.Project project, boolean asRuntimeImage)</code><br></td>
+                            <td class="colLast"><code>void</code></td>
+                            <td class="colLast"><code><strong><a href="#configureStartScripts(boolean)">configureStartScripts</a></strong>(boolean asRuntimeImage)</code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>void</code></td>
+                            <td class="colLast"><code><strong><a href="#configureTemplate(org.gradle.jvm.application.scripts.ScriptGenerator, java.io.File, java.lang.String)">configureTemplate</a></strong>(org.gradle.jvm.application.scripts.ScriptGenerator scriptGenerator, java.io.File customTemplate, java.lang.String resourceTemplate)</code><br></td>
+                        </tr>
+                        
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>org.gradle.api.file.Directory</code></td>
                             <td class="colLast"><code><strong><a href="#getDistDir()">getDistDir</a></strong>()</code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>org.gradle.api.tasks.Sync</code></td>
                             <td class="colLast"><code><strong><a href="#getDistTask()">getDistTask</a></strong>()</code><br></td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>org.gradle.api.file.Directory</code></td>
                             <td class="colLast"><code><strong><a href="#getImageDir()">getImageDir</a></strong>()</code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.io.File</code></td>
                             <td class="colLast"><code><strong><a href="#getImageDirAsFile()">getImageDirAsFile</a></strong>()</code><br></td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>org.gradle.api.file.Directory</code></td>
                             <td class="colLast"><code><strong><a href="#getJreDir()">getJreDir</a></strong>()</code><br></td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code><a href='../../../org/beryx/runtime/data/LauncherData.html'>LauncherData</a></code></td>
+                            <td class="colLast"><code><strong><a href="#getLauncherData()">getLauncherData</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="altColor">
@@ -202,12 +214,6 @@ if (location.href.indexOf('is-external=true') == -1) {
                         </tr>
                         
                         <tr class="rowColor">
-                            <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>static&nbsp;org.gradle.api.resources.TextResource</code></td>
-                            <td class="colLast"><code><strong><a href="#getTextResource(org.gradle.api.Project, java.lang.String)">getTextResource</a></strong>(org.gradle.api.Project project, java.lang.String path)</code><br></td>
-                        </tr>
-                        
-                        <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
                             <td class="colLast"><code><strong><a href="#runtimeTaskAction()">runtimeTaskAction</a></strong>()</code><br></td>
@@ -264,11 +270,18 @@ if (location.href.indexOf('is-external=true') == -1) {
                 </a>
                     <h3>Method Detail</h3>
                     
-                        <a name="configureStartScripts(org.gradle.api.Project, boolean)"><!-- --></a>
+                        <a name="configureStartScripts(boolean)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>@groovy.transform.CompileDynamic
-static&nbsp;void <strong>configureStartScripts</strong>(org.gradle.api.Project project, boolean asRuntimeImage)</h4>
+                                <h4>void <strong>configureStartScripts</strong>(boolean asRuntimeImage)</h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="configureTemplate(org.gradle.jvm.application.scripts.ScriptGenerator, java.io.File, java.lang.String)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>void <strong>configureTemplate</strong>(org.gradle.jvm.application.scripts.ScriptGenerator scriptGenerator, java.io.File customTemplate, java.lang.String resourceTemplate)</h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -318,19 +331,20 @@ org.gradle.api.file.Directory <strong>getJreDir</strong>()</h4>
                             </li>
                         </ul>
                     
+                        <a name="getLauncherData()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@org.gradle.api.tasks.Input
+<a href='../../../org/beryx/runtime/data/LauncherData.html'>LauncherData</a> <strong>getLauncherData</strong>()</h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
                         <a name="getTargetPlatforms()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.Input
 java.util.Map&lt;java.lang.String, <a href='../../../org/beryx/runtime/data/TargetPlatform.html' title='TargetPlatform'>TargetPlatform</a>&gt; <strong>getTargetPlatforms</strong>()</h4>
-                                <p></p>
-                            </li>
-                        </ul>
-                    
-                        <a name="getTextResource(org.gradle.api.Project, java.lang.String)"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>static&nbsp;org.gradle.api.resources.TextResource <strong>getTextResource</strong>(org.gradle.api.Project project, java.lang.String path)</h4>
                                 <p></p>
                             </li>
                         </ul>

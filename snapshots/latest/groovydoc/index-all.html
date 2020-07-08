@@ -175,7 +175,9 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/JPackageTaskData.html#configureRuntimeImageDir(org.beryx.runtime.JreTask)" title="Method in JPackageTaskData">configureRuntimeImageDir(JreTask)</a></span> - Method in <a href="org/beryx/runtime/data/JPackageTaskData.html">JPackageTaskData</a>
 </dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#configureStartScripts(org.gradle.api.Project, boolean)" title="Method in RuntimeTask">configureStartScripts(Project, boolean)</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
+<dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#configureStartScripts(boolean)" title="Method in RuntimeTask">configureStartScripts(boolean)</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#configureTemplate(org.gradle.jvm.application.scripts.ScriptGenerator, java.io.File, java.lang.String)" title="Method in RuntimeTask">configureTemplate(ScriptGenerator, File, String)</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/impl/RuntimeTaskImpl.html#copyAppTo(java.io.File)" title="Method in RuntimeTaskImpl">copyAppTo(File)</a></span> - Method in <a href="org/beryx/runtime/impl/RuntimeTaskImpl.html">RuntimeTaskImpl</a>
 </dt><dd> <div class="block"></div></dd>
@@ -289,6 +291,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/JPackageData.html#getJvmArgs()" title="Method in JPackageData">getJvmArgs()</a></span> - Method in <a href="org/beryx/runtime/data/JPackageData.html">JPackageData</a>
 </dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#getLauncherData()" title="Method in RuntimeTask">getLauncherData()</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
+</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/JPackageData.html#getMainClass()" title="Method in JPackageData">getMainClass()</a></span> - Method in <a href="org/beryx/runtime/data/JPackageData.html">JPackageData</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/Util.html#getMainClass(org.gradle.api.Project)" title="Method in Util">getMainClass(Project)</a></span> - Method in <a href="org/beryx/runtime/util/Util.html">Util</a>
@@ -316,8 +320,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#getTargetPlatforms()" title="Method in RuntimeTask">getTargetPlatforms()</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/RuntimeZipTask.html#getTargetPlatforms()" title="Method in RuntimeZipTask">getTargetPlatforms()</a></span> - Method in <a href="org/beryx/runtime/RuntimeZipTask.html">RuntimeZipTask</a>
-</dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#getTextResource(org.gradle.api.Project, java.lang.String)" title="Method in RuntimeTask">getTextResource(Project, String)</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
 </dt><dd> <div class="block"></div></dd>
 </dl>
 
@@ -358,7 +360,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/JPackageData.html" title="Class in org.beryx.runtime.data">JPackageData</a></span> - Class in <a href="./org/beryx/runtime/data/package-summary.html">org.beryx.runtime.data</a>
 </dt><dd><div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/data/JPackageData.html#JPackageData(org.gradle.api.Project)" title="Constructor in JPackageData">JPackageData(Project)</a></span> - Constructor in <a href="org/beryx/runtime/data/JPackageData.html">JPackageData</a>
+<dt><span class="strong"><a href="org/beryx/runtime/data/JPackageData.html#JPackageData(org.gradle.api.Project, org.beryx.runtime.data.LauncherData)" title="Constructor in JPackageData">JPackageData(Project, LauncherData)</a></span> - Constructor in <a href="org/beryx/runtime/data/JPackageData.html">JPackageData</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/JPackageImageTask.html" title="Class in org.beryx.runtime">JPackageImageTask</a></span> - Class in <a href="./org/beryx/runtime/package-summary.html">org.beryx.runtime</a>
 </dt><dd><div class="block"></div></dd>
@@ -406,6 +408,10 @@ if (location.href.indexOf('is-external=true') == -1) {
 <h2 class="title">L</h2>
 <dl>
 
+<dt><span class="strong"><a href="org/beryx/runtime/data/RuntimePluginExtension.html#launcher(Action<LauncherData>)" title="Method in RuntimePluginExtension">launcher(Action&lt;LauncherData&gt;)</a></span> - Method in <a href="org/beryx/runtime/data/RuntimePluginExtension.html">RuntimePluginExtension</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/data/LauncherData.html" title="Class in org.beryx.runtime.data">LauncherData</a></span> - Class in <a href="./org/beryx/runtime/data/package-summary.html">org.beryx.runtime.data</a>
+</dt><dd><div class="block"></div></dd>
 </dl>
 
     
