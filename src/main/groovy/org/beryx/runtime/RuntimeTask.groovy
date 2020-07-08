@@ -83,7 +83,7 @@ class RuntimeTask extends BaseTask {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
             startScriptTask.unixStartScriptGenerator
             startScriptTask.doLast {
-                startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME')
+                startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME/bin')
                 startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replace('{{BIN_DIR}}', '%~dp0')
             }
             // workaround for shadow bug https://github.com/johnrengelman/shadow/issues/572
