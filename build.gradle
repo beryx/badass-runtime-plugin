@@ -71,6 +71,11 @@ license {
 
 configurations {
     compile {transitive = true}
+
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(shadowJar)
+    }
 }
 
 dependencies {
