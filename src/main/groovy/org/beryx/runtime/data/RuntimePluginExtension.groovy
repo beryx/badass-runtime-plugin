@@ -75,8 +75,7 @@ class RuntimePluginExtension {
         jvmVersion = project.objects.property(Integer)
 
         launcherData = project.objects.property(LauncherData)
-        def ld = new LauncherData()
-        ld.jvmArgs = Util.getDefaultJvmArgs(project)
+        def ld = new LauncherData(project)
         launcherData.set(ld)
 
         jpackageData = project.objects.property(JPackageData)

@@ -17,11 +17,29 @@ package org.beryx.runtime.data
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import org.beryx.runtime.util.Util
+import org.gradle.api.Project
+import org.gradle.api.tasks.Input
 
 @CompileStatic
 @ToString(includeNames = true)
 class LauncherData implements Serializable {
-    List<String> jvmArgs = []
+    transient private final Project project
+
+    private List<String> jvmArgs = []
+
+    LauncherData(Project project) {
+        this.project = project
+    }
+
+    @Input
     File unixScriptTemplate
+
+    @Input
     File windowsScriptTemplate
+
+    @Input
+    List<String> getJvmArgs() {
+        this.@jvmArgs ?: Util.getDefaultJvmArgs(project)
+    }
 }
