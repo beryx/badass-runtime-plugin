@@ -17,14 +17,19 @@ package org.beryx.runtime.data
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import org.beryx.runtime.RuntimePlugin
 import org.beryx.runtime.util.Util
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 
 @CompileStatic
 @ToString(includeNames = true)
-class LauncherData implements Serializable {
-    transient private final Project project
+class LauncherData {
+    private final Project project
 
     private List<String> jvmArgs = []
 
@@ -33,13 +38,34 @@ class LauncherData implements Serializable {
     }
 
     @Input
+    boolean noConsole = false
+
+    @InputFile @Optional
     File unixScriptTemplate
 
-    @Input
+    @InputFile @Optional
     File windowsScriptTemplate
 
     @Input
     List<String> getJvmArgs() {
         this.@jvmArgs ?: Util.getDefaultJvmArgs(project)
+    }
+
+    @Internal
+    URL getUnixTemplateUrl() {
+        if(unixScriptTemplate) return unixScriptTemplate.toURI().toURL()
+        def resourceName = '/unixScriptTemplate.txt'
+        def templateUrl = RuntimePlugin.class.getResource(resourceName)
+        if(!templateUrl) throw new GradleException("Resource $resourceName not found.")
+        return templateUrl
+    }
+
+    @Internal
+    URL getWindowsTemplateUrl() {
+        if(windowsScriptTemplate) return windowsScriptTemplate.toURI().toURL()
+        def resourceName = noConsole ? '/windowsScriptTemplateJavaw.txt' : '/windowsScriptTemplate.txt'
+        def templateUrl = RuntimePlugin.class.getResource(resourceName)
+        if(!templateUrl) throw new GradleException("Resource $resourceName not found.")
+        return templateUrl
     }
 }

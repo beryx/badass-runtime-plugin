@@ -37,7 +37,7 @@ class RuntimeTask extends BaseTask {
         extension.targetPlatforms.get()
     }
 
-    @Input
+    @Nested
     LauncherData getLauncherData() {
         extension.launcherData.get()
     }
@@ -94,15 +94,13 @@ class RuntimeTask extends BaseTask {
             }
             startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
             if(asRuntimeImage) {
-                configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.unixScriptTemplate, '/unixScriptTemplate.txt')
-                configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.windowsScriptTemplate, '/windowsScriptTemplate.txt')
+                configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.unixTemplateUrl)
+                configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.windowsTemplateUrl)
             }
         }
     }
 
-    void configureTemplate(ScriptGenerator scriptGenerator, File customTemplate, String resourceTemplate) {
-        def template = customTemplate ? customTemplate.toURI().toURL() : RuntimePlugin.class.getResource(resourceTemplate)
-        if(!template) throw new GradleException("Resource $resourceTemplate not found.")
+    void configureTemplate(ScriptGenerator scriptGenerator, URL template) {
         ((TemplateBasedScriptGenerator)scriptGenerator).template = project.resources.text.fromString(template.text)
     }
 

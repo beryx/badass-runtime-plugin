@@ -175,6 +175,10 @@ You can customize these scripts by configuring the following properties in the `
 jvmArgs:: list of JVM arguments to be passed to the java executable. +
 _defaultValue_: the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension
 
+noConsole:: This boolean property has an effect only on Windows. It is ignored on other platforms. +
+If true, the application will be launched without an associated console window (using `javaw` instead of `java`). +
+_defaultValue_: false
+
 unixScriptTemplate:: the template for generating the script file for Unix-like systems. +
 _defaultValue_: null (the plugin uses its own template)
 
