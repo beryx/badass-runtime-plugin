@@ -605,7 +605,9 @@ It is also applicable when creating an application image when you want your own 
 <dt class="hdlist1">jvmArgs</dt>
 <dd>
 <p>list of JVM arguments to be passed to the virtual machine.<br>
-<em>defaultValue</em>: the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension</p>
+    <em>defaultValue</em>: the <code>jvmArgs</code> value configured in the <code>launcher</code> block, or the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension.<br>
+NOTE: If the default value is used, and it contains the placeholder <code>{{BIN_DIR}}</code>, the plugin replaces this placeholder with <code>$APPDIR/..</code> when passing the arguments to <code>jpackage</code>.
+This is the correct approach in most cases. If it doesn&#8217;t work in your case, you need to explicitly configure <strong>jvmArgs</strong> in the <code>jpackage</code> block.</p>
 </dd>
 <dt class="hdlist1">args</dt>
 <dd>
