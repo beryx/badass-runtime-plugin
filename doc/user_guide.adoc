@@ -274,7 +274,9 @@ installerName:: the argument passed to the `--name` option when running `jpackag
     _usage example_: `installerName = "MyApp"`
 
 jvmArgs:: list of JVM arguments to be passed to the virtual machine. +
-    _defaultValue_: the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension
+    _defaultValue_: the `jvmArgs` value configured in the `launcher` block, or the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension. +
+NOTE: If the default value is used, and it contains the placeholder `{{BIN_DIR}}`, the plugin replaces this placeholder with `$APPDIR/..` when passing the arguments to `jpackage`.
+This is the correct approach in most cases. If it doesn't work in your case, you need to explicitly configure *jvmArgs* in the `jpackage` block.
 
 args:: list of arguments to be passed to the application. +
     _defaultValue_: the arguments configured in the `args` property of the `run` task

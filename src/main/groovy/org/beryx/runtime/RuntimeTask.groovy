@@ -81,10 +81,10 @@ class RuntimeTask extends BaseTask {
 
     void configureStartScripts(boolean asRuntimeImage) {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
-            startScriptTask.unixStartScriptGenerator
+            startScriptTask.defaultJvmOpts = launcherData.jvmArgs
             startScriptTask.doLast {
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME/bin')
-                startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replace('{{BIN_DIR}}', '%~dp0')
+                startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replace('{{BIN_DIR}}', '%APP_HOME%\\\\bin')
             }
             // workaround for shadow bug https://github.com/johnrengelman/shadow/issues/572
             if(GradleVersion.current() >= GradleVersion.version('6.4')) {
