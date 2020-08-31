@@ -193,6 +193,8 @@ to parse the templates, with the following variables available:
 
 The values in the *jvmArgs* list may contain the placeholder `{{BIN_DIR}}`, which stands for the _bin_ directory of your custom runtime image.
 
+You can include the value of an environment variable in a JVM argument by enclosing the name of the environment variable between `{{` and `}}`.
+
 _Usage example_
 [source,groovy,indent=0,subs="verbatim,attributes",role="primary"]
 .Groovy
@@ -200,7 +202,10 @@ _Usage example_
 runtime {
     ...
     launcher {
-        jvmArgs = ['-Dlog4j.debug=true', '-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml']
+        jvmArgs = [
+            '-Dlog4j.debug=true', '-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml',
+            '-DdbHost', '{{PGHOST}}'
+        ]
         unixScriptTemplate = file('unixStartScript.txt')
         windowsScriptTemplate = file('windowsStartScript.txt')
     }
@@ -276,7 +281,8 @@ installerName:: the argument passed to the `--name` option when running `jpackag
 jvmArgs:: list of JVM arguments to be passed to the virtual machine. +
     _defaultValue_: the `jvmArgs` value configured in the `launcher` block, or the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension. +
 NOTE: If the default value is used, and it contains the placeholder `{{BIN_DIR}}`, the plugin replaces this placeholder with `$APPDIR/..` when passing the arguments to `jpackage`.
-This is the correct approach in most cases. If it doesn't work in your case, you need to explicitly configure *jvmArgs* in the `jpackage` block.
+This is the correct approach in most cases. If it doesn't work in your case, you need to explicitly configure *jvmArgs* in the `jpackage` block. +
+Currently, jpackage doesn't support environment variables in `--java-options`. Therefore, you cannot use environment variable names enclosed between `{{` and `}}` in `jvmArgs`.
 
 args:: list of arguments to be passed to the application. +
     _defaultValue_: the arguments configured in the `args` property of the `run` task
