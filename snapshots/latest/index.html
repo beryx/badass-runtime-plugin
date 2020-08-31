@@ -499,6 +499,9 @@ to parse the templates, with the following variables available:</p>
 <p>The values in the <strong>jvmArgs</strong> list may contain the placeholder <code>{{BIN_DIR}}</code>, which stands for the <em>bin</em> directory of your custom runtime image.</p>
 </div>
 <div class="paragraph">
+<p>You can include the value of an environment variable in a JVM argument by enclosing the name of the environment variable between <code>{{</code> and <code>}}</code>.</p>
+</div>
+<div class="paragraph">
 <p><em>Usage example</em></p>
 </div>
 <div class="listingblock primary">
@@ -507,7 +510,10 @@ to parse the templates, with the following variables available:</p>
 <pre class="CodeRay highlight"><code data-lang="groovy">runtime {
     ...
     launcher {
-        jvmArgs = [<span class="string"><span class="delimiter">'</span><span class="content">-Dlog4j.debug=true</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml</span><span class="delimiter">'</span></span>]
+        jvmArgs = [
+            <span class="string"><span class="delimiter">'</span><span class="content">-Dlog4j.debug=true</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml</span><span class="delimiter">'</span></span>,
+            <span class="string"><span class="delimiter">'</span><span class="content">-DdbHost</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">{{PGHOST}}</span><span class="delimiter">'</span></span>
+        ]
         unixScriptTemplate = file(<span class="string"><span class="delimiter">'</span><span class="content">unixStartScript.txt</span><span class="delimiter">'</span></span>)
         windowsScriptTemplate = file(<span class="string"><span class="delimiter">'</span><span class="content">windowsStartScript.txt</span><span class="delimiter">'</span></span>)
     }
@@ -607,7 +613,8 @@ It is also applicable when creating an application image when you want your own 
 <p>list of JVM arguments to be passed to the virtual machine.<br>
     <em>defaultValue</em>: the <code>jvmArgs</code> value configured in the <code>launcher</code> block, or the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension.<br>
 NOTE: If the default value is used, and it contains the placeholder <code>{{BIN_DIR}}</code>, the plugin replaces this placeholder with <code>$APPDIR/..</code> when passing the arguments to <code>jpackage</code>.
-This is the correct approach in most cases. If it doesn&#8217;t work in your case, you need to explicitly configure <strong>jvmArgs</strong> in the <code>jpackage</code> block.</p>
+This is the correct approach in most cases. If it doesn&#8217;t work in your case, you need to explicitly configure <strong>jvmArgs</strong> in the <code>jpackage</code> block.<br>
+Currently, jpackage doesn&#8217;t support environment variables in <code>--java-options</code>. Therefore, you cannot use environment variable names enclosed between <code>{{</code> and <code>}}</code> in <code>jvmArgs</code>.</p>
 </dd>
 <dt class="hdlist1">args</dt>
 <dd>
