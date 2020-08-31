@@ -344,7 +344,7 @@ determine the location of the image directory and of the image archive.<br>
 <span class="purple"><strong>jdkHome</strong></span>: the path to the target platform JDK.<br>
 <span class="purple"><strong>options</strong></span>: an optional list of platform-specific options.
 These options will pe passed to <em>jlink</em> in addition to those provided by the <code>options</code> property of the <code>runtime</code> extension.<br>
-<em>NOTE</em>: This is only a convenience method. There is a more powerful <code>targetPlatform</code> method (described below), which allows configuring additional parameters of the target platform.</p>
+<span class="purple"><em>NOTE</em></span>: This is only a convenience method. There is a more powerful <code>targetPlatform</code> method (described below), which allows configuring additional parameters of the target platform.</p>
 </dd>
 </dl>
 </div>
@@ -527,7 +527,10 @@ to parse the templates, with the following variables available:</p>
 <pre class="CodeRay highlight"><code data-lang="kotlin">runtime {
     ...
     launcher {
-        jvmArgs = listOf(&quot;-Dlog4j.debug=true&quot;, &quot;-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml&quot;)
+        jvmArgs = listOf(
+            &quot;-Dlog4j.debug=true&quot;, &quot;-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml&quot;,
+            &quot;-DdbHost&quot;, &quot;{{PGHOST}}&quot;
+        )
         unixScriptTemplate = file(&quot;unixStartScript.txt&quot;)
         windowsScriptTemplate = file(&quot;windowsStartScript.txt&quot;)
     }
@@ -612,7 +615,7 @@ It is also applicable when creating an application image when you want your own 
 <dd>
 <p>list of JVM arguments to be passed to the virtual machine.<br>
     <em>defaultValue</em>: the <code>jvmArgs</code> value configured in the <code>launcher</code> block, or the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension.<br>
-NOTE: If the default value is used, and it contains the placeholder <code>{{BIN_DIR}}</code>, the plugin replaces this placeholder with <code>$APPDIR/..</code> when passing the arguments to <code>jpackage</code>.
+<span class="purple"><em>NOTE</em></span>: If the default value is used, and it contains the placeholder <code>{{BIN_DIR}}</code>, the plugin replaces this placeholder with <code>$APPDIR/..</code> when passing the arguments to <code>jpackage</code>.
 This is the correct approach in most cases. If it doesn&#8217;t work in your case, you need to explicitly configure <strong>jvmArgs</strong> in the <code>jpackage</code> block.<br>
 Currently, jpackage doesn&#8217;t support environment variables in <code>--java-options</code>. Therefore, you cannot use environment variable names enclosed between <code>{{</code> and <code>}}</code> in <code>jvmArgs</code>.</p>
 </dd>
