@@ -87,7 +87,7 @@ determine the location of the image directory and of the image archive. +
 [purple]##**jdkHome**##: the path to the target platform JDK. +
 [purple]##**options**##: an optional list of platform-specific options.
 These options will pe passed to _jlink_ in addition to those provided by the `options` property of the `runtime` extension. +
-_NOTE_: This is only a convenience method. There is a more powerful `targetPlatform` method (described below), which allows configuring additional parameters of the target platform.
+[purple]##_NOTE_##: This is only a convenience method. There is a more powerful `targetPlatform` method (described below), which allows configuring additional parameters of the target platform.
 
 [cols="1,100", frame=none, grid=none]
 |===
@@ -219,7 +219,10 @@ runtime {
 runtime {
     ...
     launcher {
-        jvmArgs = listOf("-Dlog4j.debug=true", "-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml")
+        jvmArgs = listOf(
+            "-Dlog4j.debug=true", "-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml",
+            "-DdbHost", "{{PGHOST}}"
+        )
         unixScriptTemplate = file("unixStartScript.txt")
         windowsScriptTemplate = file("windowsStartScript.txt")
     }
@@ -280,7 +283,7 @@ installerName:: the argument passed to the `--name` option when running `jpackag
 
 jvmArgs:: list of JVM arguments to be passed to the virtual machine. +
     _defaultValue_: the `jvmArgs` value configured in the `launcher` block, or the arguments configured in the `applicationDefaultJvmArgs` property of the `application` extension. +
-NOTE: If the default value is used, and it contains the placeholder `{{BIN_DIR}}`, the plugin replaces this placeholder with `$APPDIR/..` when passing the arguments to `jpackage`.
+[purple]##_NOTE_##: If the default value is used, and it contains the placeholder `{{BIN_DIR}}`, the plugin replaces this placeholder with `$APPDIR/..` when passing the arguments to `jpackage`.
 This is the correct approach in most cases. If it doesn't work in your case, you need to explicitly configure *jvmArgs* in the `jpackage` block. +
 Currently, jpackage doesn't support environment variables in `--java-options`. Therefore, you cannot use environment variable names enclosed between `{{` and `}}` in `jvmArgs`.
 
