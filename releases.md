@@ -93,6 +93,10 @@
   - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.2.0)
   - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.2.0/groovydoc)
 
+**Release 1.11.5**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.5)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.5/groovydoc)
+
 **Release 1.11.4**
   - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.4)
   - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.4/groovydoc)
