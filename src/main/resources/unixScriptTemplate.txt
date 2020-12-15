@@ -151,4 +151,4 @@ if [ "\$(uname)" = "Darwin" ] && [ "\$HOME" = "\$PWD" ]; then
   cd "\$(dirname "\$0")"
 fi
 
-cd "\$APP_HOME/bin" && exec "\$JAVACMD" "\$@" && cd "\$SAVED"
+exec "\$JAVACMD" "\$@"
