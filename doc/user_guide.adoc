@@ -191,7 +191,10 @@ to parse the templates, with the following variables available:
 - applicationName
 - mainClassName
 
-The values in the *jvmArgs* list may contain the placeholder `{{BIN_DIR}}`, which stands for the _bin_ directory of your custom runtime image.
+The values in the *jvmArgs* list may contain the following placeholders:
+
+- `{{BIN_DIR}}` - the _bin_ directory of the custom runtime image
+- `{{HOME_DIR}}` - user's home directory (`$HOME` on Unix-like systems, `%USERPROFILE%` on Windows)
 
 You can include the value of an environment variable in a JVM argument by enclosing the name of the environment variable between `{{` and `}}`.
 
