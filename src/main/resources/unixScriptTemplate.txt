@@ -152,3 +152,4 @@ if [ "\$(uname)" = "Darwin" ] && [ "\$HOME" = "\$PWD" ]; then
 fi
 
 exec "\$JAVACMD" "\$@"
+<% if ( System.properties['BADASS_RUN_IN_BIN_DIR'] ) { %>cd "\$APP_HOME/bin" && <% } %>exec "\$JAVACMD" "\$@"

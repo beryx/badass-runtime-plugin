@@ -53,6 +53,7 @@ set CLASSPATH="%JAVA_HOME:"=%/lib/*"
 
 @rem Execute ${applicationName}
 %JAVA_EXE% %DEFAULT_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath %CLASSPATH% ${mainClassName} %CMD_LINE_ARGS%
+<% if ( System.properties['BADASS_RUN_IN_BIN_DIR'] ) { %>pushd %DIRNAME% & <% } %>%JAVA_EXE% %DEFAULT_JVM_OPTS% %CDS_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath %CLASSPATH% ${mainClassName} %CMD_LINE_ARGS%<% if ( System.properties['BADASS_RUN_IN_BIN_DIR'] ) { %> & popd<% } %>
 
 :end
 @rem End local scope for the variables with windows NT shell

@@ -40,6 +40,9 @@ class LauncherData {
     @Input
     boolean noConsole = false
 
+    @Input
+    boolean runInBinDir = false
+
     @InputFile @Optional
     File unixScriptTemplate
 

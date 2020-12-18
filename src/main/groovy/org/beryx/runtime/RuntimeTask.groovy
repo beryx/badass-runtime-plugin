@@ -99,6 +99,9 @@ class RuntimeTask extends BaseTask {
             }
             startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
             if(asRuntimeImage) {
+                if(launcherData.runInBinDir) {
+                    System.properties['BADASS_RUN_IN_BIN_DIR'] = 'true'
+                }
                 configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.unixTemplateUrl)
                 configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.windowsTemplateUrl)
             }
