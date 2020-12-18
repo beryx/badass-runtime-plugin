@@ -143,13 +143,20 @@ save () {
 }
 APP_ARGS=\$(save "\$@")
 
+<% if ( System.properties['BADASS_CDS_ARCHIVE_FILE_LINUX'] ) { %>
+CDS_ARCHIVE_FILE="<%= System.properties['BADASS_CDS_ARCHIVE_FILE_LINUX'] %>"
+CDS_JVM_OPTS="-XX:ArchiveClassesAtExit=\$CDS_ARCHIVE_FILE"
+if [ -f "\$CDS_ARCHIVE_FILE" ]; then
+    CDS_JVM_OPTS="-XX:SharedArchiveFile=\$CDS_ARCHIVE_FILE"
+fi
+<% } %>
+
 # Collect all arguments for the java command, following the shell quoting and substitution rules
-eval set -- \$DEFAULT_JVM_OPTS \$JAVA_OPTS \$${optsEnvironmentVar} <% if ( appNameSystemProperty ) { %>"\"-D${appNameSystemProperty}=\$APP_BASE_NAME\"" <% } %>-classpath "\"\$CLASSPATH\"" ${mainClassName} "\$APP_ARGS"
+eval set -- \$DEFAULT_JVM_OPTS \$CDS_JVM_OPTS \$JAVA_OPTS \$${optsEnvironmentVar} <% if ( appNameSystemProperty ) { %>"\"-D${appNameSystemProperty}=\$APP_BASE_NAME\"" <% } %>-classpath "\"\$CLASSPATH\"" ${mainClassName} "\$APP_ARGS"
 
 # by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
 if [ "\$(uname)" = "Darwin" ] && [ "\$HOME" = "\$PWD" ]; then
   cd "\$(dirname "\$0")"
 fi
 
-exec "\$JAVACMD" "\$@"
 <% if ( System.properties['BADASS_RUN_IN_BIN_DIR'] ) { %>cd "\$APP_HOME/bin" && <% } %>exec "\$JAVACMD" "\$@"

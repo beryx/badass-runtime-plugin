@@ -162,6 +162,16 @@ runtime {
 ----
 |===
 
+[maroon]##enableCds##(Action<CdsData> [purple]##action## = null):: [red]##Experimental - requires Java 13 or newer## +
+Enables Class Data Sharing (CDS). +
+[purple]##**action**##: an optional script block for configuring the class data sharing. +
+&nbsp;&nbsp;&nbsp;&nbsp; _Parameters:_ +
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [purple]##**sharedArchiveFile**##: the path and name of the class data sharing archive file. +
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _defaultValue:_ +
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `lib/server/<appName>.jsa` on Unix-like systems +
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `bin\server\<appName>.jsa` on Windows
+
+
 [[scriptBlocks]]
 == Script blocks
 

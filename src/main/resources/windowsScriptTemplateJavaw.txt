@@ -51,8 +51,13 @@ set CMD_LINE_ARGS=%*
 
 set CLASSPATH="%JAVA_HOME:"=%/lib/*"
 
+<% if ( System.properties['BADASS_CDS_ARCHIVE_FILE_WINDOWS'] ) { %>
+set CDS_ARCHIVE_FILE="<%= System.properties['BADASS_CDS_ARCHIVE_FILE_WINDOWS'] %>"
+set CDS_JVM_OPTS=-XX:ArchiveClassesAtExit=%CDS_ARCHIVE_FILE%
+if exist %CDS_ARCHIVE_FILE% set CDS_JVM_OPTS=-XX:SharedArchiveFile=%CDS_ARCHIVE_FILE%
+<% } %>
+
 @rem Execute ${applicationName}
-start "${applicationName}" %JAVA_EXE% %DEFAULT_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath %CLASSPATH% ${mainClassName} %CMD_LINE_ARGS%
 <% if ( System.properties['BADASS_RUN_IN_BIN_DIR'] ) { %>pushd %DIRNAME% & <% } %>start "${applicationName}" %JAVA_EXE% %DEFAULT_JVM_OPTS% %CDS_JVM_OPTS% %JAVA_OPTS% %${optsEnvironmentVar}% <% if ( appNameSystemProperty ) { %>"-D${appNameSystemProperty}=%APP_BASE_NAME%"<% } %> -classpath %CLASSPATH% ${mainClassName} %CMD_LINE_ARGS%<% if ( System.properties['BADASS_RUN_IN_BIN_DIR'] ) { %> & popd<% } %>
 
 :end

@@ -44,6 +44,7 @@ class RuntimePluginExtension {
 
     final Property<LauncherData> launcherData
     final Property<JPackageData> jpackageData
+    final Property<CdsData> cdsData
 
     RuntimePluginExtension(Project project) {
         this.project = project
@@ -81,6 +82,9 @@ class RuntimePluginExtension {
         jpackageData = project.objects.property(JPackageData)
         def jpd = new JPackageData(project, ld)
         jpackageData.set(jpd)
+
+        cdsData = project.objects.property(CdsData)
+        cdsData.set(new CdsData())
     }
 
     void addOptions(String... options) {
@@ -99,6 +103,13 @@ class RuntimePluginExtension {
         def targetPlatform = new TargetPlatform(project, name)
         action.execute(targetPlatform)
         Util.putToMapProvider(targetPlatforms, name, targetPlatform)
+    }
+
+    void enableCds(Action<CdsData> action = null) {
+        cdsData.get().enabled = true
+        if(action) {
+            action.execute(cdsData.get())
+        }
     }
 
     void launcher(Action<LauncherData> action) {

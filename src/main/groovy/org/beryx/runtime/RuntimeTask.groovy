@@ -17,6 +17,7 @@ package org.beryx.runtime
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.beryx.runtime.data.CdsData
 import org.beryx.runtime.data.LauncherData
 import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
@@ -40,6 +41,11 @@ class RuntimeTask extends BaseTask {
     @Nested
     LauncherData getLauncherData() {
         extension.launcherData.get()
+    }
+
+    @Nested
+    CdsData getCdsData() {
+        extension.cdsData.get()
     }
 
     @InputDirectory
@@ -102,9 +108,23 @@ class RuntimeTask extends BaseTask {
                 if(launcherData.runInBinDir) {
                     System.properties['BADASS_RUN_IN_BIN_DIR'] = 'true'
                 }
+                configureCds()
                 configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.unixTemplateUrl)
                 configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.windowsTemplateUrl)
             }
+        }
+    }
+
+    @CompileDynamic
+    private void configureCds() {
+        if (cdsData.enabled) {
+            this.doLast {
+                project.exec {
+                    commandLine = ["$imageDir/bin/java", "-Xshare:dump"]
+                }
+            }
+            System.properties['BADASS_CDS_ARCHIVE_FILE_LINUX'] = cdsData.sharedArchiveFile ?: '$APP_HOME/lib/server/$APP_NAME.jsa'
+            System.properties['BADASS_CDS_ARCHIVE_FILE_WINDOWS'] = cdsData.sharedArchiveFile ?: '%~dp0\\server\\%~n0.jsa'
         }
     }
 
