@@ -74,7 +74,7 @@ class JPackageTaskData {
             }
         }
         if (jpackageData.targetPlatformName) {
-            jreDir = new File(jreTask.jreDirAsFile, "$jpackageData.installerName-$jpackageData.targetPlatformName")
+            jreDir = new File(jreTask.jreDirAsFile, "$jreTask.project.name-$jpackageData.targetPlatformName")
         } else {
             jreDir = jreTask.jreDirAsFile
         }
