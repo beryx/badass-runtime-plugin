@@ -25,7 +25,7 @@ import org.gradle.api.tasks.TaskAction
 class SuggestModulesTask extends BaseTask {
     @Input
     String getJavaHome() {
-        extension.javaHome.get()
+        javaHomeOrDefault
     }
 
     SuggestModulesTask() {

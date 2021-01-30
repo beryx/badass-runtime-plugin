@@ -30,10 +30,12 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.util.GradleVersion
 
 import java.util.zip.ZipEntry
@@ -195,6 +197,21 @@ class Util {
             return project.tasks.run?.args
         } catch (Exception e) {
             return []
+        }
+    }
+
+    static String getDefaultToolchainJavaHome(Project project) {
+        if(GradleVersion.current() < GradleVersion.version('6.7')) return null
+        try {
+            def defaultToolchain = project.extensions.getByType(JavaPluginExtension)?.toolchain
+            if(!defaultToolchain) return null
+            JavaToolchainService service = project.extensions.getByType(JavaToolchainService)
+            def launcherProvider = service?.launcherFor(defaultToolchain)
+            if(!launcherProvider?.present) return null
+            return launcherProvider.get()?.metadata?.installationPath?.asFile?.absolutePath
+        } catch(e) {
+            project.logger.warn("Cannot retrieve Java toolchain: $e")
+            return null
         }
     }
 }
