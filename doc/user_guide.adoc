@@ -302,7 +302,7 @@ jpackageHome:: The path to the JDK providing the jpackage tool. +
         pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the https://docs.gradle.org/current/userguide/toolchains.html[Java toolchain] configured in the Gradle script  +
         pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the `java.home` system property (only if it points to a JRE containing the `jpackage` tool) +
         pass:[&nbsp;&nbsp;&nbsp;&nbsp;] - the `JAVA_HOME` environment variable +
-    _usage example_: `jpackageHome = "/usr/lib/jvm/jdk14"`
+    _usage example_: `jpackageHome = "/usr/lib/jvm/jdk16"`
 
 outputDir:: Convenience property for setting both `imageOutputDir` and
 `installerOutputDir` with the value _buildDir_/_outputDir_. +
@@ -383,7 +383,7 @@ _Usage example_
 runtime {
     ...
     jpackage {
-        jpackageHome = '/usr/lib/jvm/jdk14'
+        jpackageHome = '/usr/lib/jvm/jdk16'
         outputDir = 'my-packaging'
         // imageOutputDir = file("$buildDir/my-packaging-image")
         // installerOutputDir = file("$buildDir/my-packaging-installer")
@@ -404,7 +404,7 @@ runtime {
 runtime {
     ...
     jpackage {
-        jpackageHome = "/usr/lib/jvm/jdk14"
+        jpackageHome = "/usr/lib/jvm/jdk16"
         outputDir = "my-packaging"
         // imageOutputDir = file("$buildDir/my-packaging-image")
         // installerOutputDir = file("$buildDir/my-packaging-installer")

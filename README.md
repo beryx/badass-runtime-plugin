@@ -5,7 +5,7 @@
 ## Badass Runtime Plugin ##
 
 Using this Gradle plugin you can create custom runtime images for non-modularized applications.
-The plugin also lets you create an application installer with the [jpackage](https://jdk.java.net/jpackage/) tool introduced in Java 14.
+The plugin also lets you create an application installer with the [jpackage](https://openjdk.java.net/jeps/392) tool.
 
 
 :bulb: For modularized applications use the [Badass-JLink plugin](https://badass-jlink-plugin.beryx.org/releases/latest/).

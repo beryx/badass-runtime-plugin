@@ -2,7 +2,7 @@
 = Introduction
 
 The badass-runtime plugin allows you to create custom runtime images for non-modular applications.
-It also lets you create an application installer with the https://jdk.java.net/jpackage/[jpackage] tool introduced in Java 14.
+It also lets you create an application installer with the https://openjdk.java.net/jeps/392[jpackage] tool.
 
 TIP: For modular applications use the https://badass-jlink-plugin.beryx.org/releases/latest/[Badass-JLink plugin].
 
