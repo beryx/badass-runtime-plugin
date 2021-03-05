@@ -15,50 +15,110 @@
  */
 package org.beryx.runtime.util
 
-import java.lang.module.ModuleDescriptor
-import java.util.zip.ZipFile
+import groovy.transform.CompileStatic
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 
+@CompileStatic
 class ModuleManager {
-    // [module name : descriptor]
-    final Map<String, ModuleDescriptor> moduleMap = [:]
+    private static final Logger LOGGER = Logging.getLogger(ModuleManager.class);
 
-    // [package : module name]
-    final Map<String, String> exportMap = [:]
+    final String javaHome
 
-    ModuleManager(Object... modulePath) {
-        getJarsAndMods(modulePath).each {
-            def md = getModuleDescriptor(it)
-            if(md) {
-                moduleMap[md.name()] = md
-                md.exports().each {exportMap[it.source()] = md.name()}
-            }
-        }
+    ModuleManager(String javaHome) {
+        this.javaHome = javaHome
     }
 
-    private static List<File> getJarsAndMods(Object... modulePath) {
-        List<File> allFiles = []
-        modulePath.each {entry ->
-            File f = (entry instanceof File) ? entry : new File(entry.toString())
-            if(f.file) allFiles.add(f)
-            if(f.directory) {
-                allFiles.addAll(f.listFiles({it.file} as FileFilter))
+    /**
+     * @return map with entries of type [package : module-name]
+     */
+    Map<String, String> getExportsMap(String... modulePaths) {
+        final Map<String, String> exportMap = [:]
+        def runner = new SourceCodeRunner(javaHome, 'ModuleManager', sourceCode)
+        String output = runner.getOutput(modulePaths);
+        output.eachLine {line ->
+            if(line) {
+                def nameAndExports = line.split(':')
+                if(nameAndExports.length > 1) {
+                    String moduleName = nameAndExports[0]
+                    for(String exportedPkg: nameAndExports[1].split(',')) {
+                        exportMap[exportedPkg] = moduleName
+                    }
+                }
             }
         }
-        allFiles.findAll {it.name.endsWith(".jar") || it.name.endsWith(".jmod")}
+        exportMap
     }
 
-    static ModuleDescriptor getModuleDescriptor(File f) {
-        if(!f.file) throw new IllegalArgumentException("$f is not a file")
-        if(f.name == 'module-info.class') return ModuleDescriptor.read(f.newInputStream())
-        if(!f.name.endsWith('.jar') && !f.name.endsWith('.jmod')) throw new IllegalArgumentException("Unsupported file type: $f")
-        def prefix = f.name.endsWith('.jmod') ? 'classes/' : ''
-        def zipFile = new ZipFile(f)
-        for(entry in zipFile.entries()) {
-            if(entry.name == "${prefix}module-info.class" as String) {
-                def entryStream = zipFile.getInputStream(entry)
-                return ModuleDescriptor.read(entryStream)
+    static final String sourceCode = '''
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.module.ModuleDescriptor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class ModuleManager {
+    public static void main(String[] args) {
+        List<String> exports = getExports(getJarsAndMods(args));
+        System.out.println(exports.stream().collect(Collectors.joining("\\n")));
+    }
+
+    private static List<File> getJarsAndMods(String... modulePaths) {
+        List<File> allFiles = new ArrayList<>();
+        for(String path:  modulePaths) {
+            File f = new File(path);
+            if(f.isFile()) allFiles.add(f);
+            if(f.isDirectory()) {
+                allFiles.addAll(Arrays.asList(f.listFiles(File::isFile)));
             }
         }
-        null
+        return allFiles.stream()
+                .filter(f -> f.getName().endsWith(".jar") || f.getName().endsWith(".jmod"))
+                .collect(Collectors.toList());
     }
+
+    private static List<String> getExports(List<File> files) {
+        List<String> exports = new ArrayList<>();
+        for(File f: files) {
+            ModuleDescriptor md = getModuleDescriptor(f);
+            if(md != null && !md.exports().isEmpty()) {
+                String exportedPackages = md.exports().stream()
+                        .map(ModuleDescriptor.Exports::source)
+                        .collect(Collectors.joining(","));
+                exports.add(md.name() + ":" + exportedPackages);
+            }
+        }
+        return exports;
+    }
+
+    private static ModuleDescriptor getModuleDescriptor(File f) {
+        try {
+            if(!f.isFile()) throw new IllegalArgumentException(f + " is not a file");
+            if(f.getName().equals("module-info.class")) {
+                return ModuleDescriptor.read(new FileInputStream(f));
+            }
+            if(!f.getName().endsWith(".jar") && !f.getName().endsWith(".jmod")) throw new IllegalArgumentException("Unsupported file type: " + f);
+            String prefix = f.getName().endsWith(".jmod") ? "classes/" : "";
+            ZipFile zipFile = new ZipFile(f);
+            for (Enumeration<? extends ZipEntry> entries = zipFile.entries(); entries.hasMoreElements();) {
+                ZipEntry entry = entries.nextElement();
+                if(entry.getName().equals(prefix + "module-info.class")) {
+                    InputStream entryStream = zipFile.getInputStream(entry);
+                    return ModuleDescriptor.read(entryStream);
+                }
+            }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+'''
 }
