@@ -128,13 +128,13 @@ if (location.href.indexOf('is-external=true') == -1) {
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code><strong>java.util.Map&lt;java.lang.String, java.lang.String&gt;</strong></code>&nbsp;</td>
-                            <td class="colLast"><code><a href="#exportMap">exportMap</a></code><br></td>
+                            <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#javaHome">javaHome</a></code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
-                            <td class="colFirst"><code><strong>java.util.Map&lt;java.lang.String, java.lang.module.ModuleDescriptor&gt;</strong></code>&nbsp;</td>
-                            <td class="colLast"><code><a href="#moduleMap">moduleMap</a></code><br></td>
+                            <td class="colFirst"><code><strong>static&nbsp;java.lang.String</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#sourceCode">sourceCode</a></code><br></td>
                         </tr>
                         
                     </table>
@@ -160,8 +160,8 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst">
-                                <code><a href="#ModuleManager(java.lang.Object)">ModuleManager</a>
-                                (java.lang.Object... modulePath)</code><br></td>
+                                <code><a href="#ModuleManager(java.lang.String)">ModuleManager</a>
+                                (java.lang.String javaHome)</code><br></td>
                         </tr>
                         
                     </table>
@@ -187,8 +187,8 @@ if (location.href.indexOf('is-external=true') == -1) {
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>static&nbsp;java.lang.module.ModuleDescriptor</code></td>
-                            <td class="colLast"><code><strong><a href="#getModuleDescriptor(java.io.File)">getModuleDescriptor</a></strong>(java.io.File f)</code><br></td>
+                            <td class="colLast"><code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#getExportsMap(java.lang.String)">getExportsMap</a></strong>(java.lang.String... modulePaths)</code><br>@return map with entries of type [package : module-name]</td>
                         </tr>
                         
                     </table>
@@ -234,18 +234,18 @@ if (location.href.indexOf('is-external=true') == -1) {
                 </a>
                     <h3>Property Detail</h3>
                     
-                        <a name="exportMap"><!-- --></a>
+                        <a name="javaHome"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>final&nbsp;java.util.Map&lt;java.lang.String, java.lang.String&gt; <strong>exportMap</strong></h4>
+                                <h4>final&nbsp;java.lang.String <strong>javaHome</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
                     
-                        <a name="moduleMap"><!-- --></a>
+                        <a name="sourceCode"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>final&nbsp;java.util.Map&lt;java.lang.String, java.lang.module.ModuleDescriptor&gt; <strong>moduleMap</strong></h4>
+                                <h4>static&nbsp;final&nbsp;java.lang.String <strong>sourceCode</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -264,10 +264,10 @@ if (location.href.indexOf('is-external=true') == -1) {
                 </a>
                     <h3>Constructor Detail</h3>
                     
-                        <a name="ModuleManager(java.lang.Object)"><!-- --></a>
+                        <a name="ModuleManager(java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4><strong>ModuleManager</strong>(java.lang.Object... modulePath)</h4>
+                                <h4><strong>ModuleManager</strong>(java.lang.String javaHome)</h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -285,11 +285,12 @@ if (location.href.indexOf('is-external=true') == -1) {
                 </a>
                     <h3>Method Detail</h3>
                     
-                        <a name="getModuleDescriptor(java.io.File)"><!-- --></a>
+                        <a name="getExportsMap(java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>static&nbsp;java.lang.module.ModuleDescriptor <strong>getModuleDescriptor</strong>(java.io.File f)</h4>
-                                <p></p>
+                                <h4>java.util.Map&lt;java.lang.String, java.lang.String&gt; <strong>getExportsMap</strong>(java.lang.String... modulePaths)</h4>
+                                <p>
+     <DL><DT><B>Returns:</B></DT><DD>map with entries of type [package : module-name]</DD></DL></p>
                             </li>
                         </ul>
                     

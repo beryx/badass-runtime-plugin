@@ -265,6 +265,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#getDistTask()" title="Method in RuntimeTask">getDistTask()</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
 </dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/util/ModuleManager.html#getExportsMap(java.lang.String)" title="Method in ModuleManager">getExportsMap(String)</a></span> - Method in <a href="org/beryx/runtime/util/ModuleManager.html">ModuleManager</a>
+</dt><dd> <div class="block">@return map with entries of type [package : module-name]</div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/PackageUseScanner.html#getExternalPackages()" title="Method in PackageUseScanner">getExternalPackages()</a></span> - Method in <a href="org/beryx/runtime/util/PackageUseScanner.html">PackageUseScanner</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/RuntimeTask.html#getImageDir()" title="Method in RuntimeTask">getImageDir()</a></span> - Method in <a href="org/beryx/runtime/RuntimeTask.html">RuntimeTask</a>
@@ -317,8 +319,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/Util.html#getMainDistJarFile(org.gradle.api.Project)" title="Method in Util">getMainDistJarFile(Project)</a></span> - Method in <a href="org/beryx/runtime/util/Util.html">Util</a>
 </dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/util/ModuleManager.html#getModuleDescriptor(java.io.File)" title="Method in ModuleManager">getModuleDescriptor(File)</a></span> - Method in <a href="org/beryx/runtime/util/ModuleManager.html">ModuleManager</a>
-</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/JreTask.html#getModules()" title="Method in JreTask">getModules()</a></span> - Method in <a href="org/beryx/runtime/JreTask.html">JreTask</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/impl/JreTaskImpl.html#getModules()" title="Method in JreTaskImpl">getModules()</a></span> - Method in <a href="org/beryx/runtime/impl/JreTaskImpl.html">JreTaskImpl</a>
@@ -326,6 +326,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="org/beryx/runtime/util/SuggestedModulesBuilder.html#getModulesRequiredBy(java.io.File)" title="Method in SuggestedModulesBuilder">getModulesRequiredBy(File)</a></span> - Method in <a href="org/beryx/runtime/util/SuggestedModulesBuilder.html">SuggestedModulesBuilder</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/JreTask.html#getOptions()" title="Method in JreTask">getOptions()</a></span> - Method in <a href="org/beryx/runtime/JreTask.html">JreTask</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/util/SourceCodeRunner.html#getOutput(java.lang.String)" title="Method in SourceCodeRunner">getOutput(String)</a></span> - Method in <a href="org/beryx/runtime/util/SourceCodeRunner.html">SourceCodeRunner</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/impl/JPackageTaskImpl.html#getPackageTypes()" title="Method in JPackageTaskImpl">getPackageTypes()</a></span> - Method in <a href="org/beryx/runtime/impl/JPackageTaskImpl.html">JPackageTaskImpl</a>
 </dt><dd> <div class="block"></div></dd>
@@ -445,7 +447,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 
 <dt><span class="strong"><a href="org/beryx/runtime/util/ModuleManager.html" title="Class in org.beryx.runtime.util">ModuleManager</a></span> - Class in <a href="./org/beryx/runtime/util/package-summary.html">org.beryx.runtime.util</a>
 </dt><dd><div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/util/ModuleManager.html#ModuleManager(java.lang.Object)" title="Constructor in ModuleManager">ModuleManager(Object)</a></span> - Constructor in <a href="org/beryx/runtime/util/ModuleManager.html">ModuleManager</a>
+<dt><span class="strong"><a href="org/beryx/runtime/util/ModuleManager.html#ModuleManager(java.lang.String)" title="Constructor in ModuleManager">ModuleManager(String)</a></span> - Constructor in <a href="org/beryx/runtime/util/ModuleManager.html">ModuleManager</a>
 </dt><dd> <div class="block"></div></dd>
 </dl>
 
@@ -536,6 +538,10 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="org/beryx/runtime/util/Util.html#scan(java.io.File, Closure<Void>)" title="Method in Util">scan(File, Closure&lt;Void&gt;)</a></span> - Method in <a href="org/beryx/runtime/util/Util.html">Util</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#setJdkHome(java.io.Serializable)" title="Method in TargetPlatform">setJdkHome(Serializable)</a></span> - Method in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/util/SourceCodeRunner.html" title="Class in org.beryx.runtime.util">SourceCodeRunner</a></span> - Class in <a href="./org/beryx/runtime/util/package-summary.html">org.beryx.runtime.util</a>
+</dt><dd><div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/util/SourceCodeRunner.html#SourceCodeRunner(java.lang.String, java.lang.String, java.lang.String)" title="Constructor in SourceCodeRunner">SourceCodeRunner(String, String, String)</a></span> - Constructor in <a href="org/beryx/runtime/util/SourceCodeRunner.html">SourceCodeRunner</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/SuggestedModulesBuilder.html" title="Class in org.beryx.runtime.util">SuggestedModulesBuilder</a></span> - Class in <a href="./org/beryx/runtime/util/package-summary.html">org.beryx.runtime.util</a>
 </dt><dd><div class="block"></div></dd>

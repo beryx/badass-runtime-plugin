@@ -122,7 +122,7 @@ $(addBlockSwitches);
 <div class="sectionbody">
 <div class="paragraph">
 <p>The badass-runtime plugin allows you to create custom runtime images for non-modular applications.
-It also lets you create an application installer with the <a href="https://jdk.java.net/jpackage/">jpackage</a> tool introduced in Java 14.</p>
+It also lets you create an application installer with the <a href="https://openjdk.java.net/jeps/392">jpackage</a> tool.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -637,7 +637,7 @@ to parse the templates, with the following variables available:</p>
     &nbsp;&nbsp;&nbsp;&nbsp; - the <a href="https://docs.gradle.org/current/userguide/toolchains.html">Java toolchain</a> configured in the Gradle script <br>
     &nbsp;&nbsp;&nbsp;&nbsp; - the <code>java.home</code> system property (only if it points to a JRE containing the <code>jpackage</code> tool)<br>
     &nbsp;&nbsp;&nbsp;&nbsp; - the <code>JAVA_HOME</code> environment variable<br>
-<em>usage example</em>: <code>jpackageHome = "/usr/lib/jvm/jdk14"</code></p>
+<em>usage example</em>: <code>jpackageHome = "/usr/lib/jvm/jdk16"</code></p>
 </dd>
 <dt class="hdlist1">outputDir</dt>
 <dd>
@@ -752,7 +752,7 @@ Usually, you don&#8217;t need to set this property, unless you also explicitly s
 <pre class="CodeRay highlight"><code data-lang="groovy">runtime {
     ...
     jpackage {
-        jpackageHome = <span class="string"><span class="delimiter">'</span><span class="content">/usr/lib/jvm/jdk14</span><span class="delimiter">'</span></span>
+        jpackageHome = <span class="string"><span class="delimiter">'</span><span class="content">/usr/lib/jvm/jdk16</span><span class="delimiter">'</span></span>
         outputDir = <span class="string"><span class="delimiter">'</span><span class="content">my-packaging</span><span class="delimiter">'</span></span>
         <span class="comment">// imageOutputDir = file(&quot;$buildDir/my-packaging-image&quot;)</span>
         <span class="comment">// installerOutputDir = file(&quot;$buildDir/my-packaging-installer&quot;)</span>
@@ -773,7 +773,7 @@ Usually, you don&#8217;t need to set this property, unless you also explicitly s
 <pre class="CodeRay highlight"><code data-lang="kotlin">runtime {
     ...
     jpackage {
-        jpackageHome = &quot;/usr/lib/jvm/jdk14&quot;
+        jpackageHome = &quot;/usr/lib/jvm/jdk16&quot;
         outputDir = &quot;my-packaging&quot;
         // imageOutputDir = file(&quot;$buildDir/my-packaging-image&quot;)
         // installerOutputDir = file(&quot;$buildDir/my-packaging-installer&quot;)
