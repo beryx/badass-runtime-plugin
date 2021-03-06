@@ -30,6 +30,7 @@ class SourceCodeRunner {
     final String javaHome
     final String className
     final String sourceCode
+    long timeoutSeconds = 120
 
     SourceCodeRunner(String javaHome, String className, String sourceCode) {
         this.javaHome = javaHome
@@ -57,18 +58,18 @@ class SourceCodeRunner {
         }
         if (javacErrOutput.size() > 0) LOGGER.error("javac failed: $javacErrOutput")
 
-        def javaCmd = "$javaHome/bin/java -cp . ${className}"
+        def cmdArray = ["$javaHome/bin/java", "-cp", ".", "${className}"]
         if(args) {
-//            javaCmd += ' ' + args.collect {'"' + it + '"'}.join(' ')
-            javaCmd += ' "' + args.join('" "') + '"' // hack for back compatibility with Gradle 4.8
+            cmdArray.addAll(Arrays.asList(args))
         }
-        LOGGER.info("Executing: $javaCmd")
-        def javaProc = javaCmd.execute(null as String[], path.toFile())
+        LOGGER.info("Executing: $cmdArray")
+        def javaProc = Runtime.runtime.exec((cmdArray as String[]), null, path.toFile())
+
         def javaErrOutput = new StringBuilder()
         def javaOutput = new StringBuilder()
         javaProc.consumeProcessOutput(javaOutput, javaErrOutput)
-        if (!javaProc.waitFor(30, TimeUnit.SECONDS)) {
-            throw new GradleException("java ${className} hasn't exited after 30 seconds.")
+        if (!javaProc.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
+            throw new GradleException("java ${className} hasn't exited after $timeoutSeconds seconds.")
         }
 
         LOGGER.info(javaOutput.toString())
