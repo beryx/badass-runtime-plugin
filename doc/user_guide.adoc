@@ -363,7 +363,7 @@ targetPlatformName:: This property is required only when using the `targetPlatfo
     It specifies which of the images produced by jlink should be used as runtime image by jpackage.
     Its value must match the name provided in one of the calls to the `targetPlatform` method. +
     _defaultValue_: null +
-    _usage example_: `targetPlatform = "linux"`
+    _usage example_: `targetPlatformName = "linux"`
 
 mainJar:: the argument passed to the `--main-jar` option when running `jpackage` to create an application image. +
     Usually, you don't need to set this property, unless you also explicitly set `distDir`. +
