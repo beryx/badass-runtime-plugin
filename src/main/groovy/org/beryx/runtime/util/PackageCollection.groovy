@@ -18,7 +18,7 @@ package org.beryx.runtime.util
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
-import jdk.internal.org.objectweb.asm.Type
+import org.objectweb.asm.Type
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
