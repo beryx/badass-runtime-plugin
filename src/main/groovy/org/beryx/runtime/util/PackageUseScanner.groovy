@@ -32,7 +32,7 @@ class PackageUseScanner extends ClassVisitor {
 
     private class ScannerMethodVisitor extends MethodVisitor {
         ScannerMethodVisitor(MethodVisitor methodVisitor) {
-            super(Opcodes.ASM8, methodVisitor)
+            super(Opcodes.ASM9, methodVisitor)
         }
 
         @Override
@@ -120,7 +120,7 @@ class PackageUseScanner extends ClassVisitor {
 
 
     PackageUseScanner() {
-        super(Opcodes.ASM8)
+        super(Opcodes.ASM9)
     }
 
     Set<String> getExternalPackages() {
