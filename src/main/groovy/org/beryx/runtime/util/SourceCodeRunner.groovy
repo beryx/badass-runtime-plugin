@@ -52,8 +52,8 @@ class SourceCodeRunner {
             throw new GradleException("javac ${className}.java hasn't exited after $timeoutSeconds seconds.")
         }
         javacErrThread.join()
-        javacProc.closeStreams()
         String javacOutput = javacProc.text
+        javacProc.closeStreams()
         LOGGER.info(javacOutput)
         if (javacProc.exitValue()) {
             throw new GradleException("javac ${className}.java failed: $javacErrOutput")
