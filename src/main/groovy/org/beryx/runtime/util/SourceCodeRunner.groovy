@@ -47,10 +47,12 @@ class SourceCodeRunner {
         LOGGER.info("Executing: $javacCmd")
         def javacProc = javacCmd.execute(null as String[], path.toFile())
         def javacErrOutput = new StringBuilder()
-        javacProc.consumeProcessErrorStream(javacErrOutput)
+        Thread javacErrThread = javacProc.consumeProcessErrorStream(javacErrOutput)
         if (!javacProc.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
             throw new GradleException("javac ${className}.java hasn't exited after $timeoutSeconds seconds.")
         }
+        javacErrThread.join()
+        javacProc.closeStreams()
         String javacOutput = javacProc.text
         LOGGER.info(javacOutput)
         if (javacProc.exitValue()) {
@@ -67,10 +69,14 @@ class SourceCodeRunner {
 
         def javaErrOutput = new StringBuilder()
         def javaOutput = new StringBuilder()
-        javaProc.consumeProcessOutput(javaOutput, javaErrOutput)
+        Thread javaOutThread = javaProc.consumeProcessOutputStream(javaOutput)
+        Thread javaErrThread = javaProc.consumeProcessErrorStream(javaErrOutput)
         if (!javaProc.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
             throw new GradleException("java ${className} hasn't exited after $timeoutSeconds seconds.")
         }
+        javaOutThread.join()
+        javaErrThread.join()
+        javaProc.closeStreams()
 
         LOGGER.info(javaOutput.toString())
         if (javaProc.exitValue()) {
