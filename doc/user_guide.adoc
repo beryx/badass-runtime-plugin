@@ -278,10 +278,10 @@ runtime {
 runtime {
     ...
     launcher {
-        jvmArgs = listOf(
+        jvmArgs.addAll(listOf(
             "-Dlog4j.debug=true", "-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml",
             "-DdbHost", "{{PGHOST}}"
-        )
+        ))
         unixScriptTemplate = file("unixStartScript.txt")
         windowsScriptTemplate = file("windowsStartScript.txt")
     }
