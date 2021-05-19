@@ -185,7 +185,7 @@ class Util {
     @CompileDynamic
     static List<String> getDefaultJvmArgs(Project project) {
         try {
-            return project.application?.applicationDefaultJvmArgs
+            return new ArrayList(project.application?.applicationDefaultJvmArgs as List)
         } catch (Exception e) {
             return []
         }
