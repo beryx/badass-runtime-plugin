@@ -41,8 +41,10 @@ class JPackageData {
     @Input
     String outputDir = 'jpackage'
 
+    @Internal
     File imageOutputDir
 
+    @Internal
     String imageName
 
     @Input
@@ -60,8 +62,10 @@ class JPackageData {
     @Input @Optional
     String installerType
 
+    @Internal
     File installerOutputDir
 
+    @Internal
     String installerName
 
     @Input @Optional
@@ -70,13 +74,16 @@ class JPackageData {
     @Input
     List<String> installerOptions = []
 
-    private List<String> args = []
+    @Internal
+    List<String> args = []
 
-    private List<String> jvmArgs = []
+    @Internal
+    List<String> jvmArgs = []
 
     @Input @Optional
     String mainJar
 
+    @Internal
     String mainClass
 
     JPackageData(Project project, LauncherData launcherData) {
@@ -86,36 +93,36 @@ class JPackageData {
     }
 
     @Input
-    List<String> getArgs() {
+    List<String> getArgsOrDefault() {
         this.@args ?: Util.getDefaultArgs(project)
     }
 
     @Input
-    List<String> getJvmArgs() {
-        this.@jvmArgs ?: launcherData.jvmArgs
+    List<String> getJvmArgsOrDefault() {
+        this.@jvmArgs ?: launcherData.jvmArgsOrDefault
     }
 
     @Input
-    String getMainClass() {
+    String getMainClassOrDefault() {
         this.@mainClass ?: Util.getMainClass(project)
     }
     @Input
-    String getImageName() {
+    String getImageNameOrDefault() {
         this.@imageName ?: project.name
     }
 
     @Input
-    String getInstallerName() {
+    String getInstallerNameOrDefault() {
         this.@installerName ?: project.name
     }
 
     @OutputDirectory
-    File getImageOutputDir() {
+    File getImageOutputDirOrDefault() {
         this.@imageOutputDir ?: project.file("$project.buildDir/$outputDir")
     }
 
     @OutputDirectory
-    File getInstallerOutputDir() {
+    File getInstallerOutputDirOrDefault() {
         this.@installerOutputDir ?: project.file("$project.buildDir/$outputDir")
     }
 

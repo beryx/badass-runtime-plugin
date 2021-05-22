@@ -45,12 +45,15 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             return
         }
 
-        if (jpd.getImageOutputDir() != jpd.getInstallerOutputDir()) {
-            project.delete(project.files(jpd.getInstallerOutputDir()))
+
+        def imgOutDir = jpd.imageOutputDirOrDefault
+        def installerOutDir = jpd.installerOutputDirOrDefault
+        if (imgOutDir != installerOutDir) {
+            project.delete(project.files(installerOutDir))
         }
         packageTypes.each { packageType ->
-            if (jpd.getImageOutputDir() != jpd.getInstallerOutputDir()) {
-                def subdirs = jpd.getInstallerOutputDir().listFiles({ f -> f.directory } as FileFilter)
+            if (imgOutDir != installerOutDir) {
+                def subdirs = installerOutDir.listFiles({ f -> f.directory } as FileFilter)
                 if(subdirs) project.delete(subdirs)
             }
             def result = project.exec {
@@ -73,8 +76,8 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
                 commandLine = [jpackageExec,
                                '--type', packageType,
-                               '--dest', jpd.getInstallerOutputDir(),
-                               '--name', jpd.installerName,
+                               '--dest', jpd.getInstallerOutputDirOrDefault(),
+                               '--name', jpd.installerNameOrDefault,
                                *versionOpts,
                                '--app-image', td.appImageDir,
                                *resourceOpts,

@@ -22,7 +22,6 @@ import org.beryx.runtime.data.LauncherData
 import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
-import org.gradle.api.GradleException
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.*
@@ -87,7 +86,7 @@ class RuntimeTask extends BaseTask {
 
     void configureStartScripts(boolean asRuntimeImage) {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
-            startScriptTask.defaultJvmOpts = launcherData.jvmArgs
+            startScriptTask.defaultJvmOpts = launcherData.jvmArgsOrDefault
             startScriptTask.doLast {
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME/bin')
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{HOME_DIR}}', '$HOME')

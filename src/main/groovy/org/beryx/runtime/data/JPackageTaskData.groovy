@@ -37,16 +37,16 @@ class JPackageTaskData {
     JPackageData jpackageData
 
     void configureAppImageDir() {
-        final def imageOutputDir = jpackageData.getImageOutputDir()
-        final def imageName = jpackageData.getImageName()
-        final def appImagePath = "${imageOutputDir}${File.separator}${imageName}"
+        final def imgOutDir = jpackageData.imageOutputDirOrDefault
+        final def imageName = jpackageData.getImageNameOrDefault()
+        final def appImagePath = "${imgOutDir}${File.separator}${imageName}"
         appImageDir = new File(appImagePath)
 
         if (OperatingSystem.current().macOsX) {
             if (!appImageDir.directory) {
                 def currImagePath = "${appImagePath}.app"
                 if (!new File(currImagePath).directory) {
-                    throw new GradleException("Unable to find the application image in ${imageOutputDir}")
+                    throw new GradleException("Unable to find the application image in ${imgOutDir}")
                 }
                 appImageDir = new File(currImagePath)
             }

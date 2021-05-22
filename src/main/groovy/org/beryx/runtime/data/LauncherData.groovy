@@ -31,7 +31,8 @@ import org.gradle.api.tasks.Optional
 class LauncherData {
     private final Project project
 
-    private List<String> jvmArgs = []
+    @Internal
+    List<String> jvmArgs = []
 
     LauncherData(Project project) {
         this.project = project
@@ -50,7 +51,7 @@ class LauncherData {
     File windowsScriptTemplate
 
     @Input
-    List<String> getJvmArgs() {
+    List<String> getJvmArgsOrDefault() {
         this.@jvmArgs ?: Util.getDefaultJvmArgs(project)
     }
 
