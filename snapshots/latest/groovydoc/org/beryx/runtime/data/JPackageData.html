@@ -133,43 +133,53 @@ if (location.href.indexOf('is-external=true') == -1) {
                         </tr>
                         
                         <tr class="rowColor">
+                            <td class="colFirst"><code><strong>java.util.List&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#args">args</a></code><br></td>
+                        </tr>
+                        
+                        <tr class="altColor">
                             <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#imageName">imageName</a></code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code><strong>java.util.List&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#imageOptions">imageOptions</a></code><br></td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code><strong>java.io.File</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#imageOutputDir">imageOutputDir</a></code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#installerName">installerName</a></code><br></td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code><strong>java.util.List&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#installerOptions">installerOptions</a></code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code><strong>java.io.File</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#installerOutputDir">installerOutputDir</a></code><br></td>
                         </tr>
                         
-                        <tr class="rowColor">
+                        <tr class="altColor">
                             <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#installerType">installerType</a></code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
+                        <tr class="rowColor">
                             <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#jpackageHome">jpackageHome</a></code><br></td>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code><strong>java.util.List&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#jvmArgs">jvmArgs</a></code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -253,7 +263,7 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-                            <td class="colLast"><code><strong><a href="#getArgs()">getArgs</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getArgsOrDefault()">getArgsOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
@@ -265,25 +275,25 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.String</code></td>
-                            <td class="colLast"><code><strong><a href="#getImageName()">getImageName</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getImageNameOrDefault()">getImageNameOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.io.File</code></td>
-                            <td class="colLast"><code><strong><a href="#getImageOutputDir()">getImageOutputDir</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getImageOutputDirOrDefault()">getImageOutputDirOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.String</code></td>
-                            <td class="colLast"><code><strong><a href="#getInstallerName()">getInstallerName</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getInstallerNameOrDefault()">getInstallerNameOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.io.File</code></td>
-                            <td class="colLast"><code><strong><a href="#getInstallerOutputDir()">getInstallerOutputDir</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getInstallerOutputDirOrDefault()">getInstallerOutputDirOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="altColor">
@@ -295,13 +305,13 @@ if (location.href.indexOf('is-external=true') == -1) {
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-                            <td class="colLast"><code><strong><a href="#getJvmArgs()">getJvmArgs</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getJvmArgsOrDefault()">getJvmArgsOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>java.lang.String</code></td>
-                            <td class="colLast"><code><strong><a href="#getMainClass()">getMainClass</a></strong>()</code><br></td>
+                            <td class="colLast"><code><strong><a href="#getMainClassOrDefault()">getMainClassOrDefault</a></strong>()</code><br></td>
                         </tr>
                         
                     </table>
@@ -357,10 +367,20 @@ java.lang.String <strong>appVersion</strong></h4>
                             </li>
                         </ul>
                     
+                        <a name="args"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@org.gradle.api.tasks.Internal
+java.util.List&lt;java.lang.String&gt; <strong>args</strong></h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
                         <a name="imageName"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.String <strong>imageName</strong></h4>
+                                <h4>@org.gradle.api.tasks.Internal
+java.lang.String <strong>imageName</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -377,7 +397,8 @@ java.util.List&lt;java.lang.String&gt; <strong>imageOptions</strong></h4>
                         <a name="imageOutputDir"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.io.File <strong>imageOutputDir</strong></h4>
+                                <h4>@org.gradle.api.tasks.Internal
+java.io.File <strong>imageOutputDir</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -385,7 +406,8 @@ java.util.List&lt;java.lang.String&gt; <strong>imageOptions</strong></h4>
                         <a name="installerName"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.String <strong>installerName</strong></h4>
+                                <h4>@org.gradle.api.tasks.Internal
+java.lang.String <strong>installerName</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -402,7 +424,8 @@ java.util.List&lt;java.lang.String&gt; <strong>installerOptions</strong></h4>
                         <a name="installerOutputDir"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.io.File <strong>installerOutputDir</strong></h4>
+                                <h4>@org.gradle.api.tasks.Internal
+java.io.File <strong>installerOutputDir</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -426,10 +449,20 @@ java.lang.String <strong>jpackageHome</strong></h4>
                             </li>
                         </ul>
                     
+                        <a name="jvmArgs"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@org.gradle.api.tasks.Internal
+java.util.List&lt;java.lang.String&gt; <strong>jvmArgs</strong></h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
                         <a name="mainClass"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.String <strong>mainClass</strong></h4>
+                                <h4>@org.gradle.api.tasks.Internal
+java.lang.String <strong>mainClass</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -517,11 +550,11 @@ java.lang.String <strong>targetPlatformName</strong></h4>
                 </a>
                     <h3>Method Detail</h3>
                     
-                        <a name="getArgs()"><!-- --></a>
+                        <a name="getArgsOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.Input
-java.util.List&lt;java.lang.String&gt; <strong>getArgs</strong>()</h4>
+java.util.List&lt;java.lang.String&gt; <strong>getArgsOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -535,38 +568,38 @@ java.lang.String <strong>getDefaultJPackageHome</strong>()</h4>
                             </li>
                         </ul>
                     
-                        <a name="getImageName()"><!-- --></a>
+                        <a name="getImageNameOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.Input
-java.lang.String <strong>getImageName</strong>()</h4>
+java.lang.String <strong>getImageNameOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>
                     
-                        <a name="getImageOutputDir()"><!-- --></a>
+                        <a name="getImageOutputDirOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.OutputDirectory
-java.io.File <strong>getImageOutputDir</strong>()</h4>
+java.io.File <strong>getImageOutputDirOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>
                     
-                        <a name="getInstallerName()"><!-- --></a>
+                        <a name="getInstallerNameOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.Input
-java.lang.String <strong>getInstallerName</strong>()</h4>
+java.lang.String <strong>getInstallerNameOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>
                     
-                        <a name="getInstallerOutputDir()"><!-- --></a>
+                        <a name="getInstallerOutputDirOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.OutputDirectory
-java.io.File <strong>getInstallerOutputDir</strong>()</h4>
+java.io.File <strong>getInstallerOutputDirOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -580,20 +613,20 @@ java.lang.String <strong>getJPackageHomeOrDefault</strong>()</h4>
                             </li>
                         </ul>
                     
-                        <a name="getJvmArgs()"><!-- --></a>
+                        <a name="getJvmArgsOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.Input
-java.util.List&lt;java.lang.String&gt; <strong>getJvmArgs</strong>()</h4>
+java.util.List&lt;java.lang.String&gt; <strong>getJvmArgsOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>
                     
-                        <a name="getMainClass()"><!-- --></a>
+                        <a name="getMainClassOrDefault()"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
                                 <h4>@org.gradle.api.tasks.Input
-java.lang.String <strong>getMainClass</strong>()</h4>
+java.lang.String <strong>getMainClassOrDefault</strong>()</h4>
                                 <p></p>
                             </li>
                         </ul>

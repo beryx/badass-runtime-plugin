@@ -609,10 +609,10 @@ to parse the templates, with the following variables available:</p>
 <pre class="CodeRay highlight"><code data-lang="kotlin">runtime {
     ...
     launcher {
-        jvmArgs.addAll(listOf(
+        jvmArgs = listOf(
             &quot;-Dlog4j.debug=true&quot;, &quot;-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml&quot;,
             &quot;-DdbHost&quot;, &quot;{{PGHOST}}&quot;
-        ))
+        )
         unixScriptTemplate = file(&quot;unixStartScript.txt&quot;)
         windowsScriptTemplate = file(&quot;windowsStartScript.txt&quot;)
     }
