@@ -24,10 +24,10 @@ The list of modules suggested by this task is a good value to start with, but it
 required modules or include unnecessary ones, so you may need to adjust it. +
     _depends on_: `jar`
 
-jpackageImage:: Uses the https://jdk.java.net/jpackage/[jpackage] tool to create a platform-specific application image.  +
+jpackageImage:: Uses the https://openjdk.java.net/jeps/392/[jpackage] tool to create a platform-specific application image.  +
     _depends on_: `runtime` +
 
-jpackage:: Uses the https://jdk.java.net/jpackage/[jpackage] tool to create a platform-specific application installer.  +
+jpackage:: Uses the https://openjdk.java.net/jeps/392/[jpackage] tool to create a platform-specific application installer.  +
     _depends on_: `jpackageImage` +
 
 
@@ -81,7 +81,8 @@ It is an alternative way of setting the `options` property.
 You can call this method multiple times. +
     _usage example_: `addOptions '--no-header-files', '--no-man-pages'`
 
-[maroon]##targetPlatform##(String [purple]##name##, String [purple]##jdkHome##, List<String> [purple]##options## = []):: Instructs the plugin to generate an application image for a specific platform. +
+[maroon]##targetPlatform##(String [purple]##name##, String [purple]##jdkHome##, List<String> [purple]##options## = []):: Instructs the plugin to use _jlink_ to generate an application image for a specific platform. +
+[red]##**This method is not for configuring the installable packages produced by jpackage.**## <<jpackageWarning, See details>> +
 By default, the plugin generates an image for the platform it runs on.
 To create images for other platforms, you need to call the `targetPlatform` method (one call per target platform). +
 [purple]##**name**##: an identifier of your choice that will be appended to the `imageDir` and `imageZip` properties to
@@ -292,7 +293,7 @@ runtime {
 
 === jpackage
 
-This script block allows you to customize the https://jdk.java.net/jpackage/[jpackage]-based generation of platform-specific application images and installers.
+This script block allows you to customize the https://openjdk.java.net/jeps/392/[jpackage]-based generation of platform-specific installable packages.
 
 [#jpackageHome]
 jpackageHome:: The path to the JDK providing the jpackage tool. +
@@ -364,6 +365,16 @@ targetPlatformName:: This property is required only when using the `targetPlatfo
     Its value must match the name provided in one of the calls to the `targetPlatform` method. +
     _defaultValue_: null +
     _usage example_: `targetPlatformName = "linux"`
+
+[#jpackageWarning]
+WARNING: [red]##**In contrast to jlink, _jpackage_ is not able to produce installers for other platforms.**##
+For example, to create an installer for Linux, you must run jpackage on a Linux machine.
+You cannot do it on a Windows or Mac platform.
+
+TIP: If you need to create installers for more than one platform, it's probably better not to use _targetPlatform_.
+Instead, you run the same build on different machines.
+If your project is on GitHub, you can automate this by using GitHub Actions, as seen in https://github.com/beryx-gist/badass-runtime-example-javafx[this example].
+
 
 mainJar:: the argument passed to the `--main-jar` option when running `jpackage` to create an application image. +
     Usually, you don't need to set this property, unless you also explicitly set `distDir`. +
