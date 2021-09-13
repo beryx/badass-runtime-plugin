@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<meta name="author" content="Serban Iordache">
+<title>The Badass Runtime Plugin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="./asciidoctor.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<style>
+.hidden {
+    display: none;
+}
+
+.switch {
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #7a2518;
+    display: inline-block;
+}
+
+.switch--item {
+    padding: 10px;
+    background-color: #ffffff;
+    color: #7a2518;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.switch--item.selected {
+    background-color: #7a2519;
+    color: #ffffff;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+<script type="text/javascript">
+function addBlockSwitches() {
+    $('.primary').each(function() {
+        primary = $(this);
+        createSwitchItem(primary, createBlockSwitch(primary)).item.addClass("selected");
+        primary.children('.title').remove();
+    });
+    $('.secondary').each(function(idx, node) {
+        secondary = $(node);
+        primary = findPrimary(secondary);
+        switchItem = createSwitchItem(secondary, primary.children('.switch'));
+        switchItem.content.addClass('hidden');
+        findPrimary(secondary).append(switchItem.content);
+        secondary.remove();
+    });
+}
+
+function createBlockSwitch(primary) {
+    blockSwitch = $('<div class="switch"></div>');
+    primary.prepend(blockSwitch);
+    return blockSwitch;
+}
+
+function findPrimary(secondary) {
+    candidate = secondary.prev();
+    while (!candidate.is('.primary')) {
+        candidate = candidate.prev();
+    }
+    return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+    blockName = block.children('.title').text();
+    content = block.children('.content').first().append(block.next('.colist'));
+    item = $('<div class="switch--item">' + blockName + '</div>');
+    item.on('click', '', content, function(e) {
+        $(this).addClass('selected');
+        $(this).siblings().removeClass('selected');
+        e.data.siblings('.content').addClass('hidden');
+        e.data.removeClass('hidden');
+    });
+    blockSwitch.append(item);
+    return {'item': item, 'content': content};
+}
+
+$(addBlockSwitches);
+
+</script>
+
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>The Badass Runtime Plugin</h1>
+<div class="details">
+<span id="author" class="author">Serban Iordache</span><br>
+<span id="revnumber">version 1.12.6</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#user_guide">User Guide</a>
+<ul class="sectlevel2">
+<li><a href="#_tasks">Tasks</a></li>
+<li><a href="#_properties">Properties</a></li>
+<li><a href="#_methods">Methods</a></li>
+<li><a href="#scriptBlocks">Script blocks</a>
+<ul class="sectlevel3">
+<li><a href="#launcher">launcher</a></li>
+<li><a href="#_jpackage">jpackage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The badass-runtime plugin allows you to create custom runtime images for non-modular applications.
+It also lets you create an application installer with the <a href="https://openjdk.java.net/jeps/392">jpackage</a> tool.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For modular applications use the <a href="https://badass-jlink-plugin.beryx.org/releases/latest/">Badass-JLink plugin</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Creating a custom runtime image for a non-modular application involves the following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>create a classic (pre-Java-9-style) distribution using a task
+such as <a href="https://docs.gradle.org/current/userguide/application_plugin.html#sec:application_tasks">installDist</a> or
+<a href="https://imperceptiblethoughts.com/shadow/application-plugin/#distributing-the-shadow-jar">installShadowDist</a></p>
+</li>
+<li>
+<p>use <em>jlink</em> to create a custom JRE containing only the modules required by the application</p>
+</li>
+<li>
+<p>merge the pre-Java-9-style distribution into the custom JRE and adjust the start scripts with appropriate
+JVM settings flags such as <code>--module-path</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The plugin provides a <code>runtime</code> task that automates the above steps
+and a <code>runtimeZip</code> task that additionally creates a zip archive of the custom runtime image.
+In addition, a <code>suggestModules</code> task helps you choose the modules to include in your custom JRE.
+With the <code>jpackage</code> task you can create a platform-specific installer for your application.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The plugin requires Java 11 and Gradle 4.8 or newer.
+While it might work with some combinations of older Java and Gradle versions, these are not officially supported.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To use the plugin, include the following in your build script:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="groovy">plugins {
+    id 'org.beryx.runtime' version '1.12.6'
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Applying this plugin also implicitly applies the <a href="https://docs.gradle.org/current/userguide/application_plugin.html">Application plugin</a>.</p>
+</div>
+<div class="paragraph">
+<p>The badass-runtime plugin adds an extension named <code>runtime</code>.
+The sample below shows a few configuration options.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    options = [<span class="string"><span class="delimiter">'</span><span class="content">--strip-debug</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">--compress</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">2</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">--no-header-files</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">--no-man-pages</span><span class="delimiter">'</span></span>]
+    modules = [<span class="string"><span class="delimiter">'</span><span class="content">java.naming</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">java.xml</span><span class="delimiter">'</span></span>]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The next sections provide detailed information on how to configure the plugin.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The source code is available on <a href="https://github.com/beryx/badass-runtime-plugin">GitHub</a> and is licensed under the <a href="https://github.com/beryx/badass-runtime-plugin/blob/v1.12.6/LICENSE">Apache-2.0 license</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user_guide">User Guide</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This plugin works with non-modular applications, that is, applications that run on the class-path and
+don&#8217;t make use of module descriptors.
+Nevertheless, in order to use this plugin, your non-modular application must be compatible with the Java version
+of your target JRE (11 or newer).</p>
+</div>
+<div class="sect2">
+<h3 id="_tasks">Tasks</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">runtime</dt>
+<dd>
+<p>Creates an image containing your application, a custom JRE, and appropriate start scripts. <br>
+If the property <code>distDir</code> is not set, this task depends on either <code>installDist</code> or
+<code>installShadowDist</code> (if the <a href="https://github.com/johnrengelman/shadow">Shadow plugin</a> is applied).</p>
+</dd>
+<dt class="hdlist1">runtimeZip</dt>
+<dd>
+<p>Creates a zip archive of the custom runtime image.<br>
+<em>depends on</em>: <code>runtime</code></p>
+</dd>
+<dt class="hdlist1">suggestModules</dt>
+<dd>
+<p>Displays a list of modules that are probably required by your application.
+This list will be used when creating the custom JRE if you don&#8217;t configure the <code>modules</code> property
+explicitly within the <code>runtime</code> extension.<br>
+Setting the <code>modules</code> property explicitly is strongly recommended.
+The list of modules suggested by this task is a good value to start with, but it may miss some
+required modules or include unnecessary ones, so you may need to adjust it.<br>
+    <em>depends on</em>: <code>jar</code></p>
+</dd>
+<dt class="hdlist1">jpackageImage</dt>
+<dd>
+<p>Uses the <a href="https://openjdk.java.net/jeps/392/">jpackage</a> tool to create a platform-specific application image. <br>
+<em>depends on</em>: <code>runtime</code><br></p>
+</dd>
+<dt class="hdlist1">jpackage</dt>
+<dd>
+<p>Uses the <a href="https://openjdk.java.net/jeps/392/">jpackage</a> tool to create a platform-specific application installer. <br>
+<em>depends on</em>: <code>jpackageImage</code><br></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_properties">Properties</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">distDir</dt>
+<dd>
+<p>The directory containing the application pre-Java-9-style distribution.<br>
+You rarely need to set this property explicitly, because the plugin automatically
+initializes it with the directory in which the <code>installDist</code> or the <code>installShadowDist</code> task
+(if the <a href="https://github.com/johnrengelman/shadow">Shadow plugin</a> is applied) creates the distribution.<br>
+    <em>usage example</em>: <code>distDir = file("$buildDir/install/myapp")</code></p>
+</dd>
+<dt class="hdlist1">imageDir</dt>
+<dd>
+<p>The directory into which the custom runtime image should be generated.<br>
+(If you use the <code>targetPlatform</code> method to generate images for other platforms, the corresponding images will be created in subdirectories of <code>imageDir</code>.)<br>
+    <em>defaultValue</em>: <code><em>buildDir</em>/image</code><br>
+    <em>usage example</em>: <code>imageDir = file("$buildDir/myapp-image")</code></p>
+</dd>
+<dt class="hdlist1">imageZip</dt>
+<dd>
+<p>The file into which a zip archive of the custom runtime image should be created.<br>
+<em>defaultValue</em>: <code><em>buildDir</em>/image.zip"</code><br>
+<em>usage example</em>: <code>imageZip = file("$buildDir/myapp-image.zip")</code></p>
+</dd>
+<dt class="hdlist1">options</dt>
+<dd>
+<p>A list of options to be passed to <em>jlink</em> when creating the custom JRE.<br>
+<em>defaultValue</em>: empty list<br>
+<em>usage example</em>: <code>options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']</code></p>
+</dd>
+</dl>
+</div>
+<div id="javaHome" class="dlist">
+<dl>
+<dt class="hdlist1">javaHome</dt>
+<dd>
+<p>The path to the JDK providing the tools needed by the plugin (<em>javac</em>, <em>jar</em>, <em>jlink</em> etc.).<br>
+<em>defaultValue</em>: the first non-empty value from:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>badass.runtime.java.home</code> system property<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>BADASS_RUNTIME_JAVA_HOME</code> environment variable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <a href="https://docs.gradle.org/current/userguide/toolchains.html">Java toolchain</a> configured in the Gradle script <br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>java.home</code> system property (only if it points to a JRE containing the <code>javac</code>, <code>jar</code>, and <code>jlink</code> tools)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>JAVA_HOME</code> environment variable<br>
+<em>usage example</em>: <code>javaHome = '/usr/lib/jvm/open-jdk'</code></p>
+</dd>
+<dt class="hdlist1">modules</dt>
+<dd>
+<p>The list of modules to be included in the custom JRE.<br>
+<em>defaultValue</em>: empty list (the modules provided by the <code>suggestModules</code> task will be used)<br>
+<em>usage example</em>: <code>modules = ['java.naming', 'java.xml']</code></p>
+</dd>
+<dt class="hdlist1">additive</dt>
+<dd>
+<p>In many cases, the list of modules provided by the <code>suggestModules</code> task contains exactly the modules required by your application.
+This means that you don’t need to configure the <code>modules</code> property, because the plugin can figure out by itself which modules are required.
+In some other cases, the "suggested" list of modules is <em>almost</em> right, in the sense that it only misses one or a few modules.
+In these cases, you are allowed to specify only the missing modules in the <code>modules</code> property,
+and you instruct the plugin to add them to the list of suggested modules, by setting the property <code>additive</code> to true.<br>
+    <em>defaultValue</em>: false<br>
+    <em>usage example</em>: <code>additive = true</code></p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_methods">Methods</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><span class="maroon">addOptions</span>(String&#8230;&#8203; <span class="purple">options</span>)</dt>
+<dd>
+<p>Adds options to be passed to <em>jlink</em>.
+It is an alternative way of setting the <code>options</code> property.
+You can call this method multiple times.<br>
+    <em>usage example</em>: <code>addOptions '--no-header-files', '--no-man-pages'</code></p>
+</dd>
+<dt class="hdlist1"><span class="maroon">targetPlatform</span>(String <span class="purple">name</span>, String <span class="purple">jdkHome</span>, List&lt;String&gt; <span class="purple">options</span> = [])</dt>
+<dd>
+<p>Instructs the plugin to use <em>jlink</em> to generate an application image for a specific platform.<br>
+<span class="red"><strong>This method is not for configuring the installable packages produced by jpackage.</strong></span> <a href="#jpackageWarning">See details</a><br>
+By default, the plugin generates an image for the platform it runs on.
+To create images for other platforms, you need to call the <code>targetPlatform</code> method (one call per target platform).<br>
+<span class="purple"><strong>name</strong></span>: an identifier of your choice that will be appended to the <code>imageDir</code> and <code>imageZip</code> properties to
+determine the location of the image directory and of the image archive.<br>
+<span class="purple"><strong>jdkHome</strong></span>: the path to the target platform JDK.<br>
+<span class="purple"><strong>options</strong></span>: an optional list of platform-specific options.
+These options will pe passed to <em>jlink</em> in addition to those provided by the <code>options</code> property of the <code>runtime</code> extension.<br>
+<span class="purple"><em>NOTE</em></span>: This is only a convenience method. There is a more powerful <code>targetPlatform</code> method (described below), which allows configuring additional parameters of the target platform.</p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 99.01%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="title">Usage example</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    targetPlatform(<span class="string"><span class="delimiter">'</span><span class="content">linux-x64</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">/usr/lib/jvm/jdk_x64_linux_hotspot_11_28</span><span class="delimiter">'</span></span>)
+    targetPlatform(<span class="string"><span class="delimiter">'</span><span class="content">linux-s390x</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">/usr/lib/jvm/jdk_s390x_linux_hotspot_11_28</span><span class="delimiter">'</span></span>,
+                                                               [<span class="string"><span class="delimiter">'</span><span class="content">--endian</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">big</span><span class="delimiter">'</span></span>])
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a project named <code>hello</code>, executing the <code>runtimeZip</code> task with the above configuration, and assuming default values for the other properties,
+the plugin will generate the platform-specific images in the directories
+<code>build/image/hello-linux-x64</code> and <code>build/image/hello-linux-s390x</code>.
+The archived images will be available in <code>build/image-linux-x64.zip</code> and <code>build/image-linux-s390x.zip</code>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><span class="maroon">targetPlatform</span>(String <span class="purple">name</span>, Action&lt;TargetPlatform&gt; <span class="purple">action</span>)</dt>
+<dd>
+<p>This more powerful version of the <code>targetPlatform</code> method allows configuring the target platform parameters using a script block.<br>
+<span class="purple"><strong>name</strong></span>: an identifier of your choice that will be appended to the <code>imageDir</code> and <code>imageZip</code> properties to
+determine the location of the image directory and of the image archive.<br>
+<span class="purple"><strong>action</strong></span>: a script block for configuring the target platform parameters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <em>Parameters:</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="purple"><strong>jdkHome</strong></span>: the path to the target platform JDK.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="purple"><strong>options</strong></span>: an optional list of platform-specific options.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <em>Methods:</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="maroon">addOptions</span>(String&#8230;&#8203; <span class="purple">options</span>): an alternative way of setting the <code>options</code> property.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="maroon">jdkDownload</span>(String <span class="purple">downloadUrl</span>, Closure <span class="purple">downloadConfig</span>=null): helper method for setting <span class="purple">jdkHome</span>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It downloads and unpacks a JDK distribution from the given URL.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The optional closure allows configuring the following parameters:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">downloadDir</span>: the directory in which the distribution is downloaded and unpacked.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code><em>buildDir</em>/jdks/<em>targetPlatform-name</em></code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">archiveName</span>: the name under which the archived distribution should be saved.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>jdk</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">archiveExtension</span>: accepted values: <code>tar.gz</code> and <code>zip</code>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>null</code> (inferred from the URL)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">pathToHome</span>: the relative path to the JDK home in the unpacked distribution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>null</code> (inferred by scanning the unpacked distribution)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="purple">overwrite</span>: if <code>true</code>, the plugin overwrites an already existing distribution.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue</em>: <code>false</code></p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 99.01%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="title">Usage example</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    targetPlatform(<span class="string"><span class="delimiter">&quot;</span><span class="content">linux-s390x</span><span class="delimiter">&quot;</span></span>) {
+        jdkHome = <span class="string"><span class="delimiter">&quot;</span><span class="content">/usr/lib/jvm/linux-s390x/jdk-14.0.1_7</span><span class="delimiter">&quot;</span></span>
+        addOptions(<span class="string"><span class="delimiter">&quot;</span><span class="content">--endian</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">big</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    targetPlatform(<span class="string"><span class="delimiter">&quot;</span><span class="content">win</span><span class="delimiter">&quot;</span></span>) {
+        jdkHome = jdkDownload(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7.1/OpenJDK14U-jdk_x64_windows_hotspot_14.0.1_7.zip</span><span class="delimiter">&quot;</span></span>)
+    }
+
+    targetPlatform(<span class="string"><span class="delimiter">&quot;</span><span class="content">mac</span><span class="delimiter">&quot;</span></span>) {
+        jdkHome = jdkDownload(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://github.com/AdoptOpenJDK/openjdk14-binaries/releases/download/jdk-14.0.1%2B7/OpenJDK14U-jdk_x64_mac_hotspot_14.0.1_7.tar.gz</span><span class="delimiter">&quot;</span></span>) {
+            downloadDir = <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>buildDir</span><span class="content">/myMac</span><span class="delimiter">&quot;</span></span>
+            archiveName = <span class="string"><span class="delimiter">&quot;</span><span class="content">my-mac-jdk</span><span class="delimiter">&quot;</span></span>
+            archiveExtension = <span class="string"><span class="delimiter">&quot;</span><span class="content">tar.gz</span><span class="delimiter">&quot;</span></span>
+            pathToHome = <span class="string"><span class="delimiter">&quot;</span><span class="content">jdk-14.0.1+7/Contents/Home</span><span class="delimiter">&quot;</span></span>
+            overwrite = <span class="predefined-constant">true</span>
+        }
+    }
+    ...
+}</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><span class="maroon">enableCds</span>(Action&lt;CdsData&gt; <span class="purple">action</span> = null)</dt>
+<dd>
+<p><span class="red">Experimental - requires Java 13 or newer</span><br>
+Enables Class Data Sharing (CDS).<br>
+<span class="purple"><strong>action</strong></span>: an optional script block for configuring the class data sharing.<br>
+&nbsp;&nbsp;&nbsp;&nbsp; <em>Parameters:</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="purple"><strong>sharedArchiveFile</strong></span>: the path and name of the class data sharing archive file.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It supports the Mustache syntax and placeholders described in the <a href="#launcher">launcher</a> section.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>defaultValue:</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>lib/server/&lt;appName&gt;.jsa</code> on Unix-like systems<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>bin\server\&lt;appName&gt;.jsa</code> on Windows</p>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 0.99%;">
+<col style="width: 99.01%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="title">Usage example</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    enableCds()
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>&nbsp;&nbsp;&nbsp;&nbsp; or</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    enableCds {
+        sharedArchiveFile = <span class="string"><span class="delimiter">&quot;</span><span class="content">{{HOME_DIR}}/</span><span class="inline"><span class="inline-delimiter">${</span>applicationName<span class="inline-delimiter">}</span></span><span class="content">.jsa</span><span class="delimiter">&quot;</span></span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the <code>enableCds</code> method is used, the plugin creates a base CDS archive of the image by executing
+<code>$imageDir/bin/java -Xshare:dump</code>. This means that you cannot use <code>enableCds</code> when targeting another platform.</p>
+</div>
+<div class="paragraph">
+<p>The plugin also configures a dynamic AppCDS archive in the start scripts.
+If no file is found at the <code>sharedArchiveFile</code> location, the application is started with the <code>-XX:ArchiveClassesAtExit</code> option,
+which will create a dynamic AppCDS archive at this location.
+Otherwise, the application is started with the <code>-XX:SharedArchiveFile</code> option and uses the existing AppCDS archive.</p>
+</div>
+<div class="paragraph">
+<p><span class="purple"><em>NOTE</em></span>: Start scripts are not included in the installable packages generated by <code>jpackage</code>.
+As a result, only the base CDS archive of the image is used by the packaged application.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="scriptBlocks">Script blocks</h3>
+<div class="paragraph">
+<p>The <code>runtime</code> extension can also contain the script blocks detailed below.</p>
+</div>
+<div class="sect3">
+<h4 id="launcher">launcher</h4>
+<div class="paragraph">
+<p>The plugin generates script files for launching your application.
+These script files can be customized by configuring the <code>launcher</code> block.</p>
+</div>
+<div class="paragraph">
+<p>Environment variables can be included by using the <a href="https://en.wikipedia.org/wiki/Mustache_(template_system)">Mustache syntax</a>,
+that is, by enclosing their name between <code>{{</code> and <code>}}</code>.
+Additionally, you can use the following placeholders:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>{{BIN_DIR}}</code> - the <em>bin</em> directory of the custom runtime image</p>
+</li>
+<li>
+<p><code>{{HOME_DIR}}</code> - user&#8217;s home directory (<code>$HOME</code> on Unix-like systems, <code>%USERPROFILE%</code> on Windows)</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">jvmArgs</dt>
+<dd>
+<p>list of JVM arguments to be passed to the java executable.<br>
+<em>defaultValue</em>: the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension</p>
+</dd>
+<dt class="hdlist1">noConsole</dt>
+<dd>
+<p>This boolean property has an effect only on Windows. It is ignored on other platforms.<br>
+If true, the application will be launched without an associated console window (using <code>javaw</code> instead of <code>java</code>).<br>
+<em>defaultValue</em>: false</p>
+</dd>
+<dt class="hdlist1">runInBinDir</dt>
+<dd>
+<p>If true, the start script will <code>cd</code> in the <code>bin</code> directory of the image before executing the application.<br>
+<em>defaultValue</em>: false</p>
+</dd>
+<dt class="hdlist1">unixScriptTemplate</dt>
+<dd>
+<p>the template for generating the script file for Unix-like systems.<br>
+<em>defaultValue</em>: null (the plugin uses its own template)</p>
+</dd>
+<dt class="hdlist1">windowsScriptTemplate</dt>
+<dd>
+<p>the template for generating the script file for Windows-based systems.<br>
+<em>defaultValue</em>: null (the plugin uses its own template)</p>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The plugin uses <a href="http://docs.groovy-lang.org/latest/html/api/groovy/text/SimpleTemplateEngine.html">Groovy&#8217;s SimpleTemplateEngine</a>
+to parse the templates, with the following variables available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>applicationName</p>
+</li>
+<li>
+<p>mainClassName</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>Usage example</em></p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    launcher {
+        jvmArgs = [
+            <span class="string"><span class="delimiter">'</span><span class="content">-Dlog4j.debug=true</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml</span><span class="delimiter">'</span></span>,
+            <span class="string"><span class="delimiter">'</span><span class="content">-DdbHost</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">{{PGHOST}}</span><span class="delimiter">'</span></span>
+        ]
+        unixScriptTemplate = file(<span class="string"><span class="delimiter">'</span><span class="content">unixStartScript.txt</span><span class="delimiter">'</span></span>)
+        windowsScriptTemplate = file(<span class="string"><span class="delimiter">'</span><span class="content">windowsStartScript.txt</span><span class="delimiter">'</span></span>)
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">runtime {
+    ...
+    launcher {
+        jvmArgs = listOf(
+            &quot;-Dlog4j.debug=true&quot;, &quot;-Dlog4j.configurationFile={{BIN_DIR}}/log4j2.xml&quot;,
+            &quot;-DdbHost&quot;, &quot;{{PGHOST}}&quot;
+        )
+        unixScriptTemplate = file(&quot;unixStartScript.txt&quot;)
+        windowsScriptTemplate = file(&quot;windowsStartScript.txt&quot;)
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_jpackage">jpackage</h4>
+<div class="paragraph">
+<p>This script block allows you to customize the <a href="https://openjdk.java.net/jeps/392/">jpackage</a>-based generation of platform-specific installable packages.</p>
+</div>
+<div id="jpackageHome" class="dlist">
+<dl>
+<dt class="hdlist1">jpackageHome</dt>
+<dd>
+<p>The path to the JDK providing the jpackage tool.<br>
+<em>defaultValue</em>: the first non-empty value from:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>badass.runtime.jpackage.home</code> system property<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>BADASS_RUNTIME_JPACKAGE_HOME</code> environment variable<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <a href="https://docs.gradle.org/current/userguide/toolchains.html">Java toolchain</a> configured in the Gradle script <br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>java.home</code> system property (only if it points to a JRE containing the <code>jpackage</code> tool)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; - the <code>JAVA_HOME</code> environment variable<br>
+<em>usage example</em>: <code>jpackageHome = "/usr/lib/jvm/jdk16"</code></p>
+</dd>
+<dt class="hdlist1">outputDir</dt>
+<dd>
+<p>Convenience property for setting both <code>imageOutputDir</code> and
+<code>installerOutputDir</code> with the value <em>buildDir</em>/<em>outputDir</em>.<br>
+    <em>defaultValue</em>: <code>"jpackage"</code><br>
+    <em>usage example</em>: <code>outputDir = "my-packaging"</code></p>
+</dd>
+<dt class="hdlist1">imageOutputDir</dt>
+<dd>
+<p>the directory passed as argument to the <code>--output</code> option when running <code>jpackage</code> to create an application image.<br>
+<em>defaultValue</em>: <code><em>buildDir</em>/<em>outputDir</em></code><br>
+<em>usage example</em>: <code>imageOutputDir = file("$buildDir/my-packaging-image")</code></p>
+</dd>
+<dt class="hdlist1">imageName</dt>
+<dd>
+<p>the argument passed to the <code>--name</code> option when running <code>jpackage</code> to create an application image.<br>
+<em>defaultValue</em>: <code><em>project.name</em></code><br>
+<em>usage example</em>: <code>imageName = "MyApp"</code></p>
+</dd>
+<dt class="hdlist1">imageOptions</dt>
+<dd>
+<p>list of additional options to be passed to the <code>jpackage</code> executable when creating the appliction image.<br>
+<em>defaultValue</em>: empty list<br>
+<em>usage example</em>: <code>imageOptions = ["--win-console"]</code></p>
+</dd>
+<dt class="hdlist1">resourceDir</dt>
+<dd>
+<p>the directory passed as argument to the <code>--resource-dir</code> option when running <code>jpackage</code> to create an application installer.
+It is also applicable when creating an application image when you want your own application image instead of the default java image.<br>
+    <em>usage example</em>: <code>resourceDir = file("$buildDir/my-packaging-resources")</code></p>
+</dd>
+<dt class="hdlist1">skipInstaller</dt>
+<dd>
+<p>boolean value that lets you generate only the platform-specific application image and skip the generation of the platform-specific application installer.<br>
+<em>defaultValue</em>: false<br>
+<em>usage example</em>: <code>skipInstaller = true</code></p>
+</dd>
+<dt class="hdlist1">installerType</dt>
+<dd>
+<p>the type of installer to be generated.<br>
+<em>defaultValue</em>: null (all supported types for the current platform will be generated)<br>
+<em>usage example</em>: <code>installerType = "rpm"</code></p>
+</dd>
+<dt class="hdlist1">installerOutputDir</dt>
+<dd>
+<p>the directory passed as argument to the <code>--output</code> option when running <code>jpackage</code> to create an application installer.<br>
+<em>defaultValue</em>: <code><em>buildDir</em>/<em>outputDir</em></code><br>
+<em>usage example</em>: <code>installerOutputDir = file("$buildDir/my-packaging-installer")</code></p>
+</dd>
+<dt class="hdlist1">installerName</dt>
+<dd>
+<p>the argument passed to the <code>--name</code> option when running <code>jpackage</code> to create an application installer.<br>
+<em>defaultValue</em>: <code><em>project.name</em></code><br>
+<em>usage example</em>: <code>installerName = "MyApp"</code></p>
+</dd>
+<dt class="hdlist1">jvmArgs</dt>
+<dd>
+<p>list of JVM arguments to be passed to the virtual machine.<br>
+    <em>defaultValue</em>: the <code>jvmArgs</code> value configured in the <code>launcher</code> block, or the arguments configured in the <code>applicationDefaultJvmArgs</code> property of the <code>application</code> extension.<br>
+<span class="purple"><em>NOTE</em></span>: If the default value is used, and it contains the placeholder <code>{{BIN_DIR}}</code>, the plugin replaces this placeholder with <code>$APPDIR/..</code> when passing the arguments to <code>jpackage</code>.
+This is the correct approach in most cases. If it doesn&#8217;t work in your case, you need to explicitly configure <strong>jvmArgs</strong> in the <code>jpackage</code> block.<br>
+Currently, jpackage doesn&#8217;t support environment variables in <code>--java-options</code>. Therefore, you cannot use environment variable names enclosed between <code>{{</code> and <code>}}</code> in <code>jvmArgs</code>.</p>
+</dd>
+<dt class="hdlist1">args</dt>
+<dd>
+<p>list of arguments to be passed to the application.<br>
+<em>defaultValue</em>: the arguments configured in the <code>args</code> property of the <code>run</code> task</p>
+</dd>
+<dt class="hdlist1">appVersion</dt>
+<dd>
+<p>the argument passed to the <code>--app-version</code> option when running <code>jpackage</code> when executing the <code>jpackage</code> and <code>jpackageImage</code> tasks.<br>
+<em>defaultValue</em>: the project version<br>
+<em>usage example</em>: <code>appVersion = "1.0.0"</code></p>
+</dd>
+<dt class="hdlist1">installerOptions</dt>
+<dd>
+<p>list of additional options to be passed to the <code>jpackage</code> executable when creating the application installer.<br>
+<em>defaultValue</em>: empty list<br>
+<em>usage example</em>: <code>installerOptions = ["--win-console"]</code></p>
+</dd>
+<dt class="hdlist1">targetPlatformName</dt>
+<dd>
+<p>This property is required only when using the <code>targetPlatform</code> method.
+It specifies which of the images produced by jlink should be used as runtime image by jpackage.
+Its value must match the name provided in one of the calls to the <code>targetPlatform</code> method.<br>
+<em>defaultValue</em>: null<br>
+<em>usage example</em>: <code>targetPlatformName = "linux"</code></p>
+</dd>
+</dl>
+</div>
+<div id="jpackageWarning" class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<span class="red"><strong>In contrast to jlink, <em>jpackage</em> is not able to produce installers for other platforms.</strong></span>
+For example, to create an installer for Linux, you must run jpackage on a Linux machine.
+You cannot do it on a Windows or Mac platform.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you need to create installers for more than one platform, it&#8217;s probably better not to use <em>targetPlatform</em>.
+Instead, you run the same build on different machines.
+If your project is on GitHub, you can automate this by using GitHub Actions, as seen in <a href="https://github.com/beryx-gist/badass-runtime-example-javafx">this example</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">mainJar</dt>
+<dd>
+<p>the argument passed to the <code>--main-jar</code> option when running <code>jpackage</code> to create an application image.<br>
+Usually, you don&#8217;t need to set this property, unless you also explicitly set <code>distDir</code>.<br>
+<em>defaultValue</em>: the name of the JAR file produced by the <code>installDist</code> or the <code>installShadowDist</code> task<br>
+<em>usage example</em>: <code>mainJar = "my-app-1.0.1.jar"</code></p>
+</dd>
+<dt class="hdlist1">mainClass</dt>
+<dd>
+<p>the argument passed to the <code>--main-class</code> option when running <code>jpackage</code> to create an application image.<br>
+Usually, you don&#8217;t need to set this property, unless you also explicitly set <code>distDir</code>.<br>
+<em>defaultValue</em>: the <code>mainClassName</code> configured for the <code>application</code> plugin<br>
+<em>usage example</em>: <code>mainClass = "org.example.hello.Greeter"</code></p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><em>Usage example</em></p>
+</div>
+<div class="listingblock primary">
+<div class="title">Groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime {
+    ...
+    jpackage {
+        jpackageHome = <span class="string"><span class="delimiter">'</span><span class="content">/usr/lib/jvm/jdk16</span><span class="delimiter">'</span></span>
+        outputDir = <span class="string"><span class="delimiter">'</span><span class="content">my-packaging</span><span class="delimiter">'</span></span>
+        <span class="comment">// imageOutputDir = file(&quot;$buildDir/my-packaging-image&quot;)</span>
+        <span class="comment">// installerOutputDir = file(&quot;$buildDir/my-packaging-installer&quot;)</span>
+        imageName = <span class="string"><span class="delimiter">'</span><span class="content">MyApp</span><span class="delimiter">'</span></span>
+        imageOptions = [<span class="string"><span class="delimiter">'</span><span class="content">--win-console</span><span class="delimiter">'</span></span>]
+        skipInstaller = <span class="predefined-constant">false</span>
+        installerName = <span class="string"><span class="delimiter">'</span><span class="content">MyApp</span><span class="delimiter">'</span></span>
+        installerType = <span class="string"><span class="delimiter">'</span><span class="content">msi</span><span class="delimiter">'</span></span>
+        installerOptions = [<span class="string"><span class="delimiter">'</span><span class="content">--win-menu</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">--win-shortcut</span><span class="delimiter">'</span></span>]
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="listingblock secondary">
+<div class="title">Kotlin</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="kotlin">runtime {
+    ...
+    jpackage {
+        jpackageHome = &quot;/usr/lib/jvm/jdk16&quot;
+        outputDir = &quot;my-packaging&quot;
+        // imageOutputDir = file(&quot;$buildDir/my-packaging-image&quot;)
+        // installerOutputDir = file(&quot;$buildDir/my-packaging-installer&quot;)
+        imageName = &quot;MyApp&quot;
+        imageOptions = listOf(&quot;--win-console&quot;)
+        skipInstaller = false
+        installerName = &quot;MyApp&quot;
+        installerType = &quot;msi&quot;
+        installerOptions = listOf(&quot;--win-menu&quot;, &quot;--win-shortcut&quot;)
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples">Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following projects illustrate how to use this plugin to create custom runtime images:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/beryx-gist/badass-runtime-example">badass-runtime-example</a> - a 'Hello world' application using slf4j and logback.</p>
+</li>
+<li>
+<p><a href="https://github.com/beryx-gist/badass-runtime-example-javafx">badass-runtime-example-javafx</a> - a 'Hello world' JavaFX application.</p>
+</li>
+<li>
+<p><a href="https://github.com/beryx-gist/badass-runtime-example-kotlin-tornadofx">badass-runtime-example-kotlin-tornadofx</a> - a 'Hello world' application written in Kotlin using <a href="https://github.com/edvin/tornadofx">tornadofx</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/beryx-gist/badass-runtime-spring-petclinic">badass-runtime-spring-petclinic</a> - creates a custom runtime image of the <a href="https://github.com/spring-projects/spring-petclinic">Spring PetClinic</a> application.</p>
+</li>
+<li>
+<p><a href="https://github.com/beryx-gist/badass-runtime-pacman">badass-runtime-pacman</a> - creates a custom runtime image of Pacman from the <a href="https://github.com/AlmasB/FXGLGames">FXGLGames</a> repository.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.12.6<br>
+</div>
+</div>
+</body>
+</html>
