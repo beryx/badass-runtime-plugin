@@ -62,6 +62,7 @@ class JreTask extends BaseTask {
     }
 
     JreTask() {
+        dependsOn('jar')
         description = 'Creates a custom java runtime image with jlink'
     }
 
