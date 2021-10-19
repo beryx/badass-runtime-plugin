@@ -79,7 +79,7 @@ class Util {
     static File getArtifact(ResolvedDependency dep) {
         def artifact = dep.moduleArtifacts.find {it.classifier} ?: dep.moduleArtifacts?.getAt(0)
         if(artifact) return artifact.file
-        LOGGER.warn "Cannot retrieve artifact $dep.name"
+        LOGGER.info "Cannot retrieve artifact $dep.name"
         return null
     }
 
