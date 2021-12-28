@@ -62,7 +62,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 project.ext.jpackageInstallerOutput = {
                     return standardOutput.toString()
                 }
-                def jpackageExec = "${jpd.getJPackageHomeOrDefault()}/bin/jpackage$EXEC_EXTENSION"
+                def jpackageExec = "${jpd.getJPackageHomeOrDefault()}${File.separator}bin${File.separator}jpackage$EXEC_EXTENSION"
                 Util.checkExecutable(jpackageExec)
 
                 def appVersion = (jpd.appVersion ?: project.version).toString()
