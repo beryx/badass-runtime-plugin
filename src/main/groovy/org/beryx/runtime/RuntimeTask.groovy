@@ -98,7 +98,7 @@ class RuntimeTask extends BaseTask {
             }
             // workaround for shadow bug https://github.com/johnrengelman/shadow/issues/572
             if(GradleVersion.current() >= GradleVersion.version('6.4')) {
-                if(!startScriptTask.mainClass.present) {
+                if(!startScriptTask.mainClass.present && GradleVersion.current() < GradleVersion.version('7.0')) {
                     startScriptTask.mainClass.set(startScriptTask.mainClassName)
                 }
             }
