@@ -5,6 +5,78 @@
 - [documentation](http://badass-runtime-plugin.beryx.org/snapshots/latest)
 - [groovydoc](http://badass-runtime-plugin.beryx.org/snapshots/latest/groovydoc)
 
+**Release 1.13.0**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.13.0)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.13.0/groovydoc)
+
+**Release 1.12.7**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.7)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.7/groovydoc)
+
+**Release 1.12.6**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.6)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.6/groovydoc)
+
+**Release 1.12.5**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.5)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.5/groovydoc)
+
+**Release 1.12.4**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.4)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.4/groovydoc)
+
+**Release 1.12.3**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.3)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.3/groovydoc)
+
+**Release 1.12.2**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.2)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.2/groovydoc)
+
+**Release 1.12.1**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.1)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.1/groovydoc)
+
+**Release 1.12.0**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.0)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.0/groovydoc)
+
+**Release 1.11.7**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.7)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.7/groovydoc)
+
+**Release 1.11.6**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.6)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.6/groovydoc)
+
+**Release 1.11.5**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.5)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.5/groovydoc)
+
+**Release 1.11.4**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.4)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.4/groovydoc)
+
+**Release 1.11.3**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.3)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.3/groovydoc)
+
+**Release 1.11.2**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.2)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.2/groovydoc)
+
+**Release 1.11.1**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.1)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.1/groovydoc)
+
+**Release 1.11.0**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.0)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.0/groovydoc)
+
+**Release 1.10.0**
+  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.10.0)
+  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.10.0/groovydoc)
+
 **Release 1.9.1**
   - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.9.1)
   - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.9.1/groovydoc)
@@ -92,78 +164,6 @@
 **Release 1.2.0**
   - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.2.0)
   - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.2.0/groovydoc)
-
-**Release 1.13.0**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.13.0)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.13.0/groovydoc)
-
-**Release 1.12.7**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.7)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.7/groovydoc)
-
-**Release 1.12.6**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.6)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.6/groovydoc)
-
-**Release 1.12.5**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.5)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.5/groovydoc)
-
-**Release 1.12.4**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.4)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.4/groovydoc)
-
-**Release 1.12.3**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.3)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.3/groovydoc)
-
-**Release 1.12.2**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.2)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.2/groovydoc)
-
-**Release 1.12.1**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.1)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.1/groovydoc)
-
-**Release 1.12.0**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.12.0)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.12.0/groovydoc)
-
-**Release 1.11.7**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.7)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.7/groovydoc)
-
-**Release 1.11.6**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.6)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.6/groovydoc)
-
-**Release 1.11.5**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.5)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.5/groovydoc)
-
-**Release 1.11.4**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.4)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.4/groovydoc)
-
-**Release 1.11.3**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.3)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.3/groovydoc)
-
-**Release 1.11.2**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.2)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.2/groovydoc)
-
-**Release 1.11.1**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.1)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.1/groovydoc)
-
-**Release 1.11.0**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.11.0)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.11.0/groovydoc)
-
-**Release 1.10.0**
-  - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.10.0)
-  - [groovydoc](http://badass-runtime-plugin.beryx.org/releases/1.10.0/groovydoc)
 
 **Release 1.1.7**
   - [documentation](http://badass-runtime-plugin.beryx.org/releases/1.1.7)
