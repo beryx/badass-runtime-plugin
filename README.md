@@ -33,3 +33,5 @@ The following projects illustrate how to use this plugin to create custom runtim
 
 
 ### Please [read the documentation](https://badass-runtime-plugin.beryx.org/releases/latest/) before using this plugin.
+
+See the [list of all releases](https://github.com/beryx/badass-runtime-plugin/blob/gh-pages/releases.md) if you use an older version of this plugin. 
