@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JreTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.JreTaskImpl
+import org.gradle.api.GradleException
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
@@ -63,8 +64,8 @@ class JreTask extends BaseTask {
 
     JreTask() {
         dependsOn('jar')
-        dependsOn(project.configurations.runtimeClasspath.allDependencies)
         description = 'Creates a custom java runtime image with jlink'
+        dependsOn(project.configurations['runtimeClasspath'].allDependencies)
     }
 
     @TaskAction

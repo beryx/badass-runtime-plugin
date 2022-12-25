@@ -89,7 +89,8 @@ class RuntimePluginSpec extends Specification {
         imageLauncher.setExecutable(true)
         def process = imageLauncher.absolutePath.execute([], imageBinDir)
         def out = new ByteArrayOutputStream(2048)
-        process.waitForProcessOutput(out, out)
+        def err = new ByteArrayOutputStream(2048)
+        process.waitForProcessOutput(out, err)
         def outputText = out.toString()
 
         then:
