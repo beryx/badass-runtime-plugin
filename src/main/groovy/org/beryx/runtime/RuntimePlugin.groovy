@@ -34,8 +34,8 @@ class RuntimePlugin implements Plugin<Project> {
     @CompileStatic
     @Override
     void apply(Project project) {
-        if(GradleVersion.current() < GradleVersion.version('4.0')) {
-            throw new GradleException("This plugin requires Gradle 4.8 or newer.")
+        if(GradleVersion.current() < GradleVersion.version('7.0')) {
+            throw new GradleException("This plugin requires Gradle 7.0 or newer. Try org.beryx.runtime 1.12.7 if you must use an older version of Gradle.")
         }
         project.getPluginManager().apply('application');
         if(hasModuleInfo(project)) {

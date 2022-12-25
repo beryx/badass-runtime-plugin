@@ -18,15 +18,15 @@ package org.beryx.runtime
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+import spock.lang.TempDir
 import spock.lang.Unroll
 
+import java.nio.file.Path
 import java.util.stream.Collectors
 
 class SuggestModulesSpec extends Specification {
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @TempDir Path testProjectDir
 
     def cleanup() {
         println "CLEANUP"
@@ -35,10 +35,10 @@ class SuggestModulesSpec extends Specification {
     @Unroll
     def "should suggest the correct list of modules"() {
         given:
-        new AntBuilder().copy( todir: testProjectDir.root ) {
+        new AntBuilder().copy( todir: testProjectDir ) {
             fileset( dir: 'src/test/resources/hello-log4j-2.9.0' )
         }
-        File buildFile = new File(testProjectDir.root, "build.gradle")
+        File buildFile = new File(testProjectDir.toFile(), "build.gradle")
         def outputWriter = new StringWriter(8192)
 
         when:

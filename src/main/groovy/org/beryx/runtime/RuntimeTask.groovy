@@ -22,13 +22,13 @@ import org.beryx.runtime.data.LauncherData
 import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
+import org.beryx.runtime.util.Util
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.Directory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.jvm.application.scripts.ScriptGenerator
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
-import org.gradle.util.GradleVersion
 
 @CompileStatic
 class RuntimeTask extends BaseTask {
@@ -86,6 +86,7 @@ class RuntimeTask extends BaseTask {
 
     void configureStartScripts(boolean asRuntimeImage) {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
+            startScriptTask.mainClass.set(Util.getMainClass(project));
             startScriptTask.defaultJvmOpts = launcherData.jvmArgsOrDefault
             startScriptTask.doLast {
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME/bin')
@@ -95,12 +96,6 @@ class RuntimeTask extends BaseTask {
                 startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replace('{{BIN_DIR}}', '%APP_HOME%\\\\bin')
                 startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replace('{{HOME_DIR}}', '%USERPROFILE%')
                 startScriptTask.windowsScript.text = startScriptTask.windowsScript.text.replaceAll(/\{\{([\w.]+)}}/, '%$1%')
-            }
-            // workaround for shadow bug https://github.com/johnrengelman/shadow/issues/572
-            if(GradleVersion.current() >= GradleVersion.version('6.4')) {
-                if(!startScriptTask.mainClass.present && GradleVersion.current() < GradleVersion.version('7.0')) {
-                    startScriptTask.mainClass.set(startScriptTask.mainClassName)
-                }
             }
             startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
             if(asRuntimeImage) {

@@ -36,7 +36,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.util.GradleVersion
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -83,43 +82,21 @@ class Util {
         return null
     }
 
-    @CompileDynamic
     static DirectoryProperty createDirectoryProperty(Project project) {
-        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
-            return project.layout.directoryProperty()
-        } else {
-            return project.objects.directoryProperty()
-        }
+        return project.objects.directoryProperty()
     }
 
-    @CompileDynamic
     static RegularFileProperty createRegularFileProperty(Project project) {
-        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
-            return project.layout.fileProperty()
-        } else {
-            return project.objects.fileProperty()
-        }
+        return project.objects.fileProperty()
     }
 
     static <T> void addToListProperty(ListProperty<T> listProp, T... values) {
-        if(GradleVersion.current() < GradleVersion.version('5.0-milestone-1')) {
-            def list = new ArrayList(listProp.get())
-            list.addAll(values as List)
-            listProp.set(list)
-        } else {
-            listProp.addAll(values as List)
-        }
+        listProp.addAll(values as List)
     }
 
-    @CompileDynamic
     static <K,V>Provider<Map<K,V>> createMapProperty(Project project,
                                              Class<K> keyType, Class<V> valueType) {
-        Provider<Map<K,V>> provider
-        if(GradleVersion.current() < GradleVersion.version('5.1')) {
-            provider = (Property<Map<K,V>>)project.objects.property(Map)
-        } else {
-            provider = project.objects.mapProperty(keyType, valueType)
-        }
+        Provider<Map<K,V>> provider = project.objects.mapProperty(keyType, valueType)
         provider.set(new TreeMap<K,V>())
         provider
     }
@@ -140,14 +117,9 @@ class Util {
         if(!f.canExecute()) throw new GradleException("$f.absolutePath is not executable.")
     }
 
-    @CompileDynamic
     static File getArchiveFile(Project project) {
         Jar jarTask = (Jar)project.tasks.getByName(JavaPlugin.JAR_TASK_NAME)
-        if(GradleVersion.current() < GradleVersion.version('5.1')) {
-            return jarTask.archivePath
-        } else {
-            return jarTask.archiveFile.get().asFile
-        }
+        return jarTask.archiveFile.get().asFile
     }
 
     static File getMainDistJarFile(Project project) {
@@ -169,17 +141,7 @@ class Util {
 
     @CompileDynamic
     static String getRawMainClass(Project project) {
-        String mainClass
-        if(GradleVersion.current() < GradleVersion.version('6.4')) {
-            def convention = project.convention.plugins['application'] as ApplicationPluginConvention
-            mainClass = convention.mainClassName
-            if(!mainClass) {
-                mainClass = project['mainClassName'] as String
-            }
-        } else {
-            mainClass = project.tasks.run.mainClass?.get()
-        }
-        mainClass
+        project.tasks.run.mainClass?.get()
     }
 
     @CompileDynamic
@@ -201,7 +163,6 @@ class Util {
     }
 
     static String getDefaultToolchainJavaHome(Project project) {
-        if(GradleVersion.current() < GradleVersion.version('6.7')) return null
         try {
             def defaultToolchain = project.extensions.getByType(JavaPluginExtension)?.toolchain
             if(!defaultToolchain) return null

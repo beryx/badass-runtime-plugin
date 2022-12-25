@@ -383,7 +383,7 @@ mainJar:: the argument passed to the `--main-jar` option when running `jpackage`
 
 mainClass:: the argument passed to the `--main-class` option when running `jpackage` to create an application image. +
     Usually, you don't need to set this property, unless you also explicitly set `distDir`. +
-    _defaultValue_: the `mainClassName` configured for the `application` plugin +
+    _defaultValue_: the `mainClass` configured for the `application` plugin +
     _usage example_: `mainClass = "org.example.hello.Greeter"`
 
 

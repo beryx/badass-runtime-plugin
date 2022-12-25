@@ -201,7 +201,7 @@ class PackageUseScanner extends ClassVisitor {
     }
 
     List<String> scan(File file) {
-        def invalidEntries = []
+        List<String> invalidEntries = []
         LOGGER.debug("Scanning $file")
         Util.scan(file, { String basePath, String path, InputStream inputStream ->
             if(Util.isValidClassFileReference(path)) {
@@ -211,7 +211,7 @@ class PackageUseScanner extends ClassVisitor {
                     cr.accept(this, 0)
                 } catch (Exception e) {
                     LOGGER.info("Failed to scan $path", e)
-                    invalidEntries << "${basePath}/${path}"
+                    invalidEntries << ("${basePath}/${path}" as String)
                 }
             }
         } as Closure)

@@ -17,35 +17,28 @@ package org.beryx.runtime
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+import spock.lang.TempDir
 import spock.lang.Unroll
 import spock.util.environment.OperatingSystem
+
+import java.nio.file.Path
 
 import static org.gradle.testkit.runner.TaskOutcome.*
 
 class RuntimePluginSpec extends Specification {
-    @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
+    @TempDir Path testProjectDir
 
     def cleanup() {
         println "CLEANUP"
     }
 
-    def setUpBuild(Collection<String> modules, String gradleVersion) {
-        new AntBuilder().copy( todir: testProjectDir.root ) {
+    def setUpBuild(Collection<String> modules) {
+        new AntBuilder().copy( todir: testProjectDir ) {
             fileset( dir: 'src/test/resources/hello-logback' )
         }
 
-        File buildFile = new File(testProjectDir.root, "build.gradle")
-        if(gradleVersion.startsWith("4.")) {
-            // com.github.johnrengelman.shadow 5.2.0 is not compatible with Gradle 4.X
-            buildFile.text = buildFile.text.replace(
-                "id 'com.github.johnrengelman.shadow' version '5.2.0'",
-                    "id 'com.github.johnrengelman.shadow' version '4.0.4'"
-                )
-        }
-        // id 'com.github.johnrengelman.shadow' version '5.2.0'
+        File buildFile = new File(testProjectDir.toFile(), "build.gradle")
         buildFile << '''
             runtime {
                 options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
@@ -60,12 +53,12 @@ class RuntimePluginSpec extends Specification {
     @Unroll
     def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed with Gradle #gradleVersion"() {
         when:
-        setUpBuild(modules, gradleVersion)
+        setUpBuild(modules)
         BuildResult result
         try {
             result = GradleRunner.create()
                     .withDebug(true)
-                    .withProjectDir(testProjectDir.root)
+                    .withProjectDir(testProjectDir.toFile())
                     .withGradleVersion(gradleVersion)
                     .withPluginClasspath()
                     .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-is")
@@ -77,7 +70,7 @@ class RuntimePluginSpec extends Specification {
             assert !buildShouldSucceed
             return
         }
-        def imageBinDir = new File(testProjectDir.root, 'build/image/bin')
+        def imageBinDir = new File(testProjectDir.toFile(), 'build/image/bin')
         def launcherExt = OperatingSystem.current.windows ? '.bat' : ''
         def imageLauncher = new File(imageBinDir, "runtime-hello$launcherExt")
 
@@ -98,13 +91,13 @@ class RuntimePluginSpec extends Specification {
 
         where:
         modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion
-        null                                        | true               | true             | '4.8'
-        []                                          | true               | true             | '5.4.1'
-        ['java.base']                               | true               | false            | '6.3'
-        ['foo.bar']                                 | false              | false            | '6.4.1'
-        ['java.naming']                             | true               | false            | '4.8'
-        ['java.naming', 'java.xml']                 | true               | true             | '5.4.1'
-        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '6.3'
-        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '6.5'
+        null                                        | true               | true             | '7.6'
+        []                                          | true               | true             | '7.6'
+        ['java.base']                               | true               | false            | '7.0'
+        ['foo.bar']                                 | false              | false            | '7.6'
+        ['java.naming']                             | true               | false            | '7.0'
+        ['java.naming', 'java.xml']                 | true               | true             | '7.6'
+        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '7.0'
+        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '7.6'
     }
 }
