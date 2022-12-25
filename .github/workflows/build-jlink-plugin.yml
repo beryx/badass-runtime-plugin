@@ -23,7 +23,7 @@ jobs:
     - name: Grant execute permission for publish.sh
       run: chmod +x publish.sh
     - name: Build with Gradle
-      run: ./gradlew -is build asciidoc --scan
+      run: ./gradlew -is build groovydoc asciidoc --scan
     - name: Run publish if necessary
       env: # Or as an environment variable
         GRGIT_USER: ${{ secrets.GRGIT_USER }}
