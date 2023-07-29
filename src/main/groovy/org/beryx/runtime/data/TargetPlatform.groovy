@@ -15,7 +15,7 @@
  */
 package org.beryx.runtime.data
 
-
+import groovy.transform.CompileStatic
 import org.beryx.runtime.util.JdkUtil
 import org.gradle.api.Named
 import org.gradle.api.Project
@@ -26,6 +26,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 
+@CompileStatic
 abstract class TargetPlatform implements Serializable, Named {
     private static final Logger LOGGER = Logging.getLogger(TargetPlatform.class)
     private Project project
