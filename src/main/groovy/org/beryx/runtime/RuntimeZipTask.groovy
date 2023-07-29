@@ -30,7 +30,7 @@ import org.gradle.api.tasks.TaskAction
 class RuntimeZipTask extends BaseTask {
     @Input
     Map<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms.get()
+        extension.targetPlatforms.collectEntries()
     }
 
     @InputDirectory

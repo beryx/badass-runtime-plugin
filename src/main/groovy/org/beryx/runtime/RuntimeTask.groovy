@@ -34,7 +34,7 @@ import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 class RuntimeTask extends BaseTask {
     @Input
     Map<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms.get()
+        extension.targetPlatforms.collectEntries()
     }
 
     @Nested

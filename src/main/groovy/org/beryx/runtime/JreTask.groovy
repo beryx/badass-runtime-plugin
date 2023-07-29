@@ -49,7 +49,7 @@ class JreTask extends BaseTask {
 
     @Input
     Map<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms.get()
+        extension.targetPlatforms.collectEntries()
     }
 
     @OutputDirectory

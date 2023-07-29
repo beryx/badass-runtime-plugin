@@ -17,6 +17,7 @@ package org.beryx.runtime.data
 
 import org.beryx.runtime.util.Util
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -39,7 +40,7 @@ class RuntimePluginExtension {
     final Property<Boolean> additive
     final ListProperty<String> modules
     final Property<String> javaHome
-    final Provider<Map<String, TargetPlatform>> targetPlatforms
+    final NamedDomainObjectContainer targetPlatforms
     final Property<Integer> jvmVersion
 
     final Property<LauncherData> launcherData
@@ -70,7 +71,7 @@ class RuntimePluginExtension {
 
         javaHome = project.objects.property(String)
 
-        targetPlatforms = Util.createMapProperty(project, String, TargetPlatform)
+        targetPlatforms = project.objects.domainObjectContainer(TargetPlatform)
 
         jvmVersion = project.objects.property(Integer)
 
@@ -95,13 +96,17 @@ class RuntimePluginExtension {
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
-        Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(project, name, jdkHome, options))
+        targetPlatform(name) { TargetPlatform platform ->
+            platform.jdkHome.set(jdkHome)
+            platform.options.addAll(options)
+        }
     }
 
     void targetPlatform(String name, Action<TargetPlatform> action) {
-        def targetPlatform = new TargetPlatform(project, name)
-        action.execute(targetPlatform)
-        Util.putToMapProvider(targetPlatforms, name, targetPlatform)
+        targetPlatforms.create(name) { TargetPlatform platform ->
+            platform.setProject(project)
+            action.execute(platform)
+        }
     }
 
     void enableCds(Action<CdsData> action = null) {
