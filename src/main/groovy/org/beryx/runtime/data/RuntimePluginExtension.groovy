@@ -40,7 +40,7 @@ class RuntimePluginExtension {
     final Property<Boolean> additive
     final ListProperty<String> modules
     final Property<String> javaHome
-    final NamedDomainObjectContainer targetPlatforms
+    final NamedDomainObjectContainer<TargetPlatform> targetPlatforms
     final Property<Integer> jvmVersion
 
     final Property<LauncherData> launcherData
