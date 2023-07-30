@@ -17,7 +17,6 @@ package org.beryx.runtime.data
 
 import groovy.transform.CompileStatic
 import org.beryx.runtime.util.JdkUtil
-import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.internal.provider.DefaultProvider
 import org.gradle.api.logging.Logger
@@ -25,17 +24,25 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 
 @CompileStatic
-abstract class TargetPlatform implements Serializable, Named {
-    private static final Logger LOGGER = Logging.getLogger(TargetPlatform.class)
-    private Project project
+class TargetPlatform {
+    static final Logger LOGGER = Logging.getLogger(TargetPlatform.class)
 
-    abstract Property<String> getJdkHome()
-    abstract ListProperty<String> getOptions()
+    private final Project project
+    @Input
+    final String name
+    @Input
+    final Property<String> jdkHome
+    @Input
+    final ListProperty<String> options
 
-    void setProject(Project project) {
+    TargetPlatform(Project project, String name) {
+        this.name = name
         this.project = project
+        jdkHome = project.objects.property(String)
+        options = project.objects.listProperty(String)
     }
 
     void setJdkHome(Provider<String> jdkHome) {

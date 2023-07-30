@@ -19,9 +19,10 @@ import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JreTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.JreTaskImpl
-import org.gradle.api.GradleException
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -47,9 +48,9 @@ class JreTask extends BaseTask {
         javaHomeOrDefault
     }
 
-    @Input
-    Map<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms.collectEntries()
+    @Nested
+    MapProperty<String, TargetPlatform> getTargetPlatforms() {
+        extension.targetPlatforms
     }
 
     @OutputDirectory
@@ -76,7 +77,7 @@ class JreTask extends BaseTask {
         taskData.additive = additive
         taskData.modules = modules
         taskData.javaHome = javaHome
-        taskData.targetPlatforms = targetPlatforms
+        taskData.targetPlatforms = targetPlatforms.get()
 
         def taskImpl = new JreTaskImpl(project, taskData)
         taskImpl.execute()
