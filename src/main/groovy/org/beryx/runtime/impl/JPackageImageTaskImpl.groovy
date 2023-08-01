@@ -50,7 +50,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             def outputDir = jpd.imageOutputDirOrDefault
             project.delete(outputDir)
 
-            def jpackageExec = "${jpd.getJPackageHomeOrDefault()}/bin/jpackage$EXEC_EXTENSION"
+            def jpackageExec = "${td.javaHome}/bin/jpackage$EXEC_EXTENSION"
             Util.checkExecutable(jpackageExec)
 
             def inputSuffix = project.tasks.findByName('installShadowDist') ? '-shadow' : ''

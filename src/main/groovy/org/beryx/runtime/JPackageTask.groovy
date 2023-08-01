@@ -43,6 +43,7 @@ class JPackageTask extends BaseTask {
     void jpackageTaskAction() {
         def taskData = new JPackageTaskData()
         taskData.jpackageData = jpackageData
+        taskData.javaHome = javaHomeOrDefault
         taskData.configureAppImageDir()
 
         def taskImpl = new JPackageTaskImpl(project, taskData)

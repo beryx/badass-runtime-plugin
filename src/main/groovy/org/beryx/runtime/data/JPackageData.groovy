@@ -127,11 +127,6 @@ class JPackageData {
     }
 
     @Internal
-    String getJPackageHomeOrDefault() {
-        return jpackageHome ?: defaultJPackageHome
-    }
-
-    @Internal
     String getDefaultJPackageHome() {
         def value = System.properties['badass.runtime.jpackage.home']
         if(value) return value

@@ -67,6 +67,7 @@ class JPackageImageTask extends BaseTask {
         def taskData = new JPackageTaskData()
         taskData.distDir = distDir.asFile
         taskData.jpackageData = jpackageData
+        taskData.javaHome = javaHomeOrDefault
 
         def jreTask = (JreTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_JRE)
         taskData.configureRuntimeImageDir(jreTask)
