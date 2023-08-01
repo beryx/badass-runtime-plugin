@@ -97,11 +97,6 @@ if (location.href.indexOf('is-external=true') == -1) {
     <ul class="blockList">
         <li class="blockList">
 
-            <dl>
-                <dt>All Implemented Interfaces and Traits:</dt>
-                <dd>java.io.Serializable</dd>
-            </dl>
-    
 
             <!-- todo: direct known subclasses -->
             <hr>
@@ -109,8 +104,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 
 <pre>@groovy.transform.CompileStatic
 class TargetPlatform
-extends java.lang.Object
-implements java.io.Serializable</pre>
+extends java.lang.Object</pre>
 
           </li>
     </ul>
@@ -141,17 +135,22 @@ implements java.io.Serializable</pre>
                         </tr>
                         
                         <tr class="altColor">
-                            <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
-                            <td class="colLast"><code><a href="#jdkHome">jdkHome</a></code><br></td>
+                            <td class="colFirst"><code><strong>static&nbsp;org.gradle.api.logging.Logger</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#LOGGER">LOGGER</a></code><br></td>
                         </tr>
                         
                         <tr class="rowColor">
+                            <td class="colFirst"><code><strong>org.gradle.api.provider.Property&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
+                            <td class="colLast"><code><a href="#jdkHome">jdkHome</a></code><br></td>
+                        </tr>
+                        
+                        <tr class="altColor">
                             <td class="colFirst"><code><strong>java.lang.String</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#name">name</a></code><br></td>
                         </tr>
                         
-                        <tr class="altColor">
-                            <td class="colFirst"><code><strong>java.util.List&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
+                        <tr class="rowColor">
+                            <td class="colFirst"><code><strong>org.gradle.api.provider.ListProperty&lt;java.lang.String&gt;</strong></code>&nbsp;</td>
                             <td class="colLast"><code><a href="#options">options</a></code><br></td>
                         </tr>
                         
@@ -178,8 +177,8 @@ implements java.io.Serializable</pre>
                         
                         <tr class="altColor">
                             <td class="colFirst">
-                                <code><a href="#TargetPlatform(org.gradle.api.Project, java.lang.String, java.lang.String, List)">TargetPlatform</a>
-                                (org.gradle.api.Project project, java.lang.String name, java.lang.String jdkHome, java.util.List&lt;java.lang.String&gt; options)</code><br></td>
+                                <code><a href="#TargetPlatform(org.gradle.api.Project, java.lang.String)">TargetPlatform</a>
+                                (org.gradle.api.Project project, java.lang.String name)</code><br></td>
                         </tr>
                         
                     </table>
@@ -211,20 +210,14 @@ implements java.io.Serializable</pre>
                         
                         <tr class="rowColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code>java.lang.String</code></td>
-                            <td class="colLast"><code><strong><a href="#getJdkHome()">getJdkHome</a></strong>()</code><br></td>
+                            <td class="colLast"><code>org.gradle.api.provider.Provider&lt;java.lang.String&gt;</code></td>
+                            <td class="colLast"><code><strong><a href="#jdkDownload(java.lang.String, groovy.lang.Closure)">jdkDownload</a></strong>(java.lang.String downloadUrl, groovy.lang.Closure downloadConfig)</code><br></td>
                         </tr>
                         
                         <tr class="altColor">
                             <td class="colFirst"><code></code></td>
-                            <td class="colLast"><code><a href='../../../../org/beryx/runtime/data/TargetPlatform.LazyString.html'>TargetPlatform.LazyString</a></code></td>
-                            <td class="colLast"><code><strong><a href="#jdkDownload(java.lang.String, groovy.lang.Closure)">jdkDownload</a></strong>(java.lang.String downloadUrl, groovy.lang.Closure downloadConfig)</code><br></td>
-                        </tr>
-                        
-                        <tr class="rowColor">
-                            <td class="colFirst"><code></code></td>
                             <td class="colLast"><code>void</code></td>
-                            <td class="colLast"><code><strong><a href="#setJdkHome(java.io.Serializable)">setJdkHome</a></strong>(java.io.Serializable jdkHome)</code><br></td>
+                            <td class="colLast"><code><strong><a href="#setJdkHome(Provider)">setJdkHome</a></strong>(org.gradle.api.provider.Provider&lt;java.lang.String&gt; jdkHome)</code><br></td>
                         </tr>
                         
                     </table>
@@ -270,10 +263,19 @@ implements java.io.Serializable</pre>
                 </a>
                     <h3>Property Detail</h3>
                     
+                        <a name="LOGGER"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>static&nbsp;final&nbsp;org.gradle.api.logging.Logger <strong>LOGGER</strong></h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
                         <a name="jdkHome"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.lang.String <strong>jdkHome</strong></h4>
+                                <h4>@org.gradle.api.tasks.Input
+final&nbsp;org.gradle.api.provider.Property&lt;java.lang.String&gt; <strong>jdkHome</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -281,7 +283,8 @@ implements java.io.Serializable</pre>
                         <a name="name"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>final&nbsp;java.lang.String <strong>name</strong></h4>
+                                <h4>@org.gradle.api.tasks.Input
+final&nbsp;java.lang.String <strong>name</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -289,7 +292,8 @@ implements java.io.Serializable</pre>
                         <a name="options"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>java.util.List&lt;java.lang.String&gt; <strong>options</strong></h4>
+                                <h4>@org.gradle.api.tasks.Input
+final&nbsp;org.gradle.api.provider.ListProperty&lt;java.lang.String&gt; <strong>options</strong></h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -308,10 +312,10 @@ implements java.io.Serializable</pre>
                 </a>
                     <h3>Constructor Detail</h3>
                     
-                        <a name="TargetPlatform(org.gradle.api.Project, java.lang.String, java.lang.String, List)"><!-- --></a>
+                        <a name="TargetPlatform(org.gradle.api.Project, java.lang.String)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4><strong>TargetPlatform</strong>(org.gradle.api.Project project, java.lang.String name, java.lang.String jdkHome, java.util.List&lt;java.lang.String&gt; options)</h4>
+                                <h4><strong>TargetPlatform</strong>(org.gradle.api.Project project, java.lang.String name)</h4>
                                 <p></p>
                             </li>
                         </ul>
@@ -337,26 +341,18 @@ implements java.io.Serializable</pre>
                             </li>
                         </ul>
                     
-                        <a name="getJdkHome()"><!-- --></a>
-                        <ul class="blockListLast">
-                            <li class="blockList">
-                                <h4>java.lang.String <strong>getJdkHome</strong>()</h4>
-                                <p></p>
-                            </li>
-                        </ul>
-                    
                         <a name="jdkDownload(java.lang.String, groovy.lang.Closure)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4><a href='../../../../org/beryx/runtime/data/TargetPlatform.LazyString.html'>TargetPlatform.LazyString</a> <strong>jdkDownload</strong>(java.lang.String downloadUrl, groovy.lang.Closure downloadConfig)</h4>
+                                <h4>org.gradle.api.provider.Provider&lt;java.lang.String&gt; <strong>jdkDownload</strong>(java.lang.String downloadUrl, groovy.lang.Closure downloadConfig)</h4>
                                 <p></p>
                             </li>
                         </ul>
                     
-                        <a name="setJdkHome(java.io.Serializable)"><!-- --></a>
+                        <a name="setJdkHome(Provider)"><!-- --></a>
                         <ul class="blockListLast">
                             <li class="blockList">
-                                <h4>void <strong>setJdkHome</strong>(java.io.Serializable jdkHome)</h4>
+                                <h4>void <strong>setJdkHome</strong>(org.gradle.api.provider.Provider&lt;java.lang.String&gt; jdkHome)</h4>
                                 <p></p>
                             </li>
                         </ul>

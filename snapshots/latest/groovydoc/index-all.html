@@ -327,8 +327,6 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/BaseTask.html#getJavaHomeOrDefault()" title="Method in BaseTask">getJavaHomeOrDefault()</a></span> - Method in <a href="org/beryx/runtime/BaseTask.html">BaseTask</a>
 </dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#getJdkHome()" title="Method in TargetPlatform">getJdkHome()</a></span> - Method in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
-</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/JPackageImageTask.html#getJpackageData()" title="Method in JPackageImageTask">getJpackageData()</a></span> - Method in <a href="org/beryx/runtime/JPackageImageTask.html">JPackageImageTask</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/JPackageTask.html#getJpackageData()" title="Method in JPackageTask">getJpackageData()</a></span> - Method in <a href="org/beryx/runtime/JPackageTask.html">JPackageTask</a>
@@ -448,6 +446,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/JdkUtil.JdkDownloadOptions.html#JdkDownloadOptions(org.gradle.api.Project, java.lang.String, java.lang.String)" title="Constructor in JdkUtil.JdkDownloadOptions">JdkDownloadOptions(org.gradle.api.Project, java.lang.String, java.lang.String)</a></span> - Constructor in <a href="org/beryx/runtime/util/JdkUtil.JdkDownloadOptions.html">JdkUtil.JdkDownloadOptions</a>
 </dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#jdkHome" title="Property in TargetPlatform">jdkHome</a></span> - Property in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
+</dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/JdkUtil.html" title="Class in org.beryx.runtime.util">JdkUtil</a></span> - Class in <a href="./org/beryx/runtime/util/package-summary.html">org.beryx.runtime.util</a>
 </dt><dd><div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/util/JdkUtil.JdkDownloadOptions.html" title="Class in org.beryx.runtime.util.JdkUtil">JdkUtil.JdkDownloadOptions</a></span> - Class in <a href="./org/beryx/runtime/util/package-summary.html">org.beryx.runtime.util</a>
@@ -537,6 +537,8 @@ if (location.href.indexOf('is-external=true') == -1) {
 <dt><span class="strong"><a href="org/beryx/runtime/data/LauncherData.html#LauncherData(org.gradle.api.Project)" title="Constructor in LauncherData">LauncherData(org.gradle.api.Project)</a></span> - Constructor in <a href="org/beryx/runtime/data/LauncherData.html">LauncherData</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/RuntimePluginExtension.html#launcherData" title="Property in RuntimePluginExtension">launcherData</a></span> - Property in <a href="org/beryx/runtime/data/RuntimePluginExtension.html">RuntimePluginExtension</a>
+</dt><dd> <div class="block"></div></dd>
+<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#LOGGER" title="Property in TargetPlatform">LOGGER</a></span> - Property in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
 </dt><dd> <div class="block"></div></dd>
 </dl>
 
@@ -683,7 +685,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/impl/BaseTaskImpl.html#SEP" title="Property in BaseTaskImpl">SEP</a></span> - Property in <a href="org/beryx/runtime/impl/BaseTaskImpl.html">BaseTaskImpl</a>
 </dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#setJdkHome(java.io.Serializable)" title="Method in TargetPlatform">setJdkHome(java.io.Serializable)</a></span> - Method in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
+<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#setJdkHome(Provider<String>)" title="Method in TargetPlatform">setJdkHome(Provider&lt;String&gt;)</a></span> - Method in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/CdsData.html#sharedArchiveFile" title="Property in CdsData">sharedArchiveFile</a></span> - Property in <a href="org/beryx/runtime/data/CdsData.html">CdsData</a>
 </dt><dd> <div class="block"></div></dd>
@@ -726,7 +728,7 @@ if (location.href.indexOf('is-external=true') == -1) {
 </dt><dd><div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/RuntimePluginExtension.html#targetPlatform(java.lang.String, Action<TargetPlatform>)" title="Method in RuntimePluginExtension">targetPlatform(java.lang.String, Action&lt;TargetPlatform&gt;)</a></span> - Method in <a href="org/beryx/runtime/data/RuntimePluginExtension.html">RuntimePluginExtension</a>
 </dt><dd> <div class="block"></div></dd>
-<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#TargetPlatform(org.gradle.api.Project, java.lang.String, java.lang.String, List<String>)" title="Constructor in TargetPlatform">TargetPlatform(org.gradle.api.Project, java.lang.String, java.lang.String, List&lt;String&gt;)</a></span> - Constructor in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
+<dt><span class="strong"><a href="org/beryx/runtime/data/TargetPlatform.html#TargetPlatform(org.gradle.api.Project, java.lang.String)" title="Constructor in TargetPlatform">TargetPlatform(org.gradle.api.Project, java.lang.String)</a></span> - Constructor in <a href="org/beryx/runtime/data/TargetPlatform.html">TargetPlatform</a>
 </dt><dd> <div class="block"></div></dd>
 <dt><span class="strong"><a href="org/beryx/runtime/data/JPackageData.html#targetPlatformName" title="Property in JPackageData">targetPlatformName</a></span> - Property in <a href="org/beryx/runtime/data/JPackageData.html">JPackageData</a>
 </dt><dd> <div class="block"></div></dd>
