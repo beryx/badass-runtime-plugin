@@ -21,16 +21,17 @@ import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeZipTaskImpl
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
-import org.gradle.api.tasks.Input
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
 class RuntimeZipTask extends BaseTask {
-    @Input
-    Map<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms.get()
+    @Nested
+    MapProperty<String, TargetPlatform> getTargetPlatforms() {
+        extension.targetPlatforms
     }
 
     @InputDirectory
@@ -51,7 +52,7 @@ class RuntimeZipTask extends BaseTask {
     @TaskAction
     void runtimeZipTaskAction() {
         def taskData = new RuntimeZipTaskData()
-        taskData.targetPlatforms = targetPlatforms
+        taskData.targetPlatforms = targetPlatforms.get()
         taskData.imageDir = imageDir.asFile
         taskData.imageZip = imageZip.asFile
         def taskImpl = new RuntimeZipTaskImpl(project, taskData)

@@ -25,6 +25,7 @@ import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.beryx.runtime.util.Util
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.jvm.application.scripts.ScriptGenerator
@@ -32,9 +33,9 @@ import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 
 @CompileStatic
 class RuntimeTask extends BaseTask {
-    @Input
-    Map<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms.get()
+    @Nested
+    MapProperty<String, TargetPlatform> getTargetPlatforms() {
+        extension.targetPlatforms
     }
 
     @Nested
@@ -132,7 +133,7 @@ class RuntimeTask extends BaseTask {
         taskData.distDir = distDir.asFile
         taskData.jreDir = jreDir.asFile
         taskData.imageDir = imageDir.asFile
-        taskData.targetPlatforms = targetPlatforms
+        taskData.targetPlatforms = targetPlatforms.get()
 
         def taskImpl = new RuntimeTaskImpl(project, taskData)
         taskImpl.execute()

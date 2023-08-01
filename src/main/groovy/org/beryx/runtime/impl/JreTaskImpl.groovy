@@ -36,7 +36,7 @@ class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
         if(td.targetPlatforms) {
             td.targetPlatforms.values().each { platform ->
                 File jreDir = new File(td.jreDir, "$project.name-$platform.name")
-                createJre(jreDir, platform.jdkHome, td.options + platform.options)
+                createJre(jreDir, platform.jdkHome.getOrNull(), td.options + platform.options.get())
             }
         } else {
             createJre(td.jreDir, td.javaHome, td.options)

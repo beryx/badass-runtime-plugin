@@ -21,8 +21,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 
 import groovy.transform.CompileStatic
 
@@ -39,7 +39,7 @@ class RuntimePluginExtension {
     final Property<Boolean> additive
     final ListProperty<String> modules
     final Property<String> javaHome
-    final Provider<Map<String, TargetPlatform>> targetPlatforms
+    final MapProperty<String, TargetPlatform> targetPlatforms
     final Property<Integer> jvmVersion
 
     final Property<LauncherData> launcherData
@@ -70,7 +70,7 @@ class RuntimePluginExtension {
 
         javaHome = project.objects.property(String)
 
-        targetPlatforms = Util.createMapProperty(project, String, TargetPlatform)
+        targetPlatforms = project.objects.mapProperty(String, TargetPlatform)
 
         jvmVersion = project.objects.property(Integer)
 
@@ -95,13 +95,16 @@ class RuntimePluginExtension {
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
-        Util.putToMapProvider(targetPlatforms, name, new TargetPlatform(project, name, jdkHome, options))
+        targetPlatform(name) { TargetPlatform platform ->
+            platform.jdkHome.set(jdkHome)
+            platform.options.addAll(options)
+        }
     }
 
     void targetPlatform(String name, Action<TargetPlatform> action) {
         def targetPlatform = new TargetPlatform(project, name)
+        targetPlatforms.put(name, targetPlatform)
         action.execute(targetPlatform)
-        Util.putToMapProvider(targetPlatforms, name, targetPlatform)
     }
 
     void enableCds(Action<CdsData> action = null) {

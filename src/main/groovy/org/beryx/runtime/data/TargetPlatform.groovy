@@ -15,61 +15,51 @@
  */
 package org.beryx.runtime.data
 
-
 import groovy.transform.CompileStatic
 import org.beryx.runtime.util.JdkUtil
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.DefaultProvider
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 
 @CompileStatic
-class TargetPlatform implements Serializable {
-    private static final Logger LOGGER = Logging.getLogger(TargetPlatform.class)
+class TargetPlatform {
+    static final Logger LOGGER = Logging.getLogger(TargetPlatform.class)
 
-    transient private final Project project
+    private final Project project
+    @Input
     final String name
-    private Serializable jdkHome
-    List<String> options = []
+    @Input
+    final Property<String> jdkHome
+    @Input
+    final ListProperty<String> options
 
-    TargetPlatform(Project project, String name, String jdkHome = '', List<String> options = []) {
-        this.project = project
+    TargetPlatform(Project project, String name) {
         this.name = name
-        this.@jdkHome = jdkHome
-        this.options.addAll(options)
-    }
-    String getJdkHome() {
-        (this.@jdkHome == null) ? null : this.@jdkHome.toString()
+        this.project = project
+        jdkHome = project.objects.property(String)
+        options = project.objects.listProperty(String)
     }
 
-    void setJdkHome(Serializable jdkHome) {
-        this.@jdkHome = jdkHome
+    void setJdkHome(Provider<String> jdkHome) {
+        this.jdkHome.set(jdkHome)
     }
 
     void addOptions(String... opts) {
-        opts.each { String opt -> options.add(opt) }
+        this.options.addAll(opts)
     }
 
-    private static class LazyString implements Serializable {
-        final Closure<String> closure
-        LazyString(Closure<String> closure) {
-            this.closure = closure
-        }
-
-        @Lazy String string = closure.call()
-
-        @Override
-        String toString() {
-            string
-        }
-    }
-
-    LazyString jdkDownload(String downloadUrl, Closure downloadConfig = null) {
+    Provider<String> jdkDownload(String downloadUrl, Closure downloadConfig = null) {
         def options = new JdkUtil.JdkDownloadOptions(project, name, downloadUrl)
         if(downloadConfig) {
             downloadConfig.delegate = options
             downloadConfig(options)
         }
-        return new LazyString({
+        return new DefaultProvider<String>({
             def relativePathToHome = JdkUtil.downloadFrom(downloadUrl, options)
             def pathToHome = "$options.downloadDir/$relativePathToHome"
             LOGGER.info("Home of downloaded JDK distribution: $pathToHome")
