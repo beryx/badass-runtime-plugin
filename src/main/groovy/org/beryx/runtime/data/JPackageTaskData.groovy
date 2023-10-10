@@ -35,6 +35,7 @@ class JPackageTaskData {
     File appImageDir
 
     JPackageData jpackageData
+    String javaHome
 
     void configureAppImageDir() {
         final def imgOutDir = jpackageData.imageOutputDirOrDefault
