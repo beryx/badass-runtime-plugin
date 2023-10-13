@@ -73,9 +73,6 @@ license {
 }
 
 configurations {
-    plugin.description = 'Plugin\'s dependencies'
-    implementation.extendsFrom plugin
-
     [apiElements, runtimeElements].each {
         it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
         it.outgoing.artifact(shadowJar)
@@ -90,7 +87,7 @@ dependencies {
     shadow gradleTestKit()
     shadow localGroovy()
 
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
+    shadow group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
 
     implementation "org.ow2.asm:asm:$asmVersion"
     implementation "org.ow2.asm:asm-commons:$asmVersion"
@@ -124,15 +121,7 @@ gradlePlugin {
 }
 
 shadowJar {
-    configurations = [project.configurations.plugin]
     archiveClassifier = null
-    dependencies {
-        include(dependency("org.ow2.asm:asm:$asmVersion"))
-        include(dependency("org.ow2.asm:asm-commons:$asmVersion"))
-        include(dependency("org.ow2.asm:asm-tree:$asmVersion"))
-        include(dependency("org.ow2.asm:asm-util:$asmVersion"))
-        include(dependency("org.ow2.asm:asm-anaysis:$asmVersion"))
-    }
     relocate 'org.objectweb.asm', 'org.beryx.jlink.shadow.asm'
 }
 
