@@ -212,6 +212,7 @@ class PackageUseScanner extends ClassVisitor {
                 } catch (Exception e) {
                     LOGGER.info("Failed to scan $path", e)
                     invalidEntries << ("${basePath}/${path}" as String)
+                    return
                 }
             }
         } as Closure)
