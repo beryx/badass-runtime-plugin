@@ -1,3 +1,35 @@
+**NOTE: This is a fork of the original [repository](https://github.com/beryx/badass-runtime-plugin).
+It adds [compatibility with JDK versions up to 22](https://github.com/beryx/badass-runtime-plugin/issues/153).**
+
+A [pull request](https://github.com/beryx/badass-runtime-plugin/pull/154) has been submitted to the original repository.
+
+To use this patched version:
+
+ - build the plugin
+
+
+    ./gradlew build
+
+
+ - publish to your local repository
+
+
+    ./gradlew publishToMavenLocal publishPluginMavenPublicationToMavenLocal publishJLinkPluginMarkerMavenPublicationToMavenLocal
+
+
+ - add this to your own project's settings.gradle.kts (change to Groovy syntax if you don't use the Kotlin DSL)
+
+
+    pluginManagement {
+        repositories {
+            mavenLocal()
+            gradlePluginPortal()
+        }
+    }
+
+Find the original README below:
+<hr>
+
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/beryx/badass-runtime-plugin/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/github/workflow/status/beryx/badass-runtime-plugin/Java%2011%20Gradle%20CI)](https://github.com/beryx/badass-runtime-plugin/actions?query=workflow%3A%22Java+11+Gradle+CI%22)
