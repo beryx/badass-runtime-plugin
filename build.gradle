@@ -43,7 +43,7 @@ project.version.with {
 ext.badassRuntimePluginVersion = project.version as String
 ext.badassRuntimePluginTag = Boolean.valueOf(badassRuntimePluginReleaseBuild) ? "v$ext.badassRuntimePluginVersion" : 'master'
 
-group = 'org.beryx'
+group = 'com.dua3.gradle'
 version = badassRuntimePluginVersion
 
 ext.asmVersion = '9.7'
@@ -106,14 +106,14 @@ dependencies {
 }
 
 gradlePlugin {
-    website = 'https://github.com/beryx/badass-runtime-plugin/'
-    vcsUrl = 'https://github.com/beryx/badass-runtime-plugin'
+    website = 'https://github.com/xzel23/badass-runtime-plugin'
+    vcsUrl = 'https://github.com/xzel23/badass-runtime-plugin'
 
     plugins {
         jlink {
-            id = 'org.beryx.runtime'
+            id = 'com.dua3.gradle.runtime'
             implementationClass = 'org.beryx.runtime.RuntimePlugin'
-            displayName = 'Badass Runtime Plugin'
+            displayName = 'Badass Runtime Plugin (patched)'
             description = 'A Gradle plugin that assembles your modules into a custom runtime image'
             tags.set(['runtime', 'jlink', 'jpms', 'image'])
         }
@@ -157,11 +157,11 @@ asciidoctor {
             linkattrs: true,
             linkcss: true,
             'git-tag': badassRuntimePluginTag,
-            'blob-root': "https://github.com/beryx/badass-runtime-plugin/blob/$badassRuntimePluginTag"
+            'blob-root': "https://github.com/xzel23/badass-runtime-plugin/blob/$badassRuntimePluginTag"
 }
 
 gitPublish {
-    repoUri = 'https://github.com/beryx/badass-runtime-plugin.git'
+    repoUri = 'https://github.com/xzel23/badass-runtime-plugin'
     branch = 'gh-pages'
 
     def pgType = project.hasProperty('ghPageType') ? ghPageType : 'latest'

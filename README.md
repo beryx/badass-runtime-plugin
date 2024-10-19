@@ -4,6 +4,26 @@
 
 ## Badass Runtime Plugin ##
 
+##### NOTE: This is a fork of the original [Badass-Runtime-Plugin](https://github.com/beryx/badass-runtime-plugin) that is patched to support newer Java releases and other fixes not yet available with the original plugin.
+
+###### Changes in this fork
+
+**1.13.1-patch-1**
+
+ - updated some dependencies, this includes the assembler so that the plugin works on newer JDK versions.
+
+###### How to build
+
+Make sure your environment is set to use JDK 11 and run `./gradlew build`.
+
+###### How to use
+
+Change the plugin ID from `org.beryx.runtime` to `com.dua3.gradle.runtime` in your Gradle build files.
+
+##### The following is the content of the original README.
+
+---
+
 ##### NOTE: Looking for co-maintainers - see [this issue](https://github.com/beryx/badass-runtime-plugin/issues/135). #####
 
 Using this Gradle plugin you can create custom runtime images for non-modularized applications.

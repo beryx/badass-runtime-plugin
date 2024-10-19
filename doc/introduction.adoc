@@ -30,7 +30,7 @@ To use the plugin, include the following in your build script:
 [subs="attributes",options="nowrap"]
 ----
 plugins {
-    id 'org.beryx.runtime' version '{project-version}'
+    id 'com.dua3.gradle.runtime' version '{project-version}'
 }
 ----
 
