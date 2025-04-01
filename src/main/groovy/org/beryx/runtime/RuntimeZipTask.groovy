@@ -15,12 +15,14 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimeZipTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeZipTaskImpl
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
@@ -28,33 +30,27 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
-class RuntimeZipTask extends BaseTask {
+abstract class RuntimeZipTask extends DefaultTask {
     @Nested
-    MapProperty<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms
-    }
+    abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
 
     @InputDirectory
-    Directory getImageDir() {
-        extension.imageDir.get()
-    }
+    abstract DirectoryProperty getImageDir()
 
     @OutputFile
-    RegularFile getImageZip() {
-        extension.imageZip.get()
-    }
+    abstract RegularFileProperty getImageZip()
 
-    RuntimeZipTask() {
+    /*RuntimeZipTask() {
         dependsOn(RuntimePlugin.TASK_NAME_RUNTIME)
         description = 'Creates a zip of the runtime image of your application'
-    }
+    }*/
 
     @TaskAction
     void runtimeZipTaskAction() {
         def taskData = new RuntimeZipTaskData()
         taskData.targetPlatforms = targetPlatforms.get()
-        taskData.imageDir = imageDir.asFile
-        taskData.imageZip = imageZip.asFile
+        taskData.imageDir = imageDir.asFile.get()
+        taskData.imageZip = imageZip.asFile.get()
         def taskImpl = new RuntimeZipTaskImpl(project, taskData)
         taskImpl.execute()
     }

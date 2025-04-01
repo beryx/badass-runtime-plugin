@@ -15,6 +15,11 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.CdsData
@@ -32,43 +37,32 @@ import org.gradle.jvm.application.scripts.ScriptGenerator
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 
 @CompileStatic
-class RuntimeTask extends BaseTask {
+abstract class RuntimeTask extends DefaultTask {
     @Nested
-    MapProperty<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms
-    }
+    abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
 
     @Nested
-    LauncherData getLauncherData() {
-        extension.launcherData.get()
-    }
+    abstract Property<LauncherData> getLauncherData()
 
     @Nested
-    CdsData getCdsData() {
-        extension.cdsData.get()
-    }
+    abstract Property<CdsData> getCdsData()
 
     @InputDirectory
-    Directory getDistDir() {
-        extension.distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
-    }
+    @Optional
+    abstract DirectoryProperty getDistDir()
 
     @OutputDirectory
-    Directory getJreDir() {
-        extension.jreDir.get()
-    }
+    abstract DirectoryProperty getJreDir()
 
     @Internal
-    Directory getImageDir() {
-        extension.imageDir.get()
-    }
+    abstract DirectoryProperty getImageDir()
 
     @Internal
     Sync getDistTask() {
         (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
     }
 
-    @CompileDynamic
+    /*@CompileDynamic
     RuntimeTask() {
         description = 'Creates a runtime image of your application'
         dependsOn(RuntimePlugin.TASK_NAME_JRE)
@@ -78,17 +72,17 @@ class RuntimeTask extends BaseTask {
         project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
             configureStartScripts(taskGraph.hasTask(this))
         }
-    }
+    }*/
 
     @OutputDirectory
-    File getImageDirAsFile() {
+    Provider<File> getImageDirAsFile() {
         imageDir.asFile
     }
 
     void configureStartScripts(boolean asRuntimeImage) {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
             startScriptTask.mainClass.set(Util.getMainClass(project));
-            startScriptTask.defaultJvmOpts = launcherData.jvmArgsOrDefault
+            startScriptTask.defaultJvmOpts = launcherData.get().jvmArgsOrDefault
             startScriptTask.doLast {
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME/bin')
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{HOME_DIR}}', '$HOME')
@@ -100,26 +94,26 @@ class RuntimeTask extends BaseTask {
             }
             startScriptTask.inputs.property('asRuntimeImage', asRuntimeImage)
             if(asRuntimeImage) {
-                if(launcherData.runInBinDir) {
+                if(launcherData.get().runInBinDir) {
                     System.properties['BADASS_RUN_IN_BIN_DIR'] = 'true'
                 }
                 configureCds()
-                configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.unixTemplateUrl)
-                configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.windowsTemplateUrl)
+                configureTemplate(startScriptTask.unixStartScriptGenerator, launcherData.get().unixTemplateUrl)
+                configureTemplate(startScriptTask.windowsStartScriptGenerator, launcherData.get().windowsTemplateUrl)
             }
         }
     }
 
     @CompileDynamic
     private void configureCds() {
-        if (cdsData.enabled) {
+        if (cdsData.get().enabled) {
             this.doLast {
                 project.exec {
-                    commandLine = ["$imageDir/bin/java", "-Xshare:dump"]
+                    commandLine = ["$imageDir.get()/bin/java", "-Xshare:dump"]
                 }
             }
-            System.properties['BADASS_CDS_ARCHIVE_FILE_LINUX'] = cdsData.sharedArchiveFile ?: '$APP_HOME/lib/server/$APP_NAME.jsa'
-            System.properties['BADASS_CDS_ARCHIVE_FILE_WINDOWS'] = cdsData.sharedArchiveFile ?: '%~dp0\\server\\%~n0.jsa'
+            System.properties['BADASS_CDS_ARCHIVE_FILE_LINUX'] = cdsData.get().sharedArchiveFile ?: '$APP_HOME/lib/server/$APP_NAME.jsa'
+            System.properties['BADASS_CDS_ARCHIVE_FILE_WINDOWS'] = cdsData.get().sharedArchiveFile ?: '%~dp0\\server\\%~n0.jsa'
         }
     }
 
@@ -127,12 +121,16 @@ class RuntimeTask extends BaseTask {
         ((TemplateBasedScriptGenerator)scriptGenerator).template = project.resources.text.fromString(template.text)
     }
 
+    private Directory getDistDirRuntime(){
+        return distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
+    }
+
     @TaskAction
     void runtimeTaskAction() {
         def taskData = new RuntimeTaskData()
-        taskData.distDir = distDir.asFile
-        taskData.jreDir = jreDir.asFile
-        taskData.imageDir = imageDir.asFile
+        taskData.distDir = distDirRuntime.asFile
+        taskData.jreDir = jreDir.asFile.get()
+        taskData.imageDir = imageDir.asFile.get()
         taskData.targetPlatforms = targetPlatforms.get()
 
         def taskImpl = new RuntimeTaskImpl(project, taskData)

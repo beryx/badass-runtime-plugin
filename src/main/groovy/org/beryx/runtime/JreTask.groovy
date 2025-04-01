@@ -15,68 +15,71 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JreTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.JreTaskImpl
-import org.gradle.api.file.Directory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
-class JreTask extends BaseTask {
-    @Input
-    List<String> getOptions() {
-        extension.options.get()
-    }
+abstract class JreTask extends DefaultTask {
 
     @Input
-    boolean isAdditive() {
-        extension.additive.get()
-    }
+    abstract ListProperty<String> getOptions()
 
     @Input
-    List<String> getModules() {
-        extension.modules.get()
-    }
+    abstract Property<Boolean> getAdditive()
 
     @Input
-    String getJavaHome() {
-        javaHomeOrDefault
-    }
+    abstract ListProperty<String> getModules()
+
+    @Input
+    @Optional
+    abstract Property<String> getJavaHome()
+
+    @Input
+    abstract Property<String> getDefaultJavaHome()
 
     @Nested
-    MapProperty<String, TargetPlatform> getTargetPlatforms() {
-        extension.targetPlatforms
-    }
+    abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
 
     @OutputDirectory
-    Directory getJreDir() {
-        extension.jreDir.get()
-    }
+    abstract DirectoryProperty getJreDir()
 
     @OutputDirectory
-    File getJreDirAsFile() {
+    Provider<File> getJreDirAsFile() {
         jreDir.asFile
     }
 
-    JreTask() {
+    private String getJavaHomeOrDefault() {
+        return javaHome.present ? javaHome.get() : defaultJavaHome.get()
+    }
+
+    /*JreTask() {
         dependsOn('jar')
         description = 'Creates a custom java runtime image with jlink'
         dependsOn(project.configurations['runtimeClasspath'].allDependencies)
-    }
+    }*/
 
     @TaskAction
     void runtimeTaskAction() {
         def taskData = new JreTaskData()
-        taskData.jreDir = jreDir.asFile
-        taskData.options = options
-        taskData.additive = additive
-        taskData.modules = modules
-        taskData.javaHome = javaHome
+        taskData.jreDir = jreDir.asFile.get()
+        taskData.options = options.get()
+        taskData.additive = additive.get()
+        taskData.modules = modules.get()
+        taskData.javaHome = javaHomeOrDefault
         taskData.targetPlatforms = targetPlatforms.get()
 
         def taskImpl = new JreTaskImpl(project, taskData)

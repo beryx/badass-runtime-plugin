@@ -15,12 +15,21 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.Task
+import org.gradle.api.UnknownTaskException
+import org.gradle.api.execution.TaskExecutionGraph
+import org.gradle.api.tasks.TaskProvider
+
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimePluginExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.util.GradleVersion
+
+import org.beryx.runtime.util.Util
+
+import static org.beryx.runtime.util.Util.getEXEC_EXTENSION
 
 class RuntimePlugin implements Plugin<Project> {
     final static String EXTENSION_NAME = 'runtime'
@@ -42,13 +51,83 @@ class RuntimePlugin implements Plugin<Project> {
             throw new GradleException("This plugin works only with non-modular applications.\n" +
                     "For modular applications use https://github.com/beryx/badass-jlink-plugin/.")
         }
-        project.extensions.create(EXTENSION_NAME, RuntimePluginExtension, project)
-        project.tasks.create(TASK_NAME_JRE, JreTask)
-        project.tasks.create(TASK_NAME_RUNTIME, RuntimeTask)
-        project.tasks.create(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask)
-        project.tasks.create(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask)
-        project.tasks.create(TASK_NAME_JPACKAGE_IMAGE, JPackageImageTask)
-        project.tasks.create(TASK_NAME_JPACKAGE, JPackageTask)
+        RuntimePluginExtension extension = project.extensions.create(EXTENSION_NAME, RuntimePluginExtension, project)
+        String defaultJavaHome = getDefaultJavaHome( project )
+        project.tasks.register(TASK_NAME_JRE, JreTask) {
+            it.group = 'build'
+            it.description = 'Creates a custom java runtime image with jlink'
+            it.options.set(extension.options)
+            it.additive.set(extension.additive)
+            it.modules.set(extension.modules)
+            it.javaHome.set(extension.javaHome)
+            it.defaultJavaHome.set(defaultJavaHome)
+            it.targetPlatforms.set(extension.targetPlatforms)
+            it.jreDir.set(extension.jreDir)
+            it.dependsOn('jar')
+            it.dependsOn(project.configurations['runtimeClasspath'].allDependencies)
+        }
+        TaskProvider<RuntimeTask> runtimeTask = project.tasks.register( TASK_NAME_RUNTIME, RuntimeTask) {
+            it.group = 'build'
+            it.description = 'Creates a runtime image of your application'
+            it.targetPlatforms.set(extension.targetPlatforms)
+            it.launcherData.set(extension.launcherData)
+            it.cdsData.set(extension.cdsData)
+            it.distDir.set(extension.distDir)
+            it.jreDir.set(extension.jreDir)
+            it.imageDir.set(extension.imageDir)
+            it.dependsOn( TASK_NAME_JRE)
+            project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
+                it.configureStartScripts(taskGraph.hasTask(it))
+            }
+        }
+        project.tasks.register(TASK_NAME_RUNTIME_ZIP, RuntimeZipTask) {
+            it.group = 'build'
+            it.description = 'Creates a zip of the runtime image of your application'
+            it.targetPlatforms.set(extension.targetPlatforms)
+            it.imageDir.set(extension.imageDir)
+            it.imageZip.set(extension.imageZip)
+            it.dependsOn(TASK_NAME_RUNTIME)
+        }
+        project.tasks.register(TASK_NAME_SUGGEST_MODULES, SuggestModulesTask) {
+            it.group = 'build'
+            it.description = 'Suggests the modules to be included in the runtime image'
+            it.outputs.upToDateWhen { false }
+            it.javaHome.set(extension.javaHome)
+            it.defaultJavaHome.set(defaultJavaHome)
+            it.dependsOn('jar')
+        }
+        TaskProvider<JPackageImageTask> jpackageImageTask = project.tasks.register(TASK_NAME_JPACKAGE_IMAGE, JPackageImageTask) {
+            it.group = 'build'
+            it.description = 'Creates an application image using the jpackage tool'
+            it.distDir.set(extension.distDir)
+            it.jreDir.set(extension.jreDir)
+            it.jpackageData.set(extension.jpackageData)
+            it.javaHome.set(extension.javaHome)
+            it.defaultJavaHome.set(defaultJavaHome)
+            it.dependsOn(TASK_NAME_JRE)
+        }
+        project.tasks.register(TASK_NAME_JPACKAGE, JPackageTask) {
+            it.group = 'build'
+            it.description = 'Creates an application installer using the jpackage tool'
+            it.jpackageData.set(extension.jpackageData)
+            it.javaHome.set(extension.javaHome)
+            it.defaultJavaHome.set(defaultJavaHome)
+            it.dependsOn(TASK_NAME_JPACKAGE_IMAGE)
+        }
+        project.afterEvaluate {
+            TaskProvider<Task> distTask = null
+            try{
+                distTask = project.tasks.named( 'installShadowDist' )
+            }catch (UnknownTaskException ignored) {
+                distTask = project.tasks.named( 'installDist' )
+            }
+            runtimeTask.configure {
+                it.dependsOn( distTask )
+            }
+            jpackageImageTask.configure {
+                it.dependsOn( distTask )
+            }
+        }
     }
 
     static boolean hasModuleInfo(Project project) {
@@ -56,4 +135,15 @@ class RuntimePlugin implements Plugin<Project> {
         srcDirs?.any { it.list()?.contains('module-info.java')}
     }
 
+    private static String getDefaultJavaHome(Project project) {
+        def value = System.properties['badass.runtime.java.home']
+        if(value) return value
+        value = System.getenv('BADASS_RUNTIME_JAVA_HOME')
+        if(value) return value
+        value = Util.getDefaultToolchainJavaHome( project)
+        if(value) return value
+        value = System.properties['java.home']
+        if(['javac', 'jar', 'jlink'].every { new File("$value/bin/$it$EXEC_EXTENSION").file }) return value
+        return System.getenv('JAVA_HOME')
+    }
 }

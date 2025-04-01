@@ -15,6 +15,10 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Optional
+
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.SuggestModulesData
 import org.beryx.runtime.impl.SuggestModulesTaskImpl
@@ -22,22 +26,28 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
-class SuggestModulesTask extends BaseTask {
+abstract class SuggestModulesTask extends DefaultTask {
     @Input
-    String getJavaHome() {
-        javaHomeOrDefault
+    @Optional
+    abstract Property<String> getJavaHome()
+
+    @Input
+    abstract Property<String> getDefaultJavaHome()
+
+    private String getJavaHomeOrDefault() {
+        return javaHome.present ? javaHome.get() : defaultJavaHome.get()
     }
 
-    SuggestModulesTask() {
+    /*SuggestModulesTask() {
         dependsOn('jar')
         description = 'Suggests the modules to be included in the runtime image'
         outputs.upToDateWhen { false }
-    }
+    }*/
 
     @TaskAction
     void suggestMergedModuleInfoAction() {
         def taskData = new SuggestModulesData()
-        taskData.javaHome = javaHome
+        taskData.javaHome = javaHomeOrDefault
         def taskImpl = new SuggestModulesTaskImpl(project, taskData)
         taskImpl.execute()
     }

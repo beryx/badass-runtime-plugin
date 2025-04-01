@@ -15,6 +15,11 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+
 import org.beryx.runtime.data.JPackageData
 import org.beryx.runtime.data.JPackageTaskData
 import org.beryx.runtime.impl.JPackageTaskImpl
@@ -26,23 +31,32 @@ import org.gradle.api.tasks.TaskAction
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class JPackageTask extends BaseTask {
+abstract class JPackageTask extends DefaultTask {
     private static final Logger LOGGER = Logging.getLogger(JPackageTask.class)
 
     @Nested
-    JPackageData getJpackageData() {
-        extension.jpackageData.get()
-    }
+    abstract Property<JPackageData> getJpackageData()
 
-    JPackageTask() {
+    @Input
+    @Optional
+    abstract Property<String> getJavaHome()
+
+    @Input
+    abstract Property<String> getDefaultJavaHome()
+
+    /*JPackageTask() {
         description = 'Creates an application installer using the jpackage tool'
         dependsOn(RuntimePlugin.TASK_NAME_JPACKAGE_IMAGE)
+    }*/
+
+    private String getJavaHomeOrDefault() {
+        return javaHome.present ? javaHome.get() : defaultJavaHome.get()
     }
 
     @TaskAction
     void jpackageTaskAction() {
         def taskData = new JPackageTaskData()
-        taskData.jpackageData = jpackageData
+        taskData.jpackageData = jpackageData.get()
         taskData.javaHome = javaHomeOrDefault
         taskData.configureAppImageDir()
 

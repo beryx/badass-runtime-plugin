@@ -15,6 +15,12 @@
  */
 package org.beryx.runtime
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JPackageData
@@ -30,43 +36,53 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
-class JPackageImageTask extends BaseTask {
+abstract class JPackageImageTask extends DefaultTask {
     private static final Logger LOGGER = Logging.getLogger(JPackageImageTask.class)
 
     @InputDirectory
-    Directory getDistDir() {
-        extension.distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
-    }
+	@Optional
+    abstract DirectoryProperty getDistDir()
 
     @InputDirectory
-    Directory getJreDir() {
-        extension.jreDir.get()
-    }
+    abstract DirectoryProperty getJreDir()
 
     @Nested
-    JPackageData getJpackageData() {
-        extension.jpackageData.get()
-    }
+    abstract Property<JPackageData> getJpackageData()
+
+    @Input
+    @Optional
+    abstract Property<String> getJavaHome()
+
+    @Input
+    abstract Property<String> getDefaultJavaHome()
 
     @Internal
     Sync getDistTask() {
         (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
     }
 
-    @CompileDynamic
+    /*@CompileDynamic
     JPackageImageTask() {
         description = 'Creates an application image using the jpackage tool'
         dependsOn(RuntimePlugin.TASK_NAME_JRE)
         project.afterEvaluate {
             dependsOn(distTask)
         }
+    }*/
+
+	private Directory getDistDirRuntime(){
+		return distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
+	}
+
+    private String getJavaHomeOrDefault() {
+        return javaHome.present ? javaHome.get() : defaultJavaHome.get()
     }
 
     @TaskAction
     void jpackageTaskAction() {
         def taskData = new JPackageTaskData()
-        taskData.distDir = distDir.asFile
-        taskData.jpackageData = jpackageData
+        taskData.distDir = distDirRuntime.asFile
+        taskData.jpackageData = jpackageData.get()
         taskData.javaHome = javaHomeOrDefault
 
         def jreTask = (JreTask) project.tasks.getByName(RuntimePlugin.TASK_NAME_JRE)
