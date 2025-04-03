@@ -31,23 +31,10 @@ abstract class SuggestModulesTask extends DefaultTask {
     @Optional
     abstract Property<String> getJavaHome()
 
-    @Input
-    abstract Property<String> getDefaultJavaHome()
-
-    private String getJavaHomeOrDefault() {
-        return javaHome.present ? javaHome.get() : defaultJavaHome.get()
-    }
-
-    /*SuggestModulesTask() {
-        dependsOn('jar')
-        description = 'Suggests the modules to be included in the runtime image'
-        outputs.upToDateWhen { false }
-    }*/
-
     @TaskAction
     void suggestMergedModuleInfoAction() {
         def taskData = new SuggestModulesData()
-        taskData.javaHome = javaHomeOrDefault
+        taskData.javaHome = javaHome.get()
         def taskImpl = new SuggestModulesTaskImpl(project, taskData)
         taskImpl.execute()
     }

@@ -15,10 +15,13 @@
  */
 package org.beryx.runtime.data
 
-import org.beryx.runtime.util.Util
-import org.gradle.api.tasks.Internal
+import javax.inject.Inject
 
-import static org.beryx.runtime.util.Util.EXEC_EXTENSION
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+
+import org.beryx.runtime.util.Util
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
@@ -29,23 +32,21 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 
+
 @CompileStatic
 @ToString(includeNames = true)
-class JPackageData {
-    private final Project project
-    private final LauncherData launcherData
+abstract class JPackageData {
+    @Input
+    abstract Property<String> getJpackageHome()
 
     @Input
-    String jpackageHome
+    abstract Property<String> getOutputDir()
+
+    @OutputDirectory
+    abstract DirectoryProperty getImageOutputDir()
 
     @Input
-    String outputDir = 'jpackage'
-
-    @Internal
-    File imageOutputDir
-
-    @Internal
-    String imageName
+    abstract Property<String> getImageName()
 
     @Input
     List<String> imageOptions = []
@@ -62,11 +63,11 @@ class JPackageData {
     @Input @Optional
     String installerType
 
-    @Internal
-    File installerOutputDir
+    @OutputDirectory
+    abstract DirectoryProperty getInstallerOutputDir()
 
-    @Internal
-    String installerName
+    @Input
+    abstract Property<String> getInstallerName()
 
     @Input @Optional
     String appVersion
@@ -74,55 +75,28 @@ class JPackageData {
     @Input
     List<String> installerOptions = []
 
-    @Internal
-    List<String> args = []
+    @Input @Optional
+    abstract ListProperty<String> getArgs()
 
-    @Internal
-    List<String> jvmArgs = []
+    @Input @Optional
+    abstract ListProperty<String> getJvmArgs()
 
     @Input @Optional
     String mainJar
 
-    @Internal
-    String mainClass
+    @Input
+    abstract Property<String> getMainClass()
 
+    @Inject
     JPackageData(Project project, LauncherData launcherData) {
-        this.project = project
-        this.launcherData = launcherData
-        this.jpackageHome = ''
-    }
-
-    @Input
-    List<String> getArgsOrDefault() {
-        this.@args ?: Util.getDefaultArgs(project)
-    }
-
-    @Input
-    List<String> getJvmArgsOrDefault() {
-        this.@jvmArgs ?: launcherData.jvmArgsOrDefault
-    }
-
-    @Input
-    String getMainClassOrDefault() {
-        this.@mainClass ?: Util.getMainClass(project)
-    }
-    @Input
-    String getImageNameOrDefault() {
-        this.@imageName ?: project.name
-    }
-
-    @Input
-    String getInstallerNameOrDefault() {
-        this.@installerName ?: project.name
-    }
-
-    @OutputDirectory
-    File getImageOutputDirOrDefault() {
-        this.@imageOutputDir ?: project.file("$project.buildDir/$outputDir")
-    }
-
-    @OutputDirectory
-    File getInstallerOutputDirOrDefault() {
-        this.@installerOutputDir ?: project.file("$project.buildDir/$outputDir")
+        jpackageHome.convention('')
+        outputDir.convention('jpackage')
+        imageOutputDir.convention(project.layout.buildDirectory.dir(outputDir))
+        imageName.convention( project.name )
+        installerOutputDir.convention(project.layout.buildDirectory.dir(outputDir))
+        installerName.convention( project.name )
+        args.convention(Util.getDefaultArgs(project))
+        jvmArgs.convention(launcherData.jvmArgs)
+        mainClass.convention(Util.getMainClass(project))
     }
 }

@@ -19,7 +19,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JreTaskData
@@ -34,7 +33,6 @@ import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
 abstract class JreTask extends DefaultTask {
-
     @Input
     abstract ListProperty<String> getOptions()
 
@@ -48,29 +46,11 @@ abstract class JreTask extends DefaultTask {
     @Optional
     abstract Property<String> getJavaHome()
 
-    @Input
-    abstract Property<String> getDefaultJavaHome()
-
     @Nested
     abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
 
     @OutputDirectory
     abstract DirectoryProperty getJreDir()
-
-    @OutputDirectory
-    Provider<File> getJreDirAsFile() {
-        jreDir.asFile
-    }
-
-    private String getJavaHomeOrDefault() {
-        return javaHome.present ? javaHome.get() : defaultJavaHome.get()
-    }
-
-    /*JreTask() {
-        dependsOn('jar')
-        description = 'Creates a custom java runtime image with jlink'
-        dependsOn(project.configurations['runtimeClasspath'].allDependencies)
-    }*/
 
     @TaskAction
     void runtimeTaskAction() {
@@ -79,7 +59,7 @@ abstract class JreTask extends DefaultTask {
         taskData.options = options.get()
         taskData.additive = additive.get()
         taskData.modules = modules.get()
-        taskData.javaHome = javaHomeOrDefault
+        taskData.javaHome = javaHome.get()
         taskData.targetPlatforms = targetPlatforms.get()
 
         def taskImpl = new JreTaskImpl(project, taskData)

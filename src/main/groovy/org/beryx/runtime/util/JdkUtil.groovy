@@ -15,9 +15,11 @@
  */
 package org.beryx.runtime.util
 
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.file.FileOperations
+
 import groovy.transform.CompileStatic
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -27,16 +29,16 @@ class JdkUtil {
     private static final Logger LOGGER = Logging.getLogger(JdkUtil.class)
 
     static class JdkDownloadOptions implements Serializable {
-        transient final Project project
+        final FileOperations fileOperations
         String downloadDir
         String archiveName
         String archiveExtension
         String pathToHome
         boolean overwrite
 
-        JdkDownloadOptions(Project project, String targetPlatform, String downloadUrl) {
-            this.project = project
-            this.downloadDir = "$project.buildDir/jdks/$targetPlatform"
+        JdkDownloadOptions(FileOperations fileOperations, DirectoryProperty buildDirectory, String targetPlatform, String downloadUrl) {
+            this.fileOperations = fileOperations
+            this.downloadDir = buildDirectory.dir( "jdks/$targetPlatform" )
             this.archiveName = "jdk"
             def urlPath = new URL(downloadUrl).path
             if(urlPath.endsWith(".tar.gz")) archiveExtension = "tar.gz"
@@ -44,7 +46,7 @@ class JdkUtil {
         }
 
         void validate() {
-            if(!project) throw new GradleException("Internal error: project not set in JdkDownloadOptions")
+            if(!fileOperations) throw new GradleException("Internal error: fileOperations not set in JdkDownloadOptions")
             if(!downloadDir) throw new GradleException("Please provide a value for 'downloadDir' when calling the 'jdkDownload' method")
             if(!archiveName) throw new GradleException("Please provide a value for 'archiveName' when calling the 'jdkDownload' method")
             if(!archiveExtension) throw new GradleException("Cannot infer the archive type. Please provide a value for 'archiveExtension' when calling the 'jdkDownload' method. Accepted values: 'tar.gz', 'zip'")
@@ -76,10 +78,10 @@ class JdkUtil {
     private static String unpackJdk(File archiveDir, File archiveFile, JdkDownloadOptions options) {
         if(!archiveFile.file) throw new GradleException("Archive file $archiveFile does not exist.")
         LOGGER.info("Unpacking $archiveFile")
-        options.project.copy { CopySpec spec ->
+        options.fileOperations.copy { CopySpec spec ->
             spec.from ((options.archiveExtension == 'tar.gz')
-                    ? options.project.tarTree(options.project.resources.gzip(archiveFile))
-                    : options.project.zipTree(archiveFile))
+                    ? options.fileOperations.tarTree(options.fileOperations.resources.gzip(archiveFile))
+                    : options.fileOperations.zipTree(archiveFile))
             spec.into archiveDir
         }
         if(options.pathToHome) {

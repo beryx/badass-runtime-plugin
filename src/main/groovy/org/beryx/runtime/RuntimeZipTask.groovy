@@ -40,11 +40,6 @@ abstract class RuntimeZipTask extends DefaultTask {
     @OutputFile
     abstract RegularFileProperty getImageZip()
 
-    /*RuntimeZipTask() {
-        dependsOn(RuntimePlugin.TASK_NAME_RUNTIME)
-        description = 'Creates a zip of the runtime image of your application'
-    }*/
-
     @TaskAction
     void runtimeZipTaskAction() {
         def taskData = new RuntimeZipTaskData()

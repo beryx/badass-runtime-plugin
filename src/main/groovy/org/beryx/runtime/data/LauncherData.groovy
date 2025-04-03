@@ -15,6 +15,10 @@
  */
 package org.beryx.runtime.data
 
+import javax.inject.Inject
+
+import org.gradle.api.provider.ListProperty
+
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 import org.beryx.runtime.RuntimePlugin
@@ -28,14 +32,14 @@ import org.gradle.api.tasks.Optional
 
 @CompileStatic
 @ToString(includeNames = true)
-class LauncherData {
-    private final Project project
+abstract class LauncherData {
 
-    @Internal
-    List<String> jvmArgs = []
+    @Input
+    abstract ListProperty<String> getJvmArgs()
 
+    @Inject
     LauncherData(Project project) {
-        this.project = project
+        jvmArgs.convention(Util.getDefaultJvmArgs(project))
     }
 
     @Input
@@ -49,11 +53,6 @@ class LauncherData {
 
     @InputFile @Optional
     File windowsScriptTemplate
-
-    @Input
-    List<String> getJvmArgsOrDefault() {
-        this.@jvmArgs ?: Util.getDefaultJvmArgs(project)
-    }
 
     @Internal
     URL getUnixTemplateUrl() {

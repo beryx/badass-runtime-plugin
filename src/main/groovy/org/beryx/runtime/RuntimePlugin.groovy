@@ -52,7 +52,6 @@ class RuntimePlugin implements Plugin<Project> {
                     "For modular applications use https://github.com/beryx/badass-jlink-plugin/.")
         }
         RuntimePluginExtension extension = project.extensions.create(EXTENSION_NAME, RuntimePluginExtension, project)
-        String defaultJavaHome = getDefaultJavaHome( project )
         project.tasks.register(TASK_NAME_JRE, JreTask) {
             it.group = 'build'
             it.description = 'Creates a custom java runtime image with jlink'
@@ -60,7 +59,6 @@ class RuntimePlugin implements Plugin<Project> {
             it.additive.set(extension.additive)
             it.modules.set(extension.modules)
             it.javaHome.set(extension.javaHome)
-            it.defaultJavaHome.set(defaultJavaHome)
             it.targetPlatforms.set(extension.targetPlatforms)
             it.jreDir.set(extension.jreDir)
             it.dependsOn('jar')
@@ -93,7 +91,6 @@ class RuntimePlugin implements Plugin<Project> {
             it.description = 'Suggests the modules to be included in the runtime image'
             it.outputs.upToDateWhen { false }
             it.javaHome.set(extension.javaHome)
-            it.defaultJavaHome.set(defaultJavaHome)
             it.dependsOn('jar')
         }
         TaskProvider<JPackageImageTask> jpackageImageTask = project.tasks.register(TASK_NAME_JPACKAGE_IMAGE, JPackageImageTask) {
@@ -103,7 +100,6 @@ class RuntimePlugin implements Plugin<Project> {
             it.jreDir.set(extension.jreDir)
             it.jpackageData.set(extension.jpackageData)
             it.javaHome.set(extension.javaHome)
-            it.defaultJavaHome.set(defaultJavaHome)
             it.dependsOn(TASK_NAME_JRE)
         }
         project.tasks.register(TASK_NAME_JPACKAGE, JPackageTask) {
@@ -111,7 +107,6 @@ class RuntimePlugin implements Plugin<Project> {
             it.description = 'Creates an application installer using the jpackage tool'
             it.jpackageData.set(extension.jpackageData)
             it.javaHome.set(extension.javaHome)
-            it.defaultJavaHome.set(defaultJavaHome)
             it.dependsOn(TASK_NAME_JPACKAGE_IMAGE)
         }
         project.afterEvaluate {
@@ -133,17 +128,5 @@ class RuntimePlugin implements Plugin<Project> {
     static boolean hasModuleInfo(Project project) {
         Set<File> srcDirs = project.sourceSets.main?.java?.srcDirs
         srcDirs?.any { it.list()?.contains('module-info.java')}
-    }
-
-    private static String getDefaultJavaHome(Project project) {
-        def value = System.properties['badass.runtime.java.home']
-        if(value) return value
-        value = System.getenv('BADASS_RUNTIME_JAVA_HOME')
-        if(value) return value
-        value = Util.getDefaultToolchainJavaHome( project)
-        if(value) return value
-        value = System.properties['java.home']
-        if(['javac', 'jar', 'jlink'].every { new File("$value/bin/$it$EXEC_EXTENSION").file }) return value
-        return System.getenv('JAVA_HOME')
     }
 }

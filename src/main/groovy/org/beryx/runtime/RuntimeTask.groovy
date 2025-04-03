@@ -18,7 +18,6 @@ package org.beryx.runtime
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
@@ -28,7 +27,6 @@ import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
 import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.beryx.runtime.util.Util
-import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.*
@@ -54,7 +52,7 @@ abstract class RuntimeTask extends DefaultTask {
     @OutputDirectory
     abstract DirectoryProperty getJreDir()
 
-    @Internal
+    @OutputDirectory
     abstract DirectoryProperty getImageDir()
 
     @Internal
@@ -62,27 +60,10 @@ abstract class RuntimeTask extends DefaultTask {
         (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
     }
 
-    /*@CompileDynamic
-    RuntimeTask() {
-        description = 'Creates a runtime image of your application'
-        dependsOn(RuntimePlugin.TASK_NAME_JRE)
-        project.afterEvaluate {
-            dependsOn(distTask)
-        }
-        project.gradle.taskGraph.whenReady { TaskExecutionGraph taskGraph ->
-            configureStartScripts(taskGraph.hasTask(this))
-        }
-    }*/
-
-    @OutputDirectory
-    Provider<File> getImageDirAsFile() {
-        imageDir.asFile
-    }
-
     void configureStartScripts(boolean asRuntimeImage) {
         project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
-            startScriptTask.mainClass.set(Util.getMainClass(project));
-            startScriptTask.defaultJvmOpts = launcherData.get().jvmArgsOrDefault
+            startScriptTask.mainClass.set(Util.getMainClass(project))
+            startScriptTask.defaultJvmOpts = launcherData.get().jvmArgs.get()
             startScriptTask.doLast {
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{BIN_DIR}}', '$APP_HOME/bin')
                 startScriptTask.unixScript.text = startScriptTask.unixScript.text.replace('{{HOME_DIR}}', '$HOME')

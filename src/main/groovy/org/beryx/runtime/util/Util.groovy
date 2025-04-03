@@ -15,8 +15,10 @@
  */
 package org.beryx.runtime.util
 
+import org.gradle.api.plugins.JavaApplication
+import org.gradle.api.tasks.JavaExec
+
 import groovy.io.FileType
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -24,15 +26,10 @@ import org.codehaus.groovy.tools.Utilities
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.ApplicationPluginConvention
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
@@ -82,32 +79,6 @@ class Util {
         return null
     }
 
-    static DirectoryProperty createDirectoryProperty(Project project) {
-        return project.objects.directoryProperty()
-    }
-
-    static RegularFileProperty createRegularFileProperty(Project project) {
-        return project.objects.fileProperty()
-    }
-
-    static <T> void addToListProperty(ListProperty<T> listProp, T... values) {
-        listProp.addAll(values as List)
-    }
-
-    static <K,V>Provider<Map<K,V>> createMapProperty(Project project,
-                                             Class<K> keyType, Class<V> valueType) {
-        Provider<Map<K,V>> provider = project.objects.mapProperty(keyType, valueType)
-        provider.set(new TreeMap<K,V>())
-        provider
-    }
-
-    @CompileDynamic
-    static <K,V> void putToMapProvider(Provider<Map<K,V>> mapProvider, K key, V value) {
-        def map = new TreeMap(mapProvider.get())
-        map[key] = value
-        mapProvider.set(map)
-    }
-
     static void checkExecutable(String filePath) {
         checkExecutable(new File(filePath))
     }
@@ -131,35 +102,45 @@ class Util {
         jarFile
     }
 
-    static String getMainClass(Project project) {
-        def mainClass = getRawMainClass(project)
-        if(!mainClass) throw new GradleException("mainClass not configured")
-        int pos = mainClass.lastIndexOf('/')
-        if(pos < 0) return mainClass
-        mainClass.substring(pos + 1)
+    static Provider<String> getMainClass(Project project) {
+        def mainClassProp = project.tasks.named( 'run', JavaExec).flatMap { it.mainClass }
+        return mainClassProp.map { mainClass ->
+            if(!mainClass) {
+                throw new GradleException("mainClass not configured")
+            }
+            int pos = mainClass.lastIndexOf('/')
+            if(pos < 0) return mainClass
+            mainClass.substring(pos + 1)
+        }
     }
 
-    @CompileDynamic
-    static String getRawMainClass(Project project) {
-        project.tasks.run.mainClass?.get()
-    }
-
-    @CompileDynamic
     static List<String> getDefaultJvmArgs(Project project) {
         try {
-            return new ArrayList(project.application?.applicationDefaultJvmArgs as List)
+            project.extensions.getByType(JavaApplication).applicationDefaultJvmArgs.toList()
         } catch (Exception e) {
-            return []
+            []
         }
     }
 
-    @CompileDynamic
-    static List<String> getDefaultArgs(Project project) {
+    static Provider<List<String>> getDefaultArgs(Project project) {
         try {
-            return project.tasks.run?.args
+            project.tasks.named( 'run', JavaExec).flatMap {
+                project.objects.listProperty(String).set(it.args) }
         } catch (Exception e) {
-            return []
+            return project.objects.listProperty(String).set([])
         }
+    }
+
+    static String getDefaultJavaHome(Project project) {
+        def value = System.properties['badass.runtime.java.home']
+        if(value) return value
+        value = System.getenv('BADASS_RUNTIME_JAVA_HOME')
+        if(value) return value
+        value = getDefaultToolchainJavaHome(project)
+        if(value) return value
+        value = System.properties['java.home']
+        if(['javac', 'jar', 'jlink'].every { new File("$value/bin/$it$EXEC_EXTENSION").file }) return value
+        return System.getenv('JAVA_HOME')
     }
 
     static String getDefaultToolchainJavaHome(Project project) {

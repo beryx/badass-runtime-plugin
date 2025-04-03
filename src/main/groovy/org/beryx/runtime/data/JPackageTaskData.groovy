@@ -38,8 +38,8 @@ class JPackageTaskData {
     String javaHome
 
     void configureAppImageDir() {
-        final def imgOutDir = jpackageData.imageOutputDirOrDefault
-        final def imageName = jpackageData.getImageNameOrDefault()
+        final def imgOutDir = jpackageData.imageOutputDir.get()
+        final def imageName = jpackageData.imageName.get()
         final def appImagePath = "${imgOutDir}${File.separator}${imageName}"
         appImageDir = new File(appImagePath)
 
@@ -75,9 +75,9 @@ class JPackageTaskData {
             }
         }
         if (jpackageData.targetPlatformName) {
-            jreDir = new File(jreTask.jreDirAsFile, "$jreTask.project.name-$jpackageData.targetPlatformName")
+            jreDir = new File(jreTask.jreDir.get().asFile, "$jreTask.project.name-$jpackageData.targetPlatformName")
         } else {
-            jreDir = jreTask.jreDirAsFile
+            jreDir = jreTask.jreDir.get().asFile
         }
     }
 

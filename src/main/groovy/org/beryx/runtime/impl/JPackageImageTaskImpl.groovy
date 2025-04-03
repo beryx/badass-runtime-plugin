@@ -47,7 +47,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             }
 
             def jpd = td.jpackageData
-            def outputDir = jpd.imageOutputDirOrDefault
+            def outputDir = jpd.imageOutputDir.get()
             project.delete(outputDir)
 
             def jpackageExec = "${td.javaHome}/bin/jpackage$EXEC_EXTENSION"
@@ -65,16 +65,16 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
             final def resourceDir = jpd.getResourceDir()
             final def resourceOpts = resourceDir == null ? [] : [ '--resource-dir', resourceDir ]
 
-            final def jvmArgs = (jpd.jvmArgsOrDefault ? jpd.jvmArgsOrDefault.collect{['--java-options', adjustArg(it) ]}.flatten() : [])
-            final def args = (jpd.argsOrDefault ? jpd.argsOrDefault.collect{['--arguments', adjustArg(it)]}.flatten() : [])
+            final def jvmArgs = (jpd.jvmArgs.isPresent() ? jpd.jvmArgs.get().collect{['--java-options', adjustArg(it) ]}.flatten() : [])
+            final def args = (jpd.args.isPresent() ? jpd.args.get().collect{['--arguments', adjustArg(it)]}.flatten() : [])
 
             commandLine = [jpackageExec,
                            '--type', 'app-image',
                            '--input', "$td.distDir${File.separator}lib",
                            '--main-jar', jpd.mainJar ?: Util.getMainDistJarFile(project).name,
-                           '--main-class', jpd.mainClassOrDefault,
+                           '--main-class', jpd.mainClass.get(),
                            '--dest', outputDir,
-                           '--name', jpd.imageNameOrDefault,
+                           '--name', jpd.imageName.get(),
                            *versionOpts,
                            '--runtime-image', td.jreDir,
                            *resourceOpts,

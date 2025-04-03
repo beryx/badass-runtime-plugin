@@ -15,9 +15,13 @@
  */
 package org.beryx.runtime.data
 
+import javax.inject.Inject
+
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.file.FileOperations
+
 import groovy.transform.CompileStatic
 import org.beryx.runtime.util.JdkUtil
-import org.gradle.api.Project
 import org.gradle.api.internal.provider.DefaultProvider
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -27,22 +31,23 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 
 @CompileStatic
-class TargetPlatform {
+abstract class TargetPlatform {
     static final Logger LOGGER = Logging.getLogger(TargetPlatform.class)
 
-    private final Project project
+    private final FileOperations fileOperations
+    private final DirectoryProperty buildDirectory
     @Input
     final String name
     @Input
-    final Property<String> jdkHome
+    abstract Property<String> getJdkHome()
     @Input
-    final ListProperty<String> options
+    abstract ListProperty<String> getOptions()
 
-    TargetPlatform(Project project, String name) {
+    @Inject
+    TargetPlatform(FileOperations fileOperations, DirectoryProperty buildDirectory, String name) {
         this.name = name
-        this.project = project
-        jdkHome = project.objects.property(String)
-        options = project.objects.listProperty(String)
+        this.fileOperations = fileOperations
+        this.buildDirectory = buildDirectory
     }
 
     void setJdkHome(Provider<String> jdkHome) {
@@ -54,7 +59,7 @@ class TargetPlatform {
     }
 
     Provider<String> jdkDownload(String downloadUrl, Closure downloadConfig = null) {
-        def options = new JdkUtil.JdkDownloadOptions(project, name, downloadUrl)
+        def options = new JdkUtil.JdkDownloadOptions(fileOperations, buildDirectory, name, downloadUrl)
         if(downloadConfig) {
             downloadConfig.delegate = options
             downloadConfig(options)

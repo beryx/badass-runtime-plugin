@@ -15,7 +15,12 @@
  */
 package org.beryx.runtime.data
 
-import org.beryx.runtime.util.Util
+import javax.inject.Inject
+
+import org.gradle.api.internal.file.FileOperations
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.Nested
+
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -25,73 +30,59 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 import groovy.transform.CompileStatic
+import org.beryx.runtime.util.Util
 
 @CompileStatic
-class RuntimePluginExtension {
-    private final Project project
+abstract class RuntimePluginExtension {
+    private final ObjectFactory objects
+    private final FileOperations fileOperations
+    private final DirectoryProperty buildDirectory
 
-    final DirectoryProperty distDir
-    final DirectoryProperty jreDir
-    final DirectoryProperty imageDir
-    final RegularFileProperty imageZip
+    abstract DirectoryProperty getDistDir()
+    abstract DirectoryProperty getJreDir()
+    abstract DirectoryProperty getImageDir()
+    abstract RegularFileProperty getImageZip()
 
-    final ListProperty<String> options
-    final Property<Boolean> additive
-    final ListProperty<String> modules
-    final Property<String> javaHome
-    final MapProperty<String, TargetPlatform> targetPlatforms
-    final Property<Integer> jvmVersion
+    abstract ListProperty<String> getOptions()
+    abstract Property<Boolean> getAdditive()
+    abstract ListProperty<String> getModules()
 
-    final Property<LauncherData> launcherData
-    final Property<JPackageData> jpackageData
-    final Property<CdsData> cdsData
+    abstract Property<String> getJavaHome()
+    abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
+    abstract Property<Integer> getJvmVersion()
 
-    RuntimePluginExtension(Project project) {
-        this.project = project
-        distDir = Util.createDirectoryProperty(project)
+    @Nested
+    abstract Property<LauncherData> getLauncherData()
 
-        jreDir = Util.createDirectoryProperty(project)
-        jreDir.set(project.layout.buildDirectory.dir('jre'))
+    @Nested
+    abstract Property<JPackageData> getJpackageData()
 
-        imageDir = Util.createDirectoryProperty(project)
-        imageDir.set(project.layout.buildDirectory.dir('image'))
+    @Nested
+    abstract Property<CdsData> getCdsData()
 
-        imageZip = Util.createRegularFileProperty(project)
-        imageZip.set(project.layout.buildDirectory.file('image.zip'))
-
-        options = project.objects.listProperty(String)
-        options.set(new ArrayList<String>())
-
-        additive = project.objects.property(Boolean)
-        additive.set(false)
-
-        modules = project.objects.listProperty(String)
-        modules.set(new ArrayList<String>())
-
-        javaHome = project.objects.property(String)
-
-        targetPlatforms = project.objects.mapProperty(String, TargetPlatform)
-
-        jvmVersion = project.objects.property(Integer)
-
-        launcherData = project.objects.property(LauncherData)
-        def ld = new LauncherData(project)
-        launcherData.set(ld)
-
-        jpackageData = project.objects.property(JPackageData)
-        def jpd = new JPackageData(project, ld)
-        jpackageData.set(jpd)
-
-        cdsData = project.objects.property(CdsData)
-        cdsData.set(new CdsData())
+    @Inject
+    RuntimePluginExtension(Project project, FileOperations fileOperations) {
+        this.objects = project.objects
+        this.fileOperations = fileOperations
+        this.buildDirectory = project.layout.buildDirectory
+        jreDir.convention(buildDirectory.dir('jre'))
+        imageDir.convention(buildDirectory.dir('image'))
+        imageZip.convention(buildDirectory.file('image.zip'))
+        options.convention(new ArrayList<String>())
+        additive.convention(false)
+        modules.convention(new ArrayList<String>())
+        javaHome.convention( Util.getDefaultJavaHome(project))
+        launcherData.convention(objects.newInstance( LauncherData, project ))
+        jpackageData.convention(objects.newInstance( JPackageData, project, launcherData.get() ))
+        cdsData.convention(objects.newInstance( CdsData ))
     }
 
-    void addOptions(String... options) {
-        Util.addToListProperty(this.options, options)
+    void addOptions(String... option) {
+        options.addAll(option.toList())
     }
 
-    void addModules(String... modules) {
-        Util.addToListProperty(this.modules, modules)
+    void addModules(String... module) {
+        modules.addAll(module.toList())
     }
 
     void targetPlatform(String name, String jdkHome, List<String> options = []) {
@@ -102,7 +93,7 @@ class RuntimePluginExtension {
     }
 
     void targetPlatform(String name, Action<TargetPlatform> action) {
-        def targetPlatform = new TargetPlatform(project, name)
+        def targetPlatform = objects.newInstance( TargetPlatform, fileOperations, buildDirectory, name)
         targetPlatforms.put(name, targetPlatform)
         action.execute(targetPlatform)
     }
