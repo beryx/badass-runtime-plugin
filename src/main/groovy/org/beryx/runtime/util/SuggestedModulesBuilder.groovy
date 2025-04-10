@@ -16,8 +16,6 @@
 package org.beryx.runtime.util
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
@@ -31,13 +29,11 @@ class SuggestedModulesBuilder {
         this.javaHome = javaHome
     }
 
-    Set<String> getProjectModules(Project project) {
+    Set<String> getProjectModules(File mainDistJarFile, List<File> classPathFiles) {
         Set<String> modules = []
-        def mainDistJarFile = Util.getMainDistJarFile(project)
         modules.addAll(getModulesRequiredBy(mainDistJarFile))
-        for(ResolvedDependency dep: project.configurations['runtimeClasspath'].resolvedConfiguration.firstLevelModuleDependencies) {
-            def f = Util.getArtifact(dep)
-            if(f) modules.addAll(getModulesRequiredBy(f))
+        for(File file: classPathFiles) {
+            modules.addAll(getModulesRequiredBy(file))
         }
         if(!modules) {
             modules << 'java.base'

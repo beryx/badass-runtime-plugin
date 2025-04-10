@@ -15,15 +15,24 @@
  */
 package org.beryx.runtime
 
+import javax.inject.Inject
+
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.file.FileOperations
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.process.ExecOperations
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.JreTaskData
 import org.beryx.runtime.data.TargetPlatform
-import org.beryx.runtime.impl.JreTaskImpl
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -31,8 +40,18 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
+import org.beryx.runtime.util.SuggestedModulesBuilder
+
 @CompileStatic
 abstract class JreTask extends DefaultTask {
+    private static final Logger LOGGER = Logging.getLogger(JreTask)
+
+    private final FileOperations fileOperations
+    private final ExecOperations execOperations
+
+    @Input
+    String projectName
+
     @Input
     abstract ListProperty<String> getOptions()
 
@@ -52,17 +71,81 @@ abstract class JreTask extends DefaultTask {
     @OutputDirectory
     abstract DirectoryProperty getJreDir()
 
+    @InputFiles
+    abstract ListProperty<File> getClassPathFiles();
+
+    @InputFile
+    abstract Property<File> getMainDistJarFile()
+
+    @Inject
+    JreTask(FileOperations fileOperations, ExecOperations execOperations) {
+        this.fileOperations = fileOperations
+        this.execOperations = execOperations
+    }
+
     @TaskAction
     void runtimeTaskAction() {
-        def taskData = new JreTaskData()
-        taskData.jreDir = jreDir.asFile.get()
-        taskData.options = options.get()
-        taskData.additive = additive.get()
-        taskData.modules = modules.get()
-        taskData.javaHome = javaHome.get()
-        taskData.targetPlatforms = targetPlatforms.get()
+        def jreDir = jreDir.asFile.get()
+        def options = options.get()
+        def targetPlatforms = targetPlatforms.get()
+        if(targetPlatforms) {
+            targetPlatforms.values().each { platform ->
+                File jreDirectory = new File(jreDir, "$projectName-$platform.name")
+                createJre(jreDirectory, platform.jdkHome.getOrNull(), options + platform.options.get())
+            }
+        } else {
+            createJre(jreDir, javaHome.get(), options)
+        }
+    }
 
-        def taskImpl = new JreTaskImpl(project, taskData)
-        taskImpl.execute()
+    @CompileDynamic
+    void createJre(File jreDir, String jdkHome, List<String> options) {
+        fileOperations.delete(jreDir)
+
+        if(!fileOperations.file("$jdkHome/jmods").directory) {
+            throw new GradleException( "Directory not found: $jdkHome/jmods")
+        }
+        def cmd = ["${javaHome.get()}/bin/jlink",
+                   '-v',
+                   *options,
+                   '--module-path',
+                   "$jdkHome/jmods/",
+                   '--add-modules', runtimeModules.join(','),
+                   '--output', jreDir]
+        LOGGER.info("Executing: $cmd")
+        def standardOutputStream = new ByteArrayOutputStream()
+        def result = execOperations.exec {
+            ignoreExitValue = true
+            standardOutput = standardOutputStream
+            commandLine = cmd
+        }
+        if(result.exitValue != 0) {
+            LOGGER.error(standardOutputStream.toString())
+        } else {
+            LOGGER.info(standardOutputStream.toString())
+        }
+        standardOutputStream.close()
+        result.assertNormalExitValue()
+        result.rethrowFailure()
+    }
+
+    @CompileStatic @Internal
+    Collection<String> getRuntimeModules() {
+        Set<String> imageModules = []
+        def modules = modules.get()
+        if ( additive.get() || !modules ) {
+            imageModules.addAll(
+                    new SuggestedModulesBuilder(
+                            javaHome.get()
+                    ).getProjectModules(
+                            mainDistJarFile.get(),
+                            classPathFiles.get()
+                    )
+            )
+        }
+        if ( modules ) {
+            imageModules.addAll( modules )
+        }
+        imageModules
     }
 }

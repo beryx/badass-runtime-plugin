@@ -6,8 +6,10 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 11
-targetCompatibility = 11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 ext.log4jVersion = '2.9.0'
 
@@ -32,6 +34,6 @@ jar {
 tasks.runtime.doLast {
     copy {
         from('src/main/resources')
-        into("$buildDir/image/bin")
+        into("$project.layout.buildDirectory/image/bin")
     }
 }

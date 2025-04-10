@@ -46,6 +46,7 @@ class SuggestModulesSpec extends Specification {
                 .withDebug(true)
                 .forwardStdOutput(outputWriter)
                 .withProjectDir(buildFile.parentFile)
+                .withGradleVersion('7.4')
                 .withPluginClasspath()
                 .withArguments("-is", RuntimePlugin.TASK_NAME_SUGGEST_MODULES)
                 .build();

@@ -49,7 +49,6 @@ abstract class RuntimePluginExtension {
 
     abstract Property<String> getJavaHome()
     abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
-    abstract Property<Integer> getJvmVersion()
 
     @Nested
     abstract Property<LauncherData> getLauncherData()

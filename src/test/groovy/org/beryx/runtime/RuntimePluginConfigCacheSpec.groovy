@@ -17,6 +17,8 @@ package org.beryx.runtime
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
+
 import spock.lang.Specification
 import spock.lang.TempDir
 import spock.lang.Unroll
@@ -26,19 +28,25 @@ import java.nio.file.Path
 
 import static org.gradle.testkit.runner.TaskOutcome.*
 
-class RuntimePluginSpec extends Specification {
+class RuntimePluginConfigCacheSpec extends Specification {
     @TempDir Path testProjectDir
 
     def cleanup() {
         println "CLEANUP"
     }
 
-    def setUpBuild(Collection<String> modules) {
+    def setUpBuild(Collection<String> modules, String gradleVersion) {
         new AntBuilder().copy( todir: testProjectDir ) {
-            fileset( dir: 'src/test/resources/hello-logback' )
+            fileset( dir: 'src/test/resources/hello-logback-cache' )
         }
 
         File buildFile = new File(testProjectDir.toFile(), "build.gradle")
+        if( GradleVersion.version('8.0') <= GradleVersion.version( gradleVersion)) {
+            buildFile.text = buildFile.text.replace(
+                    "id 'com.dua3.gradle.runtime'",
+                    "id 'com.dua3.gradle.runtime'\n    id 'com.github.johnrengelman.shadow' version '8.1.1'"
+            )
+        }
         buildFile << '''
             runtime {
                 options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
@@ -51,9 +59,9 @@ class RuntimePluginSpec extends Specification {
     }
 
     @Unroll
-    def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed with Gradle #gradleVersion"() {
+    def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed and gradleVersion=#gradleVersion"() {
         when:
-        setUpBuild(modules)
+        setUpBuild(modules, gradleVersion)
         BuildResult result
         try {
             result = GradleRunner.create()
@@ -61,7 +69,7 @@ class RuntimePluginSpec extends Specification {
                     .withProjectDir(testProjectDir.toFile())
                     .withGradleVersion(gradleVersion)
                     .withPluginClasspath()
-                    .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-is")
+                    .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-s", "--configuration-cache")
                     .forwardOutput()
                     .build();
         } catch (Exception e) {
@@ -89,13 +97,7 @@ class RuntimePluginSpec extends Specification {
 
         where:
         modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion
-        null                                        | true               | true             | '7.6'
-        []                                          | true               | true             | '7.6'
-        ['java.base']                               | true               | false            | '7.4'
-        ['foo.bar']                                 | false              | false            | '7.6'
-        ['java.naming']                             | true               | false            | '7.4'
-        ['java.naming', 'java.xml']                 | true               | true             | '7.6'
-        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '7.4'
-        ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '7.6'
+        null                                        | true               | true             | '7.4'
+        null                                        | true               | true             | '8.0'
     }
 }

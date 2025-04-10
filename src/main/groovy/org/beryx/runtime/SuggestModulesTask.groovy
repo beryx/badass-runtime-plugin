@@ -16,14 +16,17 @@
 package org.beryx.runtime
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.SuggestModulesData
-import org.beryx.runtime.impl.SuggestModulesTaskImpl
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+
+import org.beryx.runtime.util.SuggestedModulesBuilder
 
 @CompileStatic
 abstract class SuggestModulesTask extends DefaultTask {
@@ -31,11 +34,20 @@ abstract class SuggestModulesTask extends DefaultTask {
     @Optional
     abstract Property<String> getJavaHome()
 
+    @InputFiles
+    abstract ListProperty<File> getClassPathFiles();
+
+    @InputFile
+    abstract Property<File> getMainDistJarFile()
+
     @TaskAction
     void suggestMergedModuleInfoAction() {
-        def taskData = new SuggestModulesData()
-        taskData.javaHome = javaHome.get()
-        def taskImpl = new SuggestModulesTaskImpl(project, taskData)
-        taskImpl.execute()
+        def modules = new SuggestedModulesBuilder(
+                javaHome.get()
+        ).getProjectModules(
+                mainDistJarFile.get(),
+                classPathFiles.get()
+        )
+        println "modules = [\n${modules.collect { '\'' + it + '\'' }.join( ',\n' )}]"
     }
 }

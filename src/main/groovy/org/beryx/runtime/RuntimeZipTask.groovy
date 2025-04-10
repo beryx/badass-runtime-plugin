@@ -18,11 +18,11 @@ package org.beryx.runtime
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.Input
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.beryx.runtime.data.RuntimeZipTaskData
 import org.beryx.runtime.data.TargetPlatform
-import org.beryx.runtime.impl.RuntimeZipTaskImpl
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
@@ -31,6 +31,10 @@ import org.gradle.api.tasks.TaskAction
 
 @CompileStatic
 abstract class RuntimeZipTask extends DefaultTask {
+
+    @Input
+    String projectName
+
     @Nested
     abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
 
@@ -42,11 +46,34 @@ abstract class RuntimeZipTask extends DefaultTask {
 
     @TaskAction
     void runtimeZipTaskAction() {
-        def taskData = new RuntimeZipTaskData()
-        taskData.targetPlatforms = targetPlatforms.get()
-        taskData.imageDir = imageDir.asFile.get()
-        taskData.imageZip = imageZip.asFile.get()
-        def taskImpl = new RuntimeZipTaskImpl(project, taskData)
-        taskImpl.execute()
+        def targetPlatforms = targetPlatforms.get()
+        def imageDir = imageDir.asFile.get()
+        def imageZip = imageZip.asFile.get()
+        if(targetPlatforms) {
+            def zipDir = imageZip.parentFile
+            def zipName = imageZip.name
+            int pos = zipName.lastIndexOf('.')
+            def ext = (pos > 0) ? zipName.substring(pos+1) : 'zip'
+            def baseName = (pos > 0) ? zipName.substring(0,pos) : zipName
+            targetPlatforms.values().each { platform ->
+                File zipFile = new File(zipDir, "${baseName}-${platform.name}.${ext}")
+                File imageDirectory = new File(imageDir, "$projectName-$platform.name")
+                createZip(imageDirectory, zipFile)
+            }
+        } else {
+            createZip(imageDir, imageZip)
+        }
+    }
+
+    @CompileDynamic
+    private void createZip(File imageDir, File zipFile) {
+        def parentPath = imageDir.parentFile.toPath()
+        ant.zip(destfile: zipFile, duplicate: 'fail') {
+            imageDir.eachFileRecurse { f ->
+                int mode = f.canExecute() ? 755 : 644
+                def relPath = parentPath.relativize(f.toPath()).toString()
+                zipfileset(dir: parentPath, includes: relPath, filemode: mode)
+            }
+        }
     }
 }

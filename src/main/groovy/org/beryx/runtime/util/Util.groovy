@@ -15,6 +15,8 @@
  */
 package org.beryx.runtime.util
 
+import org.gradle.api.UnknownTaskException
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.JavaExec
 
@@ -88,18 +90,22 @@ class Util {
         if(!f.canExecute()) throw new GradleException("$f.absolutePath is not executable.")
     }
 
-    static File getArchiveFile(Project project) {
-        Jar jarTask = (Jar)project.tasks.getByName(JavaPlugin.JAR_TASK_NAME)
-        return jarTask.archiveFile.get().asFile
+    static Provider<RegularFile> getArchiveFile(Project project) {
+        return project.tasks.named(JavaPlugin.JAR_TASK_NAME, Jar).flatMap { it.archiveFile }
     }
 
-    static File getMainDistJarFile(Project project) {
-        File jarFile = getArchiveFile(project)
-        if(project.tasks.findByName('installShadowDist')) {
-            def baseName = jarFile.name - '.jar'
-            jarFile = new File(jarFile.parent, "$baseName-all.jar")
+    static Provider<File> getMainDistJarFile(Project project) {
+        def archiveFileProvider = getArchiveFile(project)
+        return project.provider {
+            File jarFile = archiveFileProvider.get().asFile
+            try {
+                project.tasks.named('installShadowDist')
+                def baseName = jarFile.name - '.jar'
+                new File(jarFile.parent, "$baseName-all.jar")
+            } catch (UnknownTaskException e) {
+                jarFile
+            }
         }
-        jarFile
     }
 
     static Provider<String> getMainClass(Project project) {

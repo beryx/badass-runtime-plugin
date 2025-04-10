@@ -69,8 +69,8 @@ abstract class JPackageData {
     @Input
     abstract Property<String> getInstallerName()
 
-    @Input @Optional
-    String appVersion
+    @Input
+    abstract Property<String> getAppVersion()
 
     @Input
     List<String> installerOptions = []
@@ -95,6 +95,7 @@ abstract class JPackageData {
         imageName.convention( project.name )
         installerOutputDir.convention(project.layout.buildDirectory.dir(outputDir))
         installerName.convention( project.name )
+        appVersion.convention(project.version.toString())
         args.convention(Util.getDefaultArgs(project))
         jvmArgs.convention(launcherData.jvmArgs)
         mainClass.convention(Util.getMainClass(project))

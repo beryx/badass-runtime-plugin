@@ -15,19 +15,19 @@
  */
 package org.beryx.runtime
 
+import javax.inject.Inject
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.CdsData
 import org.beryx.runtime.data.LauncherData
-import org.beryx.runtime.data.RuntimeTaskData
 import org.beryx.runtime.data.TargetPlatform
-import org.beryx.runtime.impl.RuntimeTaskImpl
 import org.beryx.runtime.util.Util
-import org.gradle.api.file.Directory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
@@ -36,6 +36,12 @@ import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
 
 @CompileStatic
 abstract class RuntimeTask extends DefaultTask {
+
+    private final FileOperations fileOperations
+
+    @Input
+    String projectName
+
     @Nested
     abstract MapProperty<String, TargetPlatform> getTargetPlatforms()
 
@@ -55,13 +61,13 @@ abstract class RuntimeTask extends DefaultTask {
     @OutputDirectory
     abstract DirectoryProperty getImageDir()
 
-    @Internal
-    Sync getDistTask() {
-        (Sync)(project.tasks.findByName('installShadowDist') ?: project.tasks.getByName('installDist'))
+    @Inject
+    RuntimeTask(FileOperations fileOperations) {
+        this.fileOperations = fileOperations
     }
 
     void configureStartScripts(boolean asRuntimeImage) {
-        project.tasks.withType(CreateStartScripts) { CreateStartScripts startScriptTask ->
+        project.tasks.withType(CreateStartScripts).configureEach { CreateStartScripts startScriptTask ->
             startScriptTask.mainClass.set(Util.getMainClass(project))
             startScriptTask.defaultJvmOpts = launcherData.get().jvmArgs.get()
             startScriptTask.doLast {
@@ -102,19 +108,40 @@ abstract class RuntimeTask extends DefaultTask {
         ((TemplateBasedScriptGenerator)scriptGenerator).template = project.resources.text.fromString(template.text)
     }
 
-    private Directory getDistDirRuntime(){
-        return distDir.getOrNull() ?: project.layout.buildDirectory.dir(distTask.destinationDir.path).get()
-    }
-
     @TaskAction
     void runtimeTaskAction() {
-        def taskData = new RuntimeTaskData()
-        taskData.distDir = distDirRuntime.asFile
-        taskData.jreDir = jreDir.asFile.get()
-        taskData.imageDir = imageDir.asFile.get()
-        taskData.targetPlatforms = targetPlatforms.get()
+        def distDir = distDir.get().asFile
+        def jreDir = jreDir.asFile.get()
+        def imageDir = imageDir.asFile.get()
+        def targetPlatforms = targetPlatforms.get()
+        if(targetPlatforms) {
+            targetPlatforms.values().each { platform ->
+                File jreDirectory = new File(jreDir, "$projectName-$platform.name")
+                File imageDirectory = new File(imageDir, "$projectName-$platform.name")
+                createRuntime(jreDirectory, imageDirectory, distDir)
+            }
+        } else {
+            createRuntime(jreDir, imageDir, distDir)
+        }
+    }
 
-        def taskImpl = new RuntimeTaskImpl(project, taskData)
-        taskImpl.execute()
+    void createRuntime(File jreDir, File imageDir, File distDir) {
+        fileOperations.delete(imageDir)
+        copyJre(jreDir, imageDir)
+        copyAppTo(imageDir, distDir)
+    }
+
+    void copyJre(File jreDir, File imageDir) {
+        fileOperations.copy {
+            it.from jreDir
+            it.into imageDir
+        }
+    }
+
+    void copyAppTo(File imageDir, File distDir) {
+        fileOperations.copy {
+            it.from distDir
+            it.into imageDir
+        }
     }
 }
