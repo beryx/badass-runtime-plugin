@@ -21,6 +21,7 @@ import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.JavaExec
 
 import groovy.io.FileType
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -94,17 +95,12 @@ class Util {
         return project.tasks.named(JavaPlugin.JAR_TASK_NAME, Jar).flatMap { it.archiveFile }
     }
 
-    static Provider<File> getMainDistJarFile(Project project) {
-        def archiveFileProvider = getArchiveFile(project)
-        return project.provider {
-            File jarFile = archiveFileProvider.get().asFile
-            try {
-                project.tasks.named('installShadowDist')
-                def baseName = jarFile.name - '.jar'
-                new File(jarFile.parent, "$baseName-all.jar")
-            } catch (UnknownTaskException e) {
-                jarFile
-            }
+    @CompileDynamic
+    static Provider<RegularFile> getMainDistJarFile(Project project) {
+        try {
+            project.tasks.named( 'shadowJar' ).flatMap { it.archiveFile }
+        } catch (UnknownTaskException ignored) {
+            return getArchiveFile(project)
         }
     }
 
@@ -137,16 +133,18 @@ class Util {
         }
     }
 
-    static String getDefaultJavaHome(Project project) {
-        def value = System.properties['badass.runtime.java.home']
-        if(value) return value
-        value = System.getenv('BADASS_RUNTIME_JAVA_HOME')
-        if(value) return value
-        value = getDefaultToolchainJavaHome(project)
-        if(value) return value
-        value = System.properties['java.home']
-        if(['javac', 'jar', 'jlink'].every { new File("$value/bin/$it$EXEC_EXTENSION").file }) return value
-        return System.getenv('JAVA_HOME')
+    static Provider<String> getDefaultJavaHome(Project project) {
+        project.providers.provider {
+            String value = System.properties['badass.runtime.java.home']
+            if ( value ) return value
+            value = System.getenv( 'BADASS_RUNTIME_JAVA_HOME' )
+            if ( value ) return value
+            value = Util.getDefaultToolchainJavaHome( project )
+            if ( value ) return value
+            value = System.properties['java.home']
+            if ( ['javac', 'jar', 'jlink'].every { new File( "$value/bin/$it$EXEC_EXTENSION" ).file } ) return  value
+            return System.getenv( 'JAVA_HOME' )
+        }
     }
 
     static String getDefaultToolchainJavaHome(Project project) {

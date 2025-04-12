@@ -20,13 +20,14 @@ import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.process.ExecOperations
 
@@ -63,8 +64,8 @@ abstract class JPackageImageTask extends DefaultTask {
     @Optional
     abstract Property<String> getJavaHome()
 
-    @InputFile
-    abstract Property<File> getMainDistJarFile()
+    @InputFiles
+    abstract RegularFileProperty getMainDistJarFile()
 
     @Nested
     abstract MapProperty<String, TargetPlatform> getTargetPlatforms()

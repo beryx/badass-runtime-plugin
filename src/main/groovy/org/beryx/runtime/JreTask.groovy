@@ -20,12 +20,12 @@ import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.process.ExecOperations
@@ -74,8 +74,8 @@ abstract class JreTask extends DefaultTask {
     @InputFiles
     abstract ListProperty<File> getClassPathFiles();
 
-    @InputFile
-    abstract Property<File> getMainDistJarFile()
+    @InputFiles
+    abstract RegularFileProperty getMainDistJarFile()
 
     @Inject
     JreTask(FileOperations fileOperations, ExecOperations execOperations) {

@@ -16,9 +16,9 @@
 package org.beryx.runtime
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 
@@ -37,8 +37,8 @@ abstract class SuggestModulesTask extends DefaultTask {
     @InputFiles
     abstract ListProperty<File> getClassPathFiles();
 
-    @InputFile
-    abstract Property<File> getMainDistJarFile()
+    @InputFiles
+    abstract RegularFileProperty getMainDistJarFile()
 
     @TaskAction
     void suggestMergedModuleInfoAction() {

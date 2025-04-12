@@ -15,6 +15,8 @@
  */
 package org.beryx.runtime.util
 
+import org.gradle.api.file.RegularFile
+
 import groovy.transform.CompileStatic
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -29,9 +31,11 @@ class SuggestedModulesBuilder {
         this.javaHome = javaHome
     }
 
-    Set<String> getProjectModules(File mainDistJarFile, List<File> classPathFiles) {
+    Set<String> getProjectModules(RegularFile mainDistJarFile, List<File> classPathFiles) {
         Set<String> modules = []
-        modules.addAll(getModulesRequiredBy(mainDistJarFile))
+        if (mainDistJarFile.asFile.exists()) {
+            modules.addAll( getModulesRequiredBy(mainDistJarFile.asFile))
+        }
         for(File file: classPathFiles) {
             modules.addAll(getModulesRequiredBy(file))
         }

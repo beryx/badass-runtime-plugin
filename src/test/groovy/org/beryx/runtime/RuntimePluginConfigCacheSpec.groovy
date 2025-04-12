@@ -35,16 +35,16 @@ class RuntimePluginConfigCacheSpec extends Specification {
         println "CLEANUP"
     }
 
-    def setUpBuild(Collection<String> modules, String gradleVersion) {
+    def setUpBuild(Collection<String> modules, String shadow) {
         new AntBuilder().copy( todir: testProjectDir ) {
             fileset( dir: 'src/test/resources/hello-logback-cache' )
         }
 
         File buildFile = new File(testProjectDir.toFile(), "build.gradle")
-        if( GradleVersion.version('8.0') <= GradleVersion.version( gradleVersion)) {
+        if( shadow != null ) {
             buildFile.text = buildFile.text.replace(
                     "id 'com.dua3.gradle.runtime'",
-                    "id 'com.dua3.gradle.runtime'\n    id 'com.github.johnrengelman.shadow' version '8.1.1'"
+                    "id 'com.dua3.gradle.runtime'\n    id " + shadow
             )
         }
         buildFile << '''
@@ -59,9 +59,9 @@ class RuntimePluginConfigCacheSpec extends Specification {
     }
 
     @Unroll
-    def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed and gradleVersion=#gradleVersion"() {
+    def "if modules=#modules, then buildSucceeds=#buildShouldSucceed and runSucceeds=#runShouldSucceed and shadow=#shadow with Gradle #gradleVersion"() {
         when:
-        setUpBuild(modules, gradleVersion)
+        setUpBuild(modules, shadow)
         BuildResult result
         try {
             result = GradleRunner.create()
@@ -96,8 +96,10 @@ class RuntimePluginConfigCacheSpec extends Specification {
         (outputText.trim() == 'LOG: Hello, runtime!') == runShouldSucceed
 
         where:
-        modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion
-        null                                        | true               | true             | '7.4'
-        null                                        | true               | true             | '8.0'
+        modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion | shadow
+        null                                        | true               | true             | '7.4'         | null
+        null                                        | true               | true             | '8.0'         | "'com.github.johnrengelman.shadow' version '8.1.1'"
+        null                                        | true               | true             | '8.13'        | null
+        null                                        | true               | true             | '8.13'        | "'com.gradleup.shadow' version '8.3.6'"
     }
 }
