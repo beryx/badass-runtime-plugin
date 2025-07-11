@@ -18,16 +18,31 @@ package org.beryx.runtime.impl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.process.ExecOperations
+import org.gradle.process.ExecResult
+import org.gradle.process.ExecSpec
+
+import javax.inject.Inject
 
 @CompileStatic
-class BaseTaskImpl<DATA> {
+abstract class BaseTaskImpl<DATA> {
     static String SEP = File.pathSeparatorChar
 
     final Project project
     final DATA td
 
+    @Inject
+    protected abstract ExecOperations getExecOperations() // Gradle provides implementation
+
     BaseTaskImpl(Project project, DATA td) {
         this.project = project
         this.td = td
+    }
+
+    protected ExecResult exec(@DelegatesTo(ExecSpec) Closure<?> spec) {
+        return execOperations.exec {
+            spec.delegate = it
+            spec()
+        }
     }
 }

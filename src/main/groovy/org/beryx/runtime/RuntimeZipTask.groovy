@@ -55,7 +55,7 @@ class RuntimeZipTask extends BaseTask {
         taskData.targetPlatforms = targetPlatforms.get()
         taskData.imageDir = imageDir.asFile
         taskData.imageZip = imageZip.asFile
-        def taskImpl = new RuntimeZipTaskImpl(project, taskData)
+        def taskImpl = objectFactory.newInstance(RuntimeZipTaskImpl, project, taskData)
         taskImpl.execute()
     }
 }

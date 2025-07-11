@@ -15,6 +15,8 @@
  */
 package org.beryx.runtime.impl
 
+import javax.inject.Inject
+
 import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
 import groovy.transform.CompileDynamic
@@ -29,9 +31,10 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.os.OperatingSystem
 
 @CompileStatic
-class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
+abstract class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
     private static final Logger LOGGER = Logging.getLogger(JPackageTaskImpl.class);
 
+    @Inject
     JPackageTaskImpl(Project project, JPackageTaskData taskData) {
         super(project, taskData)
         LOGGER.debug("taskData: $taskData")
@@ -56,7 +59,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 def subdirs = installerOutDir.listFiles({ f -> f.directory } as FileFilter)
                 if(subdirs) project.delete(subdirs)
             }
-            def result = project.exec {
+            def result = exec {
                 ignoreExitValue = true
                 standardOutput = new ByteArrayOutputStream()
                 project.ext.jpackageInstallerOutput = {

@@ -15,6 +15,8 @@
  */
 package org.beryx.runtime.impl
 
+import javax.inject.Inject
+
 import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
 import groovy.transform.CompileDynamic
@@ -28,9 +30,10 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
 @CompileStatic
-class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
+abstract class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
     private static final Logger LOGGER = Logging.getLogger(JPackageImageTaskImpl.class)
 
+    @Inject
     JPackageImageTaskImpl(Project project, JPackageTaskData taskData) {
         super(project, taskData)
         LOGGER.debug("taskData: $taskData")
@@ -38,7 +41,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
     @CompileDynamic
     void execute() {
-        def result = project.exec {
+        def result = exec {
             ignoreExitValue = true
             standardOutput = new ByteArrayOutputStream()
 

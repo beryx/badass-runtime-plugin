@@ -38,7 +38,7 @@ class SuggestModulesTask extends BaseTask {
     void suggestMergedModuleInfoAction() {
         def taskData = new SuggestModulesData()
         taskData.javaHome = javaHome
-        def taskImpl = new SuggestModulesTaskImpl(project, taskData)
+        def taskImpl = objectFactory.newInstance(SuggestModulesTaskImpl, project, taskData)
         taskImpl.execute()
     }
 }

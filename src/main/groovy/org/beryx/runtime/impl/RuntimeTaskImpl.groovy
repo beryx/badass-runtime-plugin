@@ -21,9 +21,12 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
-class RuntimeTaskImpl extends BaseTaskImpl<RuntimeTaskData> {
+import javax.inject.Inject
+
+abstract class RuntimeTaskImpl extends BaseTaskImpl<RuntimeTaskData> {
     private static final Logger LOGGER = Logging.getLogger(RuntimeTaskImpl)
 
+    @Inject
     RuntimeTaskImpl(Project project, RuntimeTaskData taskData) {
         super(project, taskData)
         LOGGER.info("taskData: $taskData")
