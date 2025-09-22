@@ -20,9 +20,12 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
-class RuntimeZipTaskImpl extends BaseTaskImpl<RuntimeZipTaskData> {
+import javax.inject.Inject
+
+abstract class RuntimeZipTaskImpl extends BaseTaskImpl<RuntimeZipTaskData> {
     private static final Logger LOGGER = Logging.getLogger(RuntimeZipTaskImpl)
 
+    @Inject
     RuntimeZipTaskImpl(Project project, RuntimeZipTaskData taskData) {
         super(project, taskData)
         LOGGER.info("taskData: $taskData")

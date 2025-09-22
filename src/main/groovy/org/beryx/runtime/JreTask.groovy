@@ -79,7 +79,7 @@ class JreTask extends BaseTask {
         taskData.javaHome = javaHome
         taskData.targetPlatforms = targetPlatforms.get()
 
-        def taskImpl = new JreTaskImpl(project, taskData)
+        def taskImpl = objectFactory.newInstance(JreTaskImpl, project, taskData)
         taskImpl.execute()
     }
 }

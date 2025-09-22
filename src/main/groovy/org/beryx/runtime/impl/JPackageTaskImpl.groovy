@@ -28,10 +28,13 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.os.OperatingSystem
 
+import javax.inject.Inject
+
 @CompileStatic
-class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
+abstract class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
     private static final Logger LOGGER = Logging.getLogger(JPackageTaskImpl.class);
 
+    @Inject
     JPackageTaskImpl(Project project, JPackageTaskData taskData) {
         super(project, taskData)
         LOGGER.debug("taskData: $taskData")
@@ -56,7 +59,7 @@ class JPackageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
                 def subdirs = installerOutDir.listFiles({ f -> f.directory } as FileFilter)
                 if(subdirs) project.delete(subdirs)
             }
-            def result = project.exec {
+            def result = exec {
                 ignoreExitValue = true
                 standardOutput = new ByteArrayOutputStream()
                 project.ext.jpackageInstallerOutput = {

@@ -19,7 +19,10 @@ import groovy.transform.CompileStatic
 import org.beryx.runtime.data.RuntimePluginExtension
 import org.beryx.runtime.util.Util
 import org.gradle.api.DefaultTask
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Internal
+
+import javax.inject.Inject
 
 import static org.beryx.runtime.util.Util.EXEC_EXTENSION
 
@@ -31,6 +34,11 @@ class BaseTask extends DefaultTask {
     BaseTask() {
         this.extension = (RuntimePluginExtension)project.extensions.getByName(RuntimePlugin.EXTENSION_NAME)
         group = 'build'
+    }
+
+    @Inject
+    protected ObjectFactory getObjectFactory() {
+        throw new UnsupportedOperationException("Gradle overrides this method when creating the task")
     }
 
     @Internal

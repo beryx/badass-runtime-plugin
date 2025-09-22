@@ -27,10 +27,13 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
+import javax.inject.Inject
+
 @CompileStatic
-class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
+abstract class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
     private static final Logger LOGGER = Logging.getLogger(JPackageImageTaskImpl.class)
 
+    @Inject
     JPackageImageTaskImpl(Project project, JPackageTaskData taskData) {
         super(project, taskData)
         LOGGER.debug("taskData: $taskData")
@@ -38,7 +41,7 @@ class JPackageImageTaskImpl extends BaseTaskImpl<JPackageTaskData> {
 
     @CompileDynamic
     void execute() {
-        def result = project.exec {
+        def result = exec {
             ignoreExitValue = true
             standardOutput = new ByteArrayOutputStream()
 
