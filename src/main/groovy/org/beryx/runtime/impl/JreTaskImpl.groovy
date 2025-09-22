@@ -23,9 +23,12 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
-class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
+import javax.inject.Inject
+
+abstract class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
     private static final Logger LOGGER = Logging.getLogger(JreTaskImpl)
 
+    @Inject
     JreTaskImpl(Project project, JreTaskData taskData) {
         super(project, taskData)
         LOGGER.info("taskData: $taskData")
@@ -57,7 +60,7 @@ class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
                        '--add-modules', modules.join(','),
                        '--output', jreDir]
         LOGGER.info("Executing: $cmd")
-        def result = project.exec {
+        def result = exec {
             ignoreExitValue = true
             standardOutput = new ByteArrayOutputStream()
             project.ext.jlinkOutput = {

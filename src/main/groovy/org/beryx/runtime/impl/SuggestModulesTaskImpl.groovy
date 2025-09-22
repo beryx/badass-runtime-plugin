@@ -20,10 +20,14 @@ import org.beryx.runtime.util.SuggestedModulesBuilder
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.process.ExecOperations
 
-class SuggestModulesTaskImpl extends BaseTaskImpl<SuggestModulesData> {
+import javax.inject.Inject
+
+abstract class SuggestModulesTaskImpl extends BaseTaskImpl<SuggestModulesData> {
     private static final Logger LOGGER = Logging.getLogger(SuggestModulesTaskImpl)
 
+    @Inject
     SuggestModulesTaskImpl(Project project, SuggestModulesData taskData) {
         super(project, taskData)
         LOGGER.info("taskData: $taskData")

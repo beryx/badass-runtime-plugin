@@ -30,6 +30,9 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.jvm.application.scripts.ScriptGenerator
 import org.gradle.jvm.application.scripts.TemplateBasedScriptGenerator
+import org.gradle.process.ExecOperations
+
+import javax.inject.Inject
 
 @CompileStatic
 class RuntimeTask extends BaseTask {
@@ -110,12 +113,17 @@ class RuntimeTask extends BaseTask {
         }
     }
 
+    @Inject
+    protected ExecOperations getExecOperations() {
+        throw new UnsupportedOperationException("Gradle overrides this method when creating the task")
+    }
+
     @CompileDynamic
     private void configureCds() {
         if (cdsData.enabled) {
             this.doLast {
-                project.exec {
-                    commandLine = ["$imageDir/bin/java", "-Xshare:dump"]
+                execOperations.exec {
+                    it.commandLine = ["$imageDir/bin/java", "-Xshare:dump"]
                 }
             }
             System.properties['BADASS_CDS_ARCHIVE_FILE_LINUX'] = cdsData.sharedArchiveFile ?: '$APP_HOME/lib/server/$APP_NAME.jsa'
@@ -135,7 +143,7 @@ class RuntimeTask extends BaseTask {
         taskData.imageDir = imageDir.asFile
         taskData.targetPlatforms = targetPlatforms.get()
 
-        def taskImpl = new RuntimeTaskImpl(project, taskData)
+        def taskImpl = objectFactory.newInstance(RuntimeTaskImpl, project, taskData)
         taskImpl.execute()
     }
 }
