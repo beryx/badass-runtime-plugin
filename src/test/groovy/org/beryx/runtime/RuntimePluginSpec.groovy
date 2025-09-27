@@ -62,7 +62,7 @@ class RuntimePluginSpec extends Specification {
                     .withGradleVersion(gradleVersion)
                     .withPluginClasspath()
                     .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-is")
-                    .build();
+                    .build()
         } catch (Exception e) {
             if(buildShouldSucceed) {
                 e.printStackTrace()
