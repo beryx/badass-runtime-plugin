@@ -62,7 +62,7 @@ class RuntimePluginSpec extends Specification {
                     .withGradleVersion(gradleVersion)
                     .withPluginClasspath()
                     .withArguments(RuntimePlugin.TASK_NAME_RUNTIME, "-is")
-                    .build();
+                    .build()
         } catch (Exception e) {
             if(buildShouldSucceed) {
                 e.printStackTrace()
@@ -93,11 +93,11 @@ class RuntimePluginSpec extends Specification {
         modules                                     | buildShouldSucceed | runShouldSucceed | gradleVersion
         null                                        | true               | true             | '7.6'
         []                                          | true               | true             | '7.6'
-        ['java.base']                               | true               | false            | '7.0'
+        ['java.base']                               | true               | false            | '7.4'
         ['foo.bar']                                 | false              | false            | '7.6'
-        ['java.naming']                             | true               | false            | '7.0'
+        ['java.naming']                             | true               | false            | '7.4'
         ['java.naming', 'java.xml']                 | true               | true             | '7.6'
-        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '7.0'
+        ['java.naming', 'java.xml', 'java.logging'] | true               | true             | '7.4'
         ['java.naming', 'java.xml', 'foo.bar']      | false              | false            | '7.6'
     }
 }
