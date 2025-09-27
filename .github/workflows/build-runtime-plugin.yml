@@ -1,4 +1,4 @@
-name: Java 11 Gradle CI
+name: Java 17 Gradle CI
 
 on: [push]
 
