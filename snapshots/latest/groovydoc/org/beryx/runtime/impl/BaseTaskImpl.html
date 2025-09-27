@@ -70,11 +70,11 @@ if (location.href.indexOf('is-external=true') == -1) {
     <div>
         <ul class="subNavList">
             <li>Summary:&nbsp;</li>
-            Nested&nbsp;&nbsp;&nbsp;Field&nbsp;&nbsp;&nbsp;<li><a href="#property_summary">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_summary">Constructor</a></li>&nbsp;&nbsp;&nbsp;Method&nbsp;&nbsp;&nbsp;
+            Nested&nbsp;&nbsp;&nbsp;Field&nbsp;&nbsp;&nbsp;<li><a href="#property_summary">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_summary">Constructor</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#method_summary">Method</a></li>&nbsp;&nbsp;&nbsp;
         </ul>
         <ul class="subNavList">
             <li>&nbsp;|&nbsp;Detail:&nbsp;</li>
-            Field&nbsp;&nbsp;&nbsp;<li><a href="#prop_detail">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_detail">Constructor</a></li>&nbsp;&nbsp;&nbsp;Method&nbsp;&nbsp;&nbsp;
+            Field&nbsp;&nbsp;&nbsp;<li><a href="#prop_detail">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_detail">Constructor</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#method_detail">Method</a></li>&nbsp;&nbsp;&nbsp;
         </ul>
     </div>
     <a name="skip-navbar_top">
@@ -103,7 +103,7 @@ if (location.href.indexOf('is-external=true') == -1) {
             <br>
 
 <pre>@groovy.transform.CompileStatic
-class BaseTaskImpl&lt;DATA&gt;
+abstract&nbsp;class BaseTaskImpl&lt;DATA&gt;
 extends java.lang.Object</pre>
 
           </li>
@@ -185,6 +185,33 @@ extends java.lang.Object</pre>
         
         <!-- ========== METHOD SUMMARY =========== -->
         <ul class="blockList">
+            
+            <li class="blockList"><a name="method_summary"><!--   --></a>
+                    <h3>Methods Summary</h3>
+                    <ul class="blockList">
+                    <table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Methods Summary table">
+                        <caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+                        <tr>
+                            <th class="colFirst" scope="col">Type Params</th>
+                            <th class="colLast" scope="col">Return Type</th>
+                            <th class="colLast" scope="col">Name and description</th>
+                        </tr>
+                        
+                        <tr class="altColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>protected&nbsp;org.gradle.process.ExecResult</code></td>
+                            <td class="colLast"><code><strong><a href="#exec(Closure)">exec</a></strong>(groovy.lang.Closure&lt;?&gt; spec)</code><br></td>
+                        </tr>
+                        
+                        <tr class="rowColor">
+                            <td class="colFirst"><code></code></td>
+                            <td class="colLast"><code>protected&nbsp;abstract&nbsp;org.gradle.process.ExecOperations</code></td>
+                            <td class="colLast"><code><strong><a href="#getExecOperations()">getExecOperations</a></strong>()</code><br></td>
+                        </tr>
+                        
+                    </table>
+                   </ul>
+              </li>
             
             <li class="blockList"><a name="method_summary"><!--   --></a>
                     <h3>Inherited Methods Summary</h3>
@@ -277,6 +304,33 @@ extends java.lang.Object</pre>
 
 
             
+            <!-- =========== METHOD DETAIL =========== -->
+            <ul class="blockList">
+                <li class="blockList"><a name="method_detail">
+                    <!--   -->
+                </a>
+                    <h3>Method Detail</h3>
+                    
+                        <a name="exec(Closure)"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>protected&nbsp;org.gradle.process.ExecResult <strong>exec</strong>(@groovy.lang.DelegatesTo(value: ExecSpec) groovy.lang.Closure&lt;?&gt; spec)</h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
+                        <a name="getExecOperations()"><!-- --></a>
+                        <ul class="blockListLast">
+                            <li class="blockList">
+                                <h4>@javax.inject.Inject
+protected&nbsp;abstract&nbsp;org.gradle.process.ExecOperations <strong>getExecOperations</strong>()</h4>
+                                <p></p>
+                            </li>
+                        </ul>
+                    
+                </li>
+            </ul>
+            
         </li>
     </ul>
 </div>
@@ -308,11 +362,11 @@ extends java.lang.Object</pre>
     <div>
         <ul class="subNavList">
             <li>Summary:&nbsp;</li>
-            Nested&nbsp;&nbsp;&nbsp;Field&nbsp;&nbsp;&nbsp;<li><a href="#property_summary">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_summary">Constructor</a></li>&nbsp;&nbsp;&nbsp;Method&nbsp;&nbsp;&nbsp;
+            Nested&nbsp;&nbsp;&nbsp;Field&nbsp;&nbsp;&nbsp;<li><a href="#property_summary">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_summary">Constructor</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#method_summary">Method</a></li>&nbsp;&nbsp;&nbsp;
         </ul>
         <ul class="subNavList">
             <li>&nbsp;|&nbsp;Detail:&nbsp;</li>
-            Field&nbsp;&nbsp;&nbsp;<li><a href="#prop_detail">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_detail">Constructor</a></li>&nbsp;&nbsp;&nbsp;Method&nbsp;&nbsp;&nbsp;
+            Field&nbsp;&nbsp;&nbsp;<li><a href="#prop_detail">Property</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#constructor_detail">Constructor</a></li>&nbsp;&nbsp;&nbsp;<li><a href="#method_detail">Method</a></li>&nbsp;&nbsp;&nbsp;
         </ul>
     </div>
     <p>Groovy Documentation</p>
