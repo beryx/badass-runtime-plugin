@@ -5,6 +5,7 @@ This plugin works with non-modular applications, that is, applications that run 
 don't make use of module descriptors.
 Nevertheless, in order to use this plugin, your non-modular application must be compatible with the Java version
 of your target JRE (11 or newer).
+Java 17 is needed to run the current version of this plugin. Use version 1.x of this plugin for older Java versions.
 
 
 == Tasks
