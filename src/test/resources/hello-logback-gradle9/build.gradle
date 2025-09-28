@@ -1,0 +1,27 @@
+plugins {
+    id 'org.beryx.runtime'
+    id 'com.gradleup.shadow' version '8.3.9'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+dependencies {
+    implementation 'org.slf4j:slf4j-api:2.0.17'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+}
+
+application {
+    mainClass = 'org.example.runtime.HelloGradle9'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': "runtime-hello-gradle9",
+                'Main-Class': 'org.example.runtime.HelloGradle9'
+    }
+}
