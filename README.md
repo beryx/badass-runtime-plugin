@@ -1,6 +1,6 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/beryx/badass-runtime-plugin/blob/master/LICENSE)
-[![Build Status](https://img.shields.io/github/workflow/status/beryx/badass-runtime-plugin/Java%2011%20Gradle%20CI)](https://github.com/beryx/badass-runtime-plugin/actions?query=workflow%3A%22Java+11+Gradle+CI%22)
+[![Build Status](https://img.shields.io/github/workflow/status/beryx/badass-runtime-plugin/Java%2017%20Gradle%20CI)](https://github.com/beryx/badass-runtime-plugin/actions?query=workflow%3A%22Java+17+Gradle+CI%22)
 
 ## Badass Runtime Plugin ##
 
