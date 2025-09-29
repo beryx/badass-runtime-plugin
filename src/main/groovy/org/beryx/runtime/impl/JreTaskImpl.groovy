@@ -49,16 +49,17 @@ abstract class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
     void createJre(File jreDir, String jdkHome, List<String> options) {
         project.delete(jreDir)
 
-        if(!project.file("$jdkHome/jmods").directory) {
-            throw new GradleException("Directory not found: $jdkHome/jmods")
-        }
         def cmd = ["$td.javaHome/bin/jlink",
                        '-v',
                        *options,
-                       '--module-path',
-                       "$jdkHome/jmods/",
                        '--add-modules', modules.join(','),
                        '--output', jreDir]
+
+        if (project.file("$jdkHome/jmods").directory) {
+            cmd += ['--module-path',
+                    "$jdkHome/jmods/"]
+        }
+
         LOGGER.info("Executing: $cmd")
         def result = exec {
             ignoreExitValue = true
