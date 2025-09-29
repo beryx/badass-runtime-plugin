@@ -52,12 +52,13 @@ abstract class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
         def cmd = ["$td.javaHome/bin/jlink",
                        '-v',
                        *options,
-                       '--add-modules', modules.join(','),
                        '--output', jreDir]
 
         if (project.file("$jdkHome/jmods").directory) {
-            cmd += ['--module-path',
-                    "$jdkHome/jmods/"]
+            cmd += ['--module-path', "$jdkHome/jmods/"]
+        }
+        if (modules) {
+            cmd += ['--add-modules', modules.join(',')]
         }
 
         LOGGER.info("Executing: $cmd")
