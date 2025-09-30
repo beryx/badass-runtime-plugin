@@ -18,7 +18,6 @@ package org.beryx.runtime.impl
 import groovy.transform.CompileStatic
 import org.beryx.runtime.data.JreTaskData
 import org.beryx.runtime.util.SuggestedModulesBuilder
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -50,9 +49,9 @@ abstract class JreTaskImpl extends BaseTaskImpl<JreTaskData> {
         project.delete(jreDir)
 
         def cmd = ["$td.javaHome/bin/jlink",
-                       '-v',
-                       *options,
-                       '--output', jreDir]
+                   '-v',
+                   *options,
+                   '--output', jreDir]
 
         if (project.file("$jdkHome/jmods").directory) {
             cmd += ['--module-path', "$jdkHome/jmods/"]
