@@ -48,7 +48,7 @@ abstract class RuntimeZipTaskImpl extends BaseTaskImpl<RuntimeZipTaskData> {
         }
     }
 
-    private void createZip(File imageDir, File zipFile) {
+    protected void createZip(File imageDir, File zipFile) {
         def parentPath = imageDir.parentFile.toPath()
         project.ant.zip(destfile: zipFile, duplicate: 'fail') {
             imageDir.eachFileRecurse { f ->
