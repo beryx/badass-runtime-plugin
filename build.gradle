@@ -44,7 +44,7 @@ ext.badassRuntimePluginTag = Boolean.valueOf(badassRuntimePluginReleaseBuild) ? 
 group = 'org.beryx'
 version = badassRuntimePluginVersion
 
-ext.asmVersion = '9.8'
+ext.asmVersion = '9.10.1'
 
 repositories {
     mavenCentral()
